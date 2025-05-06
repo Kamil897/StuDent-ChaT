@@ -202,7 +202,10 @@ body {
   align-items: center;
   gap: 4px;
   position: relative;
+
+
   div {
+    width: 160px;
     top: 25px;
     right: 0;   
     display: flex;
@@ -210,16 +213,19 @@ body {
     position: absolute;
     background-color: #13072e ;
     border-radius: 8px;
-    padding: 6px 10px;
+    padding: 6px 8px;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.241);
     transition: 0.4s;
     opacity: 0;
     visibility: hidden;
   }
-   svg {
-    transition: 0.3s;
-   }
+
+  svg {
+   transition: 0.3s;
+  }
+
   &:hover {
+    
     div {
       opacity: 1;
       visibility: visible;
@@ -233,8 +239,10 @@ a {
   transition: 0.3s;
   padding: 4px 8px;
   color: #000000;
+  border-radius: 6px;
+
   &:hover {
-      background-color: #4717b0;
+      background-color: #34117f;
   }
 }
 }

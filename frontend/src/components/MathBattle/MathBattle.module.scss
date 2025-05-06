@@ -13,6 +13,11 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  margin: 50px auto;
+  width: 400px;
+  padding: 15px 25px;
+  background-color: rgba(255, 255, 255, 0.822);
+  border-radius: 12px;
 }
 
 .cssbuttons_io_button {
@@ -73,77 +78,103 @@
 }
 
 
-.health {
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  margin: 15px auto;
+}
+
+h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 4px #000;
+}
+
+p {
   font-size: 18px;
+  margin: 5px 0;
+}
+
+.health {
+  font-size: 20px;
   font-weight: bold;
+  color: #ffd700;
+  text-shadow: 1px 1px 3px #000;
 }
 
 .question {
-  font-size: 24px;
-  margin: 20px 0;
+  font-size: 28px;
+  margin: 25px 0 15px;
+  font-weight: bold;
 }
 
 .input {
-  padding: 10px;
-  font-size: 18px;
+  padding: 12px;
+  font-size: 20px;
+  width: 180px;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
   margin: 10px;
-  border: 2px solid #333;
-  border-radius: 5px;
 }
 
 .button {
-  padding: 10px 20px;
+  padding: 12px 25px;
   font-size: 18px;
-  background-color: #28a745;
+  background: linear-gradient(135deg, #28a745, #218838);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .button:hover {
-  background-color: #218838;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .button:disabled {
-  background-color: gray;
+  background: gray;
   cursor: not-allowed;
 }
 
 .message {
-  font-size: 16px;
-  margin-top: 10px;
+  font-size: 18px;
+  margin-top: 15px;
+  color: #ffe4b5;
 }
 
 .gameOverScreen {
-  flex-direction: column;
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.948);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  font-size: 32px;
-  font-weight: bold;
+  flex-direction: column;
   z-index: 1000;
 }
 
 .gameOver {
-  font-size: 48px;
-  color: red;
+  font-size: 64px;
+  color: #ff4c4c;
+  text-shadow: 2px 2px 8px #000;
 }
 
 .backButton {
-  display: flex;
+  margin: 50px 7px;
   height: 3em;
   width: 100px;
-  align-items: center;
-  justify-content: center;
   background-color: #eeeeee4b;
   border-radius: 3px;
   letter-spacing: 1px;
@@ -151,7 +182,6 @@
   cursor: pointer;
   border: none;
   background-color: #fff;
-  margin-top: 50px;
 }
 
 .backButton > svg {

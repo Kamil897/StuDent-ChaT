@@ -43,6 +43,7 @@ const StyledWrapper = styled.div`
   }
 
   .like {
+    padding: 0 0 5px 0;
     width: 70%;
     height: 100%;
     display: flex;

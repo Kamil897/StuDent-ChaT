@@ -2,21 +2,24 @@
    font-size: 30px;
    padding: 60px;
    border: 1px solid #D2E5E9;
-   border-left:  none ;
-   border-right:  none ;
-      color: #D2E5E9;
-      
-
-
+   border-left:  none;
+   border-right:  none;
+   color: #fbfbfb;
 }
+
+.Text {
+   font-size: 41px;
+   color: white;
+}
+
 .df {
    display: flex;
    justify-content: space-between;
    align-items: center;
    flex-wrap: wrap;
    color: #D2E5E9;
-
 }
+
 .nav {
    display: flex;
    gap: 30px;
@@ -24,9 +27,11 @@
    color: black;
 
    a {
-      color: rgb(0, 0, 0);
+      font-size: 30px;
+      color: white;
       text-decoration: none;
       transition: 0.4s;
+
       &:hover {
          color: #D2E5E9;
       }

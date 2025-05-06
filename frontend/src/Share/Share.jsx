@@ -74,25 +74,22 @@ const Wrapper = styled.div`
 
   .button {
     cursor: pointer;
-    padding: 1em;
+    padding: 10px;
     font-size: 1em;
-    width: 7em;
+    height: 48px;
+    width: 106px;
     aspect-ratio: 1/0.25;
     color: white;
-    background: #212121;
-    border-radius: 0.5em;
+    background-color: #1d1d1d;
+    border-radius: 16px;
     outline: 0.1em solid #353535;
-    border: 0;
-    box-shadow: 0 0 1em 1em rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    border: none;
+    box-shadow:
+      inset -2px -2px 5px rgba(255, 255, 255, 0.2),
+      inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+      4px 4px 10px rgba(0, 0, 0, 0.4),
+      -2px -2px 8px rgba(255, 255, 255, 0.1);
     position: relative;
-  }
-
-  .button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 1em 0.45em rgba(0, 0, 0, 0.1);
-    background: radial-gradient(circle at bottom, rgba(50, 100, 180, 0.5) 10%, #212121 70%);
-    outline: 0;
   }
 
   .icon {

@@ -12,7 +12,7 @@ const NewsHero = () => {
     <div className={s.newspage}>
 
         <div className={`${s.h1} ${s.df} `}>
-          <h1 id='allnews'>Все новости</h1>
+          <h1 className={s.Text} id='allnews'>Все новости</h1>
 
           <div className={s.nav}>
             <a href="#society">Общество</a>
@@ -26,7 +26,7 @@ const NewsHero = () => {
         </div>
 
         <div className={s.h1}>
-          <h1 id='society'>Общество</h1>
+          <h1 className={s.Text} id='society'>Общество</h1>
         </div>
         
         <div className={s.new}>
@@ -34,7 +34,7 @@ const NewsHero = () => {
         </div>  
 
         <div className={s.h1}>
-          <h1 id='tech'>Технологии</h1>
+          <h1 className={s.Text} id='tech'>Технологии</h1>
         </div>
         
         <div className={s.new}>
@@ -42,7 +42,7 @@ const NewsHero = () => {
         </div>
 
         <div className={s.h1}>
-          <h1 id='culture'>Культура</h1>
+          <h1 className={s.Text} id='culture'>Культура</h1>
         </div>
 
         <div className={s.new}>

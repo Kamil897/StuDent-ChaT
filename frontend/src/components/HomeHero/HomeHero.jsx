@@ -31,13 +31,6 @@ const HomeHero = () => {
     }, []);
 
     const [activeSection, setActiveSection] = useState("");
-        
-    // const demoItems = [
-    //   { link: '#', text: 'Mojave', image: 'https://picsum.photos/600/400?random=1' },
-    //   { link: '#', text: 'Sonoma', image: 'https://picsum.photos/600/400?random=2' },
-    //   { link: '#', text: 'Monterey', image: 'https://picsum.photos/600/400?random=3' },
-    //   { link: '#', text: 'Sequoia', image: 'https://picsum.photos/600/400?random=4' }
-    // ];
 
     useEffect(() => {
       const handleScroll = () => {
@@ -131,39 +124,39 @@ const HomeHero = () => {
                         Наш проект — это место, где мечты превращаются в планы, а планы — в реальность!
                     </p>
                 </div>
-<div className="home_img">
-  <img src="/hi.svg" alt="" />
-</div>
+                <div className="home_img">
+                  <img src="/hi.svg" alt="" />
+                </div>
       </section>
-      {/* <div className="line"></div> */}
-
+      
       <section className={s.services} id="section-Наши преимущество">
         <h1 style={{ textAlign: "center", color: "#fff", fontSize: "42px", marginBottom: "60px", paddingTop: "40px"}}>Как вы можете помочь</h1>
-            {/* <Slider /> */}
             <Tabs/>
       </section>
-      {/* <div className="line"></div> */}
 
       <div className={s.spotlight__cards}>
-        <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
-        <h2 className={s.item_title}>Общение и взаимопомощь</h2>
-                            <p className={s.item_text}>Мы не просто платформа для информации — мы место,
-                                где каждый может делиться своим опытом и вдохновляться историей других.</p>
-        </SpotlightCard>
-                <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
-                <h2 className={s.item_title}>Гибкость в обучении</h2>
-                            <p className={s.item_text}>Вы сами выбираете, как учиться: участвовать в онлайн-занятиях,
-                                проходить тесты или смотреть записи уроков.</p>
-        </SpotlightCard>
-                <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
-                <h2 className={s.item_title}>Развитие навыков</h2>
-                            <p className={s.item_text}>Помимо поступления, мы помогаем развивать навыки, которые пригодятся в учёбе и жизни: 
-                                умение работать в команде, 
-                                выступать публично, решать проблемы и управлять своим временем.</p>
-        </SpotlightCard>
+        <h1 style={{ textAlign: "center", color: "#fff", fontSize: "42px", marginBottom: "60px", paddingTop: "40px"}}>Как МЫ можем помочь</h1>
+
+        <div className={s.sCards}>
+          <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
+          <h2 className={s.item_title}>Общение и взаимопомощь</h2>
+                              <p className={s.item_text}>Мы не просто платформа для информации — мы место,
+                                  где каждый может делиться своим опытом и вдохновляться историей других.</p>
+          </SpotlightCard>
+                  <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
+                  <h2 className={s.item_title}>Гибкость в обучении</h2>
+                              <p className={s.item_text}>Вы сами выбираете, как учиться: участвовать в онлайн-занятиях,
+                                  проходить тесты или смотреть записи уроков.</p>
+          </SpotlightCard>
+                  <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
+                  <h2 className={s.item_title}>Развитие навыков</h2>
+                              <p className={s.item_text}>Помимо поступления, мы помогаем развивать навыки, которые пригодятся в учёбе и жизни: 
+                                  умение работать в команде, 
+                                  выступать публично, решать проблемы и управлять своим временем.</p>
+          </SpotlightCard>
+        </div>
       </div>
       
-
       <section className={s.our_users}>
             <h1 className={s.our_users_title} id="section-Почему выбирают нас">Почему выбирают нас?</h1>
             <div className={s.content_our}>
@@ -187,10 +180,6 @@ const HomeHero = () => {
                 </div>
             </div>
       </section>
-{/* 
-      <div style={{ height: '600px', position: 'relative' }}>
-        <FlowingMenu items={demoItems} />
-      </div> */}
     </>
   )
 }

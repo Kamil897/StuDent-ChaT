@@ -26,6 +26,16 @@ const StyledWrapper = styled.div`
     font-size: var(--size);
     user-select: none;
     fill: var(--color);
+    height: 48px;
+    width: 76px;
+    border-radius: 16px;
+    background-color: #1d1d1d;
+    overflow: hidden;
+    box-shadow:
+      inset -2px -2px 5px rgba(255, 255, 255, 0.2),
+      inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+      4px 4px 10px rgba(0, 0, 0, 0.4),
+      -2px -2px 8px rgba(255, 255, 255, 0.1);
   }
 
   .container .save-regular {

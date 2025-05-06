@@ -2,11 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import s from './MainPage.module.scss';
 import { useEffect, useState } from 'react';
 import Dock from '../Dock/Dock.jsx';
-import { VscHome } from 'react-icons/vsc';
-import { IoMdExit } from "react-icons/io";
-import { FiShoppingCart } from "react-icons/fi";
-import { CgGames } from "react-icons/cg";
-import { MdModeEditOutline } from "react-icons/md";
+
 
 const MainPage = () => {
     const [userData, setUserData] = useState(null);
@@ -22,25 +18,10 @@ const MainPage = () => {
         }
     }, [navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('loggedInUsername');
-        navigate('/login');
-    };
-
-
-    const items = [
-        { icon: <VscHome size={18} />, label: 'Домой', onClick: () => alert('Home!') , link: '/' },
-        { icon: <CgGames size={18} />, label: 'Игры', onClick: () => alert('Games!') , link: '/Games' },
-        { icon: <MdModeEditOutline size={18} />, label: 'Редактировать', onClick: () => alert('Edit!') , link: '/edit' },
-        { icon: <IoMdExit size={18} />, label: 'Выйти с аккаунта', onClick: () => alert('Settings!') , link: '/' },
-        { icon: <FiShoppingCart size={18} />, label: 'Магазин привилегий', onClick: () => alert('Shop!') , link: '/Shop' },
-      ];
-
     return (
         <>
             {userData ? (
                 <div className={s.sects}>
-                    
                     <div className={s.section_2}>
                         <div className={s.main}>
                             <img className={userData.avatar ? s.pfp : s.defoltpfp} 
@@ -59,12 +40,8 @@ const MainPage = () => {
 
                         </div>
                     </div>
-                    <Dock 
-                                items={items}
-                                panelHeight={68}
-                                baseItemSize={50}
-                                magnification={70}
-                            />
+                    
+                    <Dock />
                 </div>
             ) : (
                 <p>Загрузка...</p>
