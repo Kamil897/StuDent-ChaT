@@ -1,0 +1,113 @@
+.section {
+    padding: 40px 0;
+    background: #f9f9f9;
+    font-family: 'Segoe UI', sans-serif;
+  
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #333;
+    }
+  }
+  
+  .wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    font-size: 18px;
+    padding: 12px 18px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+  
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+  
+    span {
+      display: block;
+    }
+  }
+  
+  .unlocked {
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  .locked {
+    color: #999;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  
+  // 🎉 Всплывающее поздравление
+  
+  .congrats {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    animation: slideDownFade 0.8s ease-in-out;
+  }
+  
+  @keyframes slideDownFade {
+    from {
+      transform: translateY(-15px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .backButton {
+    background-color: #eee;
+    border: none;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .backButton:hover {
+    background-color: #ddd;
+    transform: translateY(-1px);
+  }
+  
