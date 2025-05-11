@@ -16,13 +16,8 @@ const Shop = ({ prefix }) => {
       setIsBought(true); 
     }
   };
-  
-  
-
   return (
-
-
-          <div className={s.prefixCard}>
+    <div className={s.prefixCard}>
       <div className={s.cardHeader}>
         <img src={prefix.image} alt="img" className={s.cardPhoto} />
         <h3>{prefix.name}</h3>
@@ -41,11 +36,10 @@ const Shop = ({ prefix }) => {
           </svg>
         </button>
         <Link to={`/product/${prefix.id}`} className={s.noUnderline}>
-        <button className={s.buyButton} >
-          Подробнее
-        </button>
+          <button className={s.buyButtonExtra} >
+            Подробнее
+          </button>
         </Link>
-
       </div>
     </div>
   );

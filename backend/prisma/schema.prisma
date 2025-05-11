@@ -223,3 +223,24 @@ model GroupTeacher {
 
   @@unique([group_id, teacher_id])
 }
+
+
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String
+  email       String
+  interests   String?
+  institution String?
+  created_at  DateTime @default(now())
+  messages    AiMessage[]
+}
+
+model AiMessage {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  message    String
+  response   String
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}

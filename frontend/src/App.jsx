@@ -33,6 +33,7 @@ const ChatGroup = lazy(() => import('./components/ChatGroup/ChatGroup'));
 const KnowledgeMaze = lazy(() => import('./components/KnowledgeMaze/KnowledgeMaze'));
 const MathBattle = lazy(() => import('./components/MathBattle/MathBattle'));
 const MyTituls = lazy(() => import('./components/MyTituls/MyTituls'));
+const AIChat = lazy(() => import('./components/AIChat/AIChat'));
 
 const App = () => {
   const location = useLocation();
@@ -47,7 +48,7 @@ const App = () => {
   const isNotFoundPage = ![
     "/", "/ChatGroup", "/Teacher", "/Register", "/Login", "/MainPage",
     "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake", "/flappybird",
-    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls"
+    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AIChat"
   ].includes(location.pathname);
 
   return (
@@ -83,6 +84,7 @@ const App = () => {
           <Route path='/don' element={ <Don/>} />
           <Route path='/MyTituls' element={ <MyTituls/>} />
           <Route path='/inviders' element={<Inviders/>}/>
+          <Route path="/AIChat" element={<AIChat />} />
         </Routes>
       </Suspense>
       {!isNotFoundPage && location.pathname !== "/ChatGroup" && <Footer />}

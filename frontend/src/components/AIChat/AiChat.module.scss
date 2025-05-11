@@ -1,0 +1,118 @@
+// AiChat.module.scss
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  height: 85vh;
+  margin: 70px auto;
+  background-color: #f7f7f8;
+  border: 1px solid #000000;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.Aititle {
+  padding: 16px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.chatBox {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #ffffff;
+}
+
+.placeholder {
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+  font-size: 30px;
+}
+
+.message {
+  color: #333;
+  font-size: 18px;
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.user {
+  background-color: #dcf8c6;
+  align-self: flex-end;
+  color: #000;
+  font-weight: 500;
+}
+
+.ai {
+  background-color: #e7e7e7;
+  align-self: flex-start;
+  color: #333;
+  font-weight: 500;
+}
+
+.AiinputSection {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.Aiinput {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+.Aiinput:focus {
+  border-color: #888;
+}
+
+.AiButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+  cursor: pointer;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
+}
+
+.svgIcon {
+  width: 12px;
+  transition-duration: 0.3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.AiButton:hover {
+  transition-duration: 0.5s;
+  background-color: rgb(114, 114, 114);
+  align-items: center;
+}

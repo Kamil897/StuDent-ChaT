@@ -84,6 +84,9 @@ const Header = () => {
               </Link>
 
               <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>Учителя</Link>
+
+              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>ИИ помошник</Link>
+
               
               {!userData ? (
                 <>

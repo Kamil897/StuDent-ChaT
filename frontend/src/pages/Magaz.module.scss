@@ -88,9 +88,22 @@ $shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
 .productGrid {
   display: grid;
-  grid-area: auto;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-top: 15px;
+}
+
+
+@media (max-width: 640px) {
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .productGrid {
+    grid-template-columns: repeat(1, 1fr); 
+  }
 }
 
 .shopItem {

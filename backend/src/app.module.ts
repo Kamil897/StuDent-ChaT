@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AdminModule } from './admin/admin.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config';
 import { TeacherModule } from './teacher/teacher.module';
 import { EventModule } from './event/event.module';
 import { GroupModule } from './group/group.module';
@@ -16,7 +18,9 @@ import { EventRegestrationModule } from './event_regestration/event_regestration
 import { AuthModule } from './auth/auth.module';
 import { ParentAndPreschoolModule } from './parent_and_presschooler/parent_and_presschooler.module';
 import { GameModule } from './game/game.module';
-import { ChatModule } from './chat/chat.module'; // <--- ВАЖНО: добавить импорт
+import { ChatModule } from './chat/chat.module';
+import { AiModule } from './ai/ai.module';
+
 
 @Module({
   imports: [
@@ -40,7 +44,8 @@ import { ChatModule } from './chat/chat.module'; // <--- ВАЖНО: добав�
     EventRegestrationModule,
     AuthModule,
     GameModule,
-    ChatModule // <--- ВАЖНО: подключить сюда
+    ChatModule,
+    AiModule, // <-- не забудь про модуль AI
   ],
   controllers: [],
   providers: [],

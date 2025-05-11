@@ -6,27 +6,21 @@ export class PrismaService
     extends PrismaClient
     implements OnModuleInit, OnModuleDestroy
 {
-    user: {
-        updateMany: Function;
-        create: Function;
-        findMany: Function;
-        findUnique: Function;
-        update: Function;
-        delete: Function;
-    };
-    
-    constructor(){
+    [x: string]: any;
+    constructor() {
         super({
-            datasources:{
-                db:{
-                    url:process.env.DATABASE_URL
-                }
-            }
-        })
+            datasources: {
+                db: {
+                    url: process.env.DATABASE_URL,
+                },
+            },
+        });
     }
+
     async onModuleInit() {
         await this.$connect();
     }
+
     async onModuleDestroy() {
         await this.$disconnect();
     }
