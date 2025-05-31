@@ -63,9 +63,6 @@ const Dock = () => {
 const StyledWrapper = styled.div`
   .card {
     width: 300px;
-    /* background-color: rgba(36, 40, 50, 1);
-  background-image: linear-gradient(135deg, rgba(36, 40, 50, 1) 0%, rgba(36, 40, 50, 1) 40%, rgba(37, 28, 40, 1) 100%); */
-
     background-color: rgba(36, 40, 50, 1);
     background-image: linear-gradient(
       139deg,
@@ -73,12 +70,18 @@ const StyledWrapper = styled.div`
       rgba(36, 40, 50, 1) 0%,
       rgba(37, 28, 40, 1) 100%
     );
-
     border-radius: 10px;
     padding: 26px 0px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    /* Адаптив: центрирование и ширина */
+    @media (max-width: 768px) {
+      width: 100%;
+      border-radius: 0;
+      padding: 20px 0;
+    }
   }
 
   .card .separator {
@@ -102,6 +105,11 @@ const StyledWrapper = styled.div`
     padding: 4px 7px;
     border-radius: 6px;
     cursor: pointer;
+
+    @media (max-width: 768px) {
+      justify-content: center;
+      padding: 8px;
+    }
   }
 
   .card .list .element svg {
@@ -113,6 +121,10 @@ const StyledWrapper = styled.div`
   .card .list .element .label {
     font-weight: 600;
     font-size: 22px;
+
+    @media (max-width: 768px) {
+      display: none; /* Убираем текст на телефонах */
+    }
   }
 
   .card .list .element:hover {
@@ -120,6 +132,7 @@ const StyledWrapper = styled.div`
     color: #ffffff;
     transform: translate(1px, -1px);
   }
+
   .card .list .delete:hover {
     background-color: #8e2a2a;
   }
@@ -135,12 +148,15 @@ const StyledWrapper = styled.div`
   .card .list:last-child svg {
     stroke: #bd89ff;
   }
+
   .card .list:last-child .element {
     color: #bd89ff;
   }
 
   .card .list:last-child .element:hover {
     background-color: rgba(56, 45, 71, 0.836);
-  }`;
+  }
+`;
+
 
 export default Dock;

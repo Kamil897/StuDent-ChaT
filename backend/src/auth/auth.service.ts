@@ -88,8 +88,8 @@ export class AuthService {
         }
         const validPassword = await bcrypt.compare(
             teacherSignInDto.password,
-            teacher.password
-        );
+            teacher.hashed_password
+            );
         if (!validPassword) {
             throw new UnauthorizedException("Invalid Email or password");
         }

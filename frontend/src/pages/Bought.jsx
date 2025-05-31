@@ -16,8 +16,8 @@ const Bought = () => {
 
   const confirmSell = () => {
     if (sellPrice && sellingItem) {
-      addProductToShop({ ...sellingItem, price: Number(sellPrice) }); // Преобразуем цену в число
-      removePurchasedItem(sellingItem.id); // Удаляем товар из списка купленных
+      addProductToShop({ ...sellingItem, price: Number(sellPrice) }); 
+      removePurchasedItem(sellingItem.id); 
       setSellingItem(null);
       setSellPrice("");
     }

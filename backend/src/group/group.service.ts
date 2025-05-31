@@ -18,7 +18,7 @@ export class GroupService {
                 name: createGroupDto.name,
                 min_age: createGroupDto.min_age,
                 max_age: createGroupDto.max_age,
-                created_at: formattedDate,
+                createdAt: formattedDate,
                 teachers: {
                     connect: createGroupDto.teacher_ids?.map(id => ({ id })) || [],
                 },
@@ -34,7 +34,7 @@ export class GroupService {
 
         return groups.map(group => ({
             ...group,
-            created_at: group.created_at ? group.created_at.toISOString().split('T')[0] : null,
+            created_at: group.createdAt ? group.createdAt.toISOString().split('T')[0] : null,
         }));
     }
 
@@ -48,7 +48,7 @@ export class GroupService {
 
         return {
             ...group,
-            created_at: group.created_at ? group.created_at.toISOString().split('T')[0] : null,
+            created_at: group.createdAt ? group.createdAt.toISOString().split('T')[0] : null,
         };
     }
 
@@ -65,7 +65,7 @@ export class GroupService {
                 name: updateGroupDto.name,
                 min_age: updateGroupDto.min_age,
                 max_age: updateGroupDto.max_age,
-                created_at: formattedDate,
+                createdAt: formattedDate,
                 teachers: {
                     set: updateGroupDto.teacher_ids?.map(id => ({ id })) || [],
                 },
@@ -75,7 +75,7 @@ export class GroupService {
 
         return {
             ...updatedGroup,
-            created_at: updatedGroup.created_at ? updatedGroup.created_at.toISOString().split('T')[0] : null,
+            created_at: updatedGroup.createdAt ? updatedGroup.createdAt.toISOString().split('T')[0] : null,
         };
     }
 

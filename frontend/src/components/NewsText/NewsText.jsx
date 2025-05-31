@@ -92,13 +92,13 @@ const NewsText = ({ p, ImgSrc, onShare }) => {
             )}
 
          <div className={s.likes}>
-            {/* Лайк */}
+            
             <LikeButton count={like} onToggle={(state) => {
                setLiked(state);
                setLike(prev => state ? prev + 1 : prev - 1);
             }} />
 
-            {/* Сохранить (Switch) */}
+            
             <Switch active={saved} onToggle={(state) => setSaved(state)} />
 
             <Share

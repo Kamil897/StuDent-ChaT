@@ -22,7 +22,7 @@ const products = [
 const Magaz = () => {
   const { user, spendPoints } = useUser();
   const [purchasedItems, setPurchasedItems] = useState([]);
-  const [filter, setFilter] = useState("all"); // "all", "affordable", "unaffordable"
+  const [filter, setFilter] = useState("all"); 
 
   const handleBuy = (product) => {
     if (spendPoints(product.price)) {

@@ -10,7 +10,6 @@ export class TeacherReviewService {
     return this.prisma.teacherReview.create({
       data: {
         ...dto,
-        written_at: new Date(dto.written_at),
       }
     });
   }

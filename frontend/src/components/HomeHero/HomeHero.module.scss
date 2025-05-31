@@ -365,7 +365,7 @@ text-align: right;
   text-align: center;
   padding: 20px;
   background-color: #293239;
-  padding-bottom: 150px;
+  padding-bottom: 50px;
 }
 
 .our_users_title{
@@ -422,11 +422,19 @@ text-align: right;
   }
 }
 
+
+
 .sCards {
   display: flex;
   flex-direction: row;
   gap: 30px;
   padding: 0 7em 12em 7em;
+
+  @media (max-width: 800px) {
+    flex-wrap: wrap;
+    padding: 1px;
+    justify-content: center;
+  }
 }
 
 .item_title {

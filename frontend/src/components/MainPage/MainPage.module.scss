@@ -146,10 +146,15 @@
    }
 
    @media (max-width: 800px) {
-      flex-direction: column;
+   flex-direction: column;
    justify-content: center;
    align-items: center;
    text-align: center;
+
+   img {
+      width: 130px;
+      height: 130px;
+   }
    }
 }
 

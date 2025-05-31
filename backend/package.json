@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.1.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.13",
@@ -85,7 +86,7 @@
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"
-  },  
+  },
   "jest": {
     "moduleFileExtensions": [
       "js",

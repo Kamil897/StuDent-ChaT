@@ -7,25 +7,27 @@ import { AllExceptionsFilter } from "./src/logger/error.handling";
 
 async function start() {
   try {
-    const PORT = process.env.PORT || 3030;
-    const app = await NestFactory.create(AppModule,{
-      logger : new ConsoleLogger({
-        colors:true,
-        prefix:"Exam",
-        
+    const PORT = process.env.PORT || 7777;
+    const app = await NestFactory.create(AppModule, {
+      logger: new ConsoleLogger({
+        colors: true,
+        prefix: "StudentChat"
       })
     });
+
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe());
-    app.useGlobalFilters(new AllExceptionsFilter)
+    app.useGlobalFilters(new AllExceptionsFilter());
+
     app.enableCors({
-      origin: "*",
-      methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
-      credentials: true //cookie va header
+      origin: ['https://student-chat.online'],
+      credentials: true,
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
     });
+
     const config = new DocumentBuilder()
-      .setTitle("Splay.uz")
-      .setVersion("Katze")
+      .setTitle("Student Chat")
+      .setVersion("1.0")
       .addBearerAuth(
         {
           type: "http",
@@ -35,25 +37,25 @@ async function start() {
           description: "Enter JWT token",
           in: "header",
         },
-        "parol"
+        "JWT"
       )
+      .build();
 
-      .build()
     const document = SwaggerModule.createDocument(app, config);
-
     SwaggerModule.setup("api/docs", app, document, {
       swaggerOptions: { defaultModelsExpandDepth: -1 },
     });
 
     await app.listen(PORT, () => {
       console.log("\n\n + ====================================================================== +");
-      console.log(`| |                                                                      | | `);
-      console.log(`| | 🚀             Server started at: http://localhost:${PORT}           🚀 | | `);
-      console.log(`| |                                                                      | | `);
-      console.log(`| | 📚  Swagger API documentation at: http://localhost:${PORT}/api/docs  📚 | |`);
-      console.log(`| |                                                                      | | `);
-      console.log(" + ====================================================================== +");
+      console.log(`| |                                                                      | |`);
+      console.log(`| | 🚀     Server is running at: https://student-chat.online             🚀 | |`);
+      console.log(`| |                                                                      | |`);
+      console.log(`| | 📚 Swagger docs: https://student-chat.online/api/docs                📚 | |`);
+      console.log(`| |                                                                      | |`);
+      console.log(" + ====================================================================== +\n\n");
     });
+
   } catch (error) {
     console.error("❌ Error starting server:", error);
   }

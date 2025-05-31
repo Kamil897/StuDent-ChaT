@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import s from './Edit.module.scss';
 
@@ -10,7 +10,8 @@ const EditProfile = () => {
         education: '',
         username: '',
         password: '',
-        avatar: ''
+        avatar: '',
+        avatarBorders: ''
     });
 
     const navigate = useNavigate();
@@ -116,6 +117,21 @@ const EditProfile = () => {
                                 value={formData.education}
                                 onChange={handleChange}
                             />
+                        </div>
+                        <div>
+                            <label htmlFor="avatarBorders">Стиль рамки аватара</label>
+                            <select
+                                id="avatarBorders"
+                                name="avatarBorders"
+                                className={s.input}
+                                value={formData.avatarBorders}
+                                onChange={handleChange}
+                            >
+                                <option value="">Нет рамки</option>
+                                <option value="rounded">Скруглённая</option>
+                                <option value="circle">Круглая</option>
+                                <option value="bordered">С рамкой</option>
+                            </select>
                         </div>
                     </div>
                     <button className={s.btn} type="submit">Сохранить изменения</button>

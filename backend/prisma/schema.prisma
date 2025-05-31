@@ -7,14 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Admin {
   id                  Int      @id @default(autoincrement())
   username            String   @unique
   first_name          String
   last_name           String
   email               String   @unique
-  hashed_password     String // ✅ Храним только хеш пароля
+  hashed_password     String
   hashed_refreshToken String?
   is_creator          Boolean  @default(false)
   is_active           Boolean  @default(true)
@@ -38,28 +37,20 @@ model Event {
 }
 
 model Preschooler {
-  id                Int      @id @default(autoincrement())
-  first_name        String
-  last_name         String
-  registration_date DateTime
-  born_date         DateTime
-  gender            String
+  id                  Int      @id @default(autoincrement())
+  first_name          String
+  last_name           String
+  registration_date   DateTime
+  born_date           DateTime
+  gender              String
 
-  groupPreschoolers  GroupPreschooler[]
-  attendances        Attendance[]
-  eventRegistrations EventRegistration[]
-  parentRelations    ParentAndPreschool[]
-  TeacherFeedback    TeacherFeedback[]
+  groupPreschoolers   GroupPreschooler[]
+  attendances         Attendance[]
+  eventRegistrations  EventRegistration[]
+  parentRelations     ParentAndPreschool[]
+  teacherFeedbacks    TeacherFeedback[]
 
   @@map("preschooler")
-}
-
-model UserGameStats {
-  id     Int @id @default(autoincrement())
-  userId Int @unique
-  score  Int @default(0)
-
-  user Parent @relation(fields: [userId], references: [id])
 }
 
 model GroupPreschooler {
@@ -74,18 +65,18 @@ model GroupPreschooler {
 }
 
 model Group {
-  id         Int      @id @default(autoincrement())
-  name       String
-  min_age    Int
-  max_age    Int
-  created_at DateTime @default(now())
+  id                 Int      @id @default(autoincrement())
+  name               String
+  min_age            Int
+  max_age            Int
+  createdAt          DateTime @default(now())
 
-  main_teacher_id Int?
-  main_teacher    Teacher? @relation("MainTeacher")
+  main_teacher_id    Int?
+  main_teacher       Teacher? @relation("MainTeacher")
 
-  teachers          Teacher[]          @relation("GroupTeachers")
-  groupTeachers     GroupTeacher[]
-  groupPreschoolers GroupPreschooler[]
+  teachers           Teacher[]          @relation("GroupTeachers")
+  groupTeachers      GroupTeacher[]
+  groupPreschoolers  GroupPreschooler[]
 }
 
 model Attendance {
@@ -100,6 +91,25 @@ model Attendance {
   @@map("attendance")
 }
 
+model Parent {
+  id                   Int     @id @default(autoincrement())
+  first_name           String
+  last_name            String
+  number               String
+  email                String  @unique
+  address              String?
+  hashed_password      String
+  hashed_refresh_token String?
+
+  parentRelations      ParentAndPreschool[]
+  notifications        Notification[]
+  teacherReviews       TeacherReview[]
+  teacherFeedbacks     TeacherFeedback[]
+  userGameStats        UserGameStats?
+
+  @@map("parents")
+}
+
 model ParentAndPreschool {
   id             Int    @id @default(autoincrement())
   preschooler_id Int
@@ -112,30 +122,11 @@ model ParentAndPreschool {
   @@map("parent_and_preschool")
 }
 
-model Parent {
-  id                   Int     @id @default(autoincrement())
-  first_name           String
-  last_name            String
-  number               String
-  email                String  @unique
-  address              String?
-  hashed_password      String
-  hashed_refresh_token String?
-
-  parentRelations ParentAndPreschool[]
-  notifications   Notification[]
-  teacherReviews  TeacherReview[]
-  TeacherFeedback TeacherFeedback[]
-  UserGameStats   UserGameStats?
-
-  @@map("parents")
-}
-
 model Notification {
   id        Int      @id @default(autoincrement())
   parent_id Int
   message   String
-  sent_at   DateTime @default(now())
+  sentAt    DateTime @default(now())
 
   parent Parent @relation(fields: [parent_id], references: [id])
 
@@ -152,32 +143,32 @@ model Teacher {
   hire_date            DateTime @default(now())
   email                String   @unique
   gender               String
-  password             String
-  confirm_password     String
+  hashed_password      String  @default("")
   hashed_refresh_token String?
   verification         String?  @unique
   avg_rating           Int?
   is_active            Boolean  @default(false)
   is_main              Boolean  @default(false)
 
-  feedbacks     TeacherFeedback[]
-  reviews       TeacherReview[]
-  groupTeachers GroupTeacher[]
-  groups        Group[]           @relation("GroupTeachers")
+  feedbacks       TeacherFeedback[]
+  reviews         TeacherReview[]
+  groupTeachers   GroupTeacher[]
+  groups          Group[] @relation("GroupTeachers")
 
-  main_group_id Int?   @unique
-  main_group    Group? @relation("MainTeacher", fields: [main_group_id], references: [id])
+  main_group_id   Int?   @unique
+  main_group      Group? @relation("MainTeacher", fields: [main_group_id], references: [id])
 
   @@map("teacher")
 }
 
 model TeacherFeedback {
-  id             Int    @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   teacher_id     Int
   preschooler_id Int
   parent_id      Int
   title          String
   feedback       String
+  writtenAt      DateTime @default(now()) 
 
   teacher     Teacher     @relation(fields: [teacher_id], references: [id])
   preschooler Preschooler @relation(fields: [preschooler_id], references: [id])
@@ -186,13 +177,14 @@ model TeacherFeedback {
   @@map("teacher_feedback")
 }
 
+
 model TeacherReview {
   id         Int      @id @default(autoincrement())
   teacher_id Int
   parent_id  Int
   message    String
   rating     Int
-  written_at DateTime @default(now())
+  writtenAt  DateTime @default(now())
 
   teacher Teacher @relation(fields: [teacher_id], references: [id])
   parent  Parent  @relation(fields: [parent_id], references: [id])
@@ -224,7 +216,13 @@ model GroupTeacher {
   @@unique([group_id, teacher_id])
 }
 
+model UserGameStats {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+  score  Int @default(0)
 
+  user Parent @relation(fields: [userId], references: [id])
+}
 
 model User {
   id          Int      @id @default(autoincrement())
@@ -232,7 +230,7 @@ model User {
   email       String
   interests   String?
   institution String?
-  created_at  DateTime @default(now())
+  createdAt   DateTime @default(now())
   messages    AiMessage[]
 }
 
@@ -241,6 +239,7 @@ model AiMessage {
   userId     Int
   message    String
   response   String
-  created_at DateTime @default(now())
+  createdAt  DateTime @default(now())
+
   user       User     @relation(fields: [userId], references: [id])
 }

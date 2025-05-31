@@ -37,3 +37,18 @@
       }
    }
 }
+
+.searchBox {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.searchInput {
+  width: 50%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
