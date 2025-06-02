@@ -106,7 +106,7 @@ const Tir = () => {
                       position: 'absolute',
                       backgroundImage: target.image, 
                       backgroundSize: 'cover',
-                      width: '70px',
+                      width: '99px',
                       height: '92px',
                     }}
                     onClick={() => handleTargetClick(target.id)}

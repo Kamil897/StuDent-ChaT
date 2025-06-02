@@ -83,7 +83,7 @@ $shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: background 0.3s;
 
   &:hover {
-    background: darken($accent-color, 10%);
+    background: rgba(52, 152, 219, 0.9);
   }
 }
 
@@ -108,7 +108,7 @@ $shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: background 0.3s;
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: rgba(52, 152, 219, 0.9);
   }
 }
 

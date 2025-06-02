@@ -66,7 +66,7 @@ const NewsHero = () => {
     <div className={s.newspage}>
 
 
-        <div className={s.searchSection} style={{marginBottom: '2rem'}}>
+        <div className={s.searchSection} style={{margin: '2rem'}}>
           <div style={{position: 'relative', maxWidth: '600px', margin: '0 auto'}}>
             <input
               type="text"
