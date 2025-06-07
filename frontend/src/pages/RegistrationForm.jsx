@@ -1,192 +1,102 @@
-import React, { useState, useEffect, useRef, createContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import s from './Registration.module.scss';
+import axios from 'axios';
+import s from './Login.module.scss';
 
 const Registration = () => {
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        hobby: '',
-        education: '',
-        username: '',
-        password: '',
-        avatar: ''
-    });
-
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
 
-        const existingUser = localStorage.getItem(formData.username);
-        if (existingUser) {
-            alert('Пользователь с таким именем уже существует');
+        if (password !== confirmPassword) {
+            alert('Пароли не совпадают');
             return;
         }
 
-        localStorage.setItem(formData.username, JSON.stringify(formData));
+        try {
+            const response = await axios.post('http://localhost:3000/api/auth/register', {
+                username,
+                password,
+            });
 
-        alert('Регистрация прошла успешно!');
-        
-        navigate('/login');
+            if (response.status === 201 || response.status === 200) {
+                alert('Регистрация прошла успешно');
+                navigate('/login');
+            } else {
+                alert('Что-то пошло не так при регистрации');
+            }
+        } catch (error) {
+            console.error('Ошибка регистрации:', error);
+            if (error.response && error.response.data.message) {
+                alert(error.response.data.message);
+            } else {
+                alert('Ошибка сервера при регистрации');
+            }
+        }
     };
 
     return (
         <div className="container__main">
-                <form className={s.form} onSubmit={handleRegister}>
-            {/* Аватарка */}
-            <div className={s.img}>
-                <label htmlFor="avatar" className={s.imageUpload}>
-                <img
-                    src={formData.avatar || 'profileimg.png'}
-                    alt="Аватар"
-                    className={s.uploadImage}
-                />
-                </label>
-                <input
-                type="file"
-                id="avatar"
-                name="avatar"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        setFormData({
-                        ...formData,
-                        avatar: reader.result,
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                    }
-                }}
-                />
-            </div>
+            <div className={s.formWrapper}>
+                <h2 className={s.title}>Регистрация</h2>
+                <form onSubmit={handleRegister} className={s.form}>
+                    <div className={s.flexColumn}>
+                        <label htmlFor="username">Имя пользователя</label>
+                    </div>
+                    <div className={s.inputForm}>
+                        <input
+                            className={s.input}
+                            type="text"
+                            id="username"
+                            placeholder="Введите имя пользователя"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
 
-            {/* Имя */}
-            <div className={s.flex_column}>
-                <label>Имя</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Введите имя"
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                />
-            </div>
+                    <div className={s.flexColumn}>
+                        <label htmlFor="password">Пароль</label>
+                    </div>
+                    <div className={s.inputForm}>
+                        <input
+                            className={s.input}
+                            type="password"
+                            id="password"
+                            placeholder="Введите пароль"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
 
-            {/* Фамилия */}
-            <div className={s.flex_column}>
-                <label>Фамилия</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Введите фамилию"
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                />
-            </div>
+                    <div className={s.flexColumn}>
+                        <label htmlFor="confirmPassword">Подтвердите пароль</label>
+                    </div>
+                    <div className={s.inputForm}>
+                        <input
+                            className={s.input}
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Подтвердите пароль"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </div>
 
-            {/* Хобби */}
-            <div className={s.flex_column}>
-                <label>Хобби</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Ваше хобби"
-                type="text"
-                name="hobby"
-                value={formData.hobby}
-                onChange={handleChange}
-                />
-            </div>
+                    <button className={s.button} type="submit">Зарегистрироваться</button>
 
-            {/* Образование/Работа */}
-            <div className={s.flex_column}>
-                <label>Образование / Работа</label>
+                    <p className={s.text}>
+                        Уже есть аккаунт?{' '}
+                        <Link className={s.link} to="/login">Войти</Link>
+                    </p>
+                </form>
             </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Образование или место работы"
-                type="text"
-                name="education"
-                value={formData.education}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Дата рождения */}
-            <div className={s.flex_column}>
-                <label>Дата рождения (необязательно)</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                type="date"
-                name="birth"
-                value={formData.birth}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Имя пользователя */}
-            <div className={s.flex_column}>
-                <label>Имя пользователя</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="username"
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Пароль */}
-            <div className={s.flex_column}>
-                <label>Пароль</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Введите пароль"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                />
-            </div>
-
-            {/* Кнопка отправки */}
-            <button className={s.button_submit} type="submit">
-                Зарегистрироваться
-            </button>
-
-            {/* Ссылка на вход */}
-            <p className={s.p}>
-                Уже есть аккаунт? <span className={s.span}><Link to="/login">Войти</Link></span>
-            </p>
-            </form>
         </div>
     );
 };

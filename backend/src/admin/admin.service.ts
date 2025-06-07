@@ -118,23 +118,23 @@ export class AdminService {
 
   async updateRefreshToken(
     id: number,
-    hashed_refreshToken: string | null
+    hashed_refresh_token: string | null
   ): Promise<Admin> {
-    return await this.prismaService.admin.update({
+    return await this.prismaService.Admin.update({
       where: { id },
-      data: { hashed_refreshToken },
+      data: { hashed_refresh_token },
     });
   }
 
   async findByRefreshToken(refreshToken: string): Promise<Admin | null> {
     const admins = await this.prismaService.admin.findMany({
-      select: { id: true, hashed_refreshToken: true },
+      select: { id: true, hashed_refresh_token: true },
     });
 
     for (const admin of admins) {
       if (
-        admin.hashed_refreshToken &&
-        (await bcrypt.compare(refreshToken, admin.hashed_refreshToken))
+        admin.hashed_refresh_token &&
+        (await bcrypt.compare(refreshToken, admin.hashed_refresh_token))
       ) {
         return await this.findOne(admin.id);
       }
