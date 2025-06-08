@@ -1,18 +1,11 @@
 import s from "./HomeHero.module.scss";
-import Slider from "../Slider/Slider.jsx";
-import React, { useState, useEffect, useRef, createContext } from "react";
-import Clouds from "../Clouds/Clouds.jsx";
-import AnimatedSpan from "../AnimatedSpan/AnimatedSpan.jsx";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
 import SpotlightCard from "../SpotlightCard/SpotlightCard.jsx";
-// import FlowingMenu from '../FlowingMenu/FlowingMenu.jsx';
-import TiltedCard from "../TiltedCard/TiltedCard.jsx";
 import Tabs from "../Tabs/Tabs.jsx";
 import TextCursor from "../TextCursor/TextCursor.jsx";
 
 const HomeHero = () => {
     const tooltipRef = useRef(null);
-    const [showNav, setShowNav] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -101,7 +94,6 @@ const HomeHero = () => {
     return (
         <>
             <section className={s.welcome_section}>
-                {/* <Clouds /> */}
                 <h1>Student Chat</h1>
                 <h3>место помощи - кому?</h3>
                 <TextCursor
@@ -128,7 +120,7 @@ const HomeHero = () => {
                         превращаются в планы, а планы — в реальность!
                     </p>
                 </div>
-                <div className="home_img">
+                <div className={s.home_img}>
                     <img src="/hi.svg" alt="" />
                 </div>
             </section>

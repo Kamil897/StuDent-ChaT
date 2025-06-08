@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './Snake.module.scss';
 import { getMaxPoints, addGamePoints } from '../utils/pointsHelper';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../Context/UserContext';
 
 const TILE_SIZE = 20;
 const ROWS = 20;
@@ -29,6 +30,7 @@ function Snake() {
     foodColor: '#f00',
     foodShape: 'circle',
   });
+  const {addPoints} = useUser()
 
   const timerRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
@@ -112,16 +114,23 @@ function Snake() {
     });
   };
 
-  const endGame = () => {
-    setIsGameOver(true);
-    setIsGameStarted(false);
-    clearInterval(timerRef.current);
+const endGame = useCallback(() => {
+  setIsGameOver(true);
+  setIsGameStarted(false);
+  clearInterval(timerRef.current);
 
+  setScore((currentScore) => {
     const bestScore = parseInt(localStorage.getItem('snakeScore')) || 0;
-    if (score > bestScore) {
-      localStorage.setItem('snakeScore', score);
+    if (currentScore > bestScore) {
+      localStorage.setItem('snakeScore', currentScore.toString());
     }
-  };
+
+    addPoints(currentScore);
+    
+    return currentScore; 
+  });
+}, [addPoints]);
+
 
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
@@ -194,6 +203,8 @@ function Snake() {
       setDirection(newDirection);
     }
   }, [direction, isGameStarted]);
+
+
 
   const bestScore = Math.max(score, parseInt(localStorage.getItem('snakeScore')) || 0);
 

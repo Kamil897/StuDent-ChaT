@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./Ping.module.css";
+import { useUser } from "../../Context/UserContext";
 
 const PongNeon = () => {
   const canvasRef = useRef(null);
@@ -8,6 +9,8 @@ const PongNeon = () => {
   const previousTimeRef = useRef(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [score, setScore] = useState(0)
+  const {addPoints} = useUser()
 
   const gameStateRef = useRef({
     ballX: 0,
@@ -192,6 +195,7 @@ const PongNeon = () => {
         } else {
           state.playerScore++;
           resetBall();
+          addPoints(10)
         }
       }
 

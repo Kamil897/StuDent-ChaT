@@ -37,13 +37,13 @@ body {
 
 
 .h1__logo {
-  color: #000000;
+  color: #c9c6c6;
   text-decoration: none;
   transition: 0.3s;
   font-family: "Soyuz Grotesk";
   font-size: 24px;
   &:hover {
-    color: #ddd;
+    color: #ffffff;
   }
 }
 
@@ -75,9 +75,9 @@ body {
      text-decoration: none;
      transition: 0.5s;
      font-size: 20px;
-    //  &:hover {
-    //   color: #c9c6c6;
-    // }
+    &:hover {
+      color: #ffffff;
+    }
    }
    
 

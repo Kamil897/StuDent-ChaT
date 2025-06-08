@@ -56,6 +56,9 @@ const MyTituls = ({ snakeScore, rpsWins, flappyScore }) => {
     });
   }, [missionConditions]);
 
+console.log('RPS Wins:', rpsWins);
+
+
   return (
     <section className={s.section}>
       <div className="container">

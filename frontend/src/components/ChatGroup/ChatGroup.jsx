@@ -3,10 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Picker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 
-const socket = io('https://student-chat.online:7777', {
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 2000,
+const socket = io('https://student-chat.online/api', {
   transports: ['websocket'],
 });
 
@@ -28,7 +25,7 @@ export default function GroupChat() {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await fetch('/src/components/ChatGroup/test.json');
+        const response = await fetch('/test.json');
         const data = await response.json();
         setChats(data);
       } catch (error) {

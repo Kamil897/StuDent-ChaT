@@ -16,6 +16,8 @@ function Invider() {
   const canvasRef = useRef(null);
   const [gameState, setGameState] = useState('playing');
   const { addPoints, user } = useUser();
+let canShoot = true;
+const shootCooldown = 300; 
 
 
   useEffect(() => {
@@ -63,25 +65,33 @@ function Invider() {
 
     
 
-    const updateBullets = () => {
-      bullets = bullets.filter(b => b.y > 0 && !b.hit);
-      bullets.forEach(b => {
-        b.y -= 8;
-        enemies.forEach(e => {
-          if (
-            e.alive &&
-            b.x < e.x + e.w &&
-            b.x + b.w > e.x &&
-            b.y < e.y + e.h &&
-            b.y + b.h > e.y
-          ) {
-            e.alive = false;
-            b.hit = true;
-            
-          }
-        });
-      });
-    };
+const updateBullets = () => {
+  bullets = bullets.filter(b => b.y > 0 && !b.hit);
+  bullets.forEach(b => {
+    b.y -= 8;
+    enemies.forEach(e => {
+      if (
+        e.alive &&
+        b.x < e.x + e.w &&
+        b.x + b.w > e.x &&
+        b.y < e.y + e.h &&
+        b.y + b.h > e.y
+      ) {
+        e.alive = false;
+        b.hit = true;
+        addPoints(10);
+      }
+    });
+  });
+
+
+  const allEnemiesDead = enemies.every(e => !e.alive);
+  if (allEnemiesDead) {
+    cancelAnimationFrame(animationId);
+    setGameState('win');
+  }
+};
+
     
 
     const moveEnemies = () => {
@@ -126,17 +136,22 @@ function Invider() {
       animationId = requestAnimationFrame(gameLoop);
     };
 
-    const keyDown = e => {
-      keys[e.key] = true;
-      if (e.key === ' ') {
-        bullets.push({
-          x: player.x + player.w / 2 - BULLET_WIDTH / 2,
-          y: player.y,
-          w: BULLET_WIDTH,
-          h: BULLET_HEIGHT,
-        });
-      }
-    };
+const keyDown = e => {
+  keys[e.key] = true;
+  if (e.key === ' ' && canShoot) {
+    bullets.push({
+      x: player.x + player.w / 2 - BULLET_WIDTH / 2,
+      y: player.y,
+      w: BULLET_WIDTH,
+      h: BULLET_HEIGHT,
+    });
+    canShoot = false;
+    setTimeout(() => {
+      canShoot = true;
+    }, shootCooldown);
+  }
+};
+
 
     const keyUp = e => {
       keys[e.key] = false;

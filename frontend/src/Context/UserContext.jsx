@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -8,7 +9,7 @@ export const UserProvider = ({ children }) => {
       const savedUser = localStorage.getItem("userData");
       const parsedUser = savedUser ? JSON.parse(savedUser) : {};
       return {
-        points: parsedUser.points ?? 5000,
+        points: parsedUser.points ?? 0,
         purchasedItems: parsedUser.purchasedItems ?? [],
         ...parsedUser,
       };

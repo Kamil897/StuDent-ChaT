@@ -25,7 +25,6 @@ const Games = () => {
   }, []);
 
   const games = [
-    { id: 1, name: 'Flappy Bird', description: 'Fly through obstacles...', link: '/flappybird', image: 'https://miro.medium.com/v2/resize:fit:1400/1*MZcxSSARUkVfSeAwzQ95kw.png', video: 'https://www.youtube.com/embed/WN6YEU2Dg1Q', category: 'Arcade' },
     { id: 2, name: 'Snake', description: 'The classic Snake game...', link: '/Snake', image: 'https://play-lh.googleusercontent.com/xIDxenYWwwKdyDF2eYzSYhKUMVejc0AhOR64mpcY4keuwXP3UeI7yN1SnIJT4tpjgc4', category: 'Classic' },
     { id: 3, name: 'Tic Tac', description: 'Challenge your friends...', link: '/TicTacToe', image: 'https://cdn.pixabay.com/photo/2013/07/12/15/56/tic-tac-toe-150614_960_720.png', category: 'Board' },
     { id: 4, name: 'Тир', description: 'Test your aim...', link: '/Tir', image: 'https://storage.needpix.com/rsynced_images/archery-152912_1280.png', category: 'Action' },
@@ -44,7 +43,6 @@ const Games = () => {
     const updated = currentPoints + pointsToAdd;
     setCurrentPoints(updated);
 
-    // Сохраняем обновленные очки в localStorage
     localStorage.setItem('currentPoints', updated);
 
     if (updated >= maxPoints) {

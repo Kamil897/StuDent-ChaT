@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import s from "./DonDon.module.css";
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../Context/UserContext'; 
 
 const choices = [
   { name: "Rock", image: '/rock.png' },
@@ -21,7 +22,9 @@ const getResult = (playerChoice, computerChoice) => {
 };
 
 const Don = () => {
+  const [rpsWins, setRpsWins] = useState(0);
   const navigate = useNavigate();
+  const { addPoints } = useUser();
   const [gameState, setGameState] = useState({
     playerChoice: null,
     computerChoice: null,
@@ -31,21 +34,53 @@ const Don = () => {
     losses: 0,
   });
 
+  useEffect(() => {
+    localStorage.setItem('rpsWins', gameState.wins.toString());
+  }, [gameState.wins]);
+
+  useEffect(() => {
+    const savedWins = parseInt(localStorage.getItem('rpsWins'), 10) || 0;
+    setRpsWins(savedWins);
+  }, []);
+
   const handlePlayerChoice = (choice) => {
     const randomChoice = choices[Math.floor(Math.random() * choices.length)];
     const gameResult = getResult(choice.name, randomChoice.name);
 
-    setGameState((prevState) => ({
-      ...prevState,
-      playerChoice: choice,
-      computerChoice: randomChoice,
-      result: gameResult,
-      wins: gameResult === "You Win!" ? prevState.wins + 1 : prevState.wins,
-      ties: gameResult === "It's a Tie!" ? prevState.ties + 1 : prevState.ties,
-      losses: gameResult === "Computer Wins!" ? prevState.losses + 1 : prevState.losses,
-    }));
+    setGameState((prevState) => {
+      const newWins = gameResult === "You Win!" ? prevState.wins + 1 : prevState.wins;
+      const newTies = gameResult === "It's a Tie!" ? prevState.ties + 1 : prevState.ties;
+      const newLosses = gameResult === "Computer Wins!" ? prevState.losses + 1 : prevState.losses;
+
+      if (gameResult === "You Win!") {
+        addPoints(1); 
+      }
+
+      return {
+        ...prevState,
+        playerChoice: choice,
+        computerChoice: randomChoice,
+        result: gameResult,
+        wins: newWins,
+        ties: newTies,
+        losses: newLosses,
+      };
+    });
   };
 
+  useEffect(() => {
+    if (gameState.wins >= 30) {
+      const title = 'Чемпион РПС ✊✋✌️';
+      const titles = JSON.parse(localStorage.getItem('titlesUnlocked')) || [];
+  
+      if (!titles.includes(title)) {
+        const updated = [...titles, title];
+        localStorage.setItem('titlesUnlocked', JSON.stringify(updated));
+        console.log(`🏆 Титул получен: ${title}`);
+      }
+    }
+  }, [gameState.wins]);
+  
   const { playerChoice, computerChoice, result, wins, ties, losses } = gameState;
 
   return (

@@ -287,6 +287,7 @@ const Doom = () => {
         <button className={styles.settingsToggle} onClick={() => setShowSettings(prev => !prev)}>
           ⚙️ Settings
         </button>
+        <button>press before play</button>
       </div>
   
       {showSettings && (
