@@ -386,7 +386,7 @@ text-align: right;
 .item {
   flex: 1;
   // margin: 100px;
-  padding: 0 40px;
+  padding: 12px 40px;
   text-align: center;
   border: 1px solid #e3eced;
   border-radius: 10px;
@@ -413,7 +413,6 @@ text-align: right;
 .spotlight__cards {
   font-family: 'Soyuz Grotesk';
   background-color: #293239 ;
-  height: 80vh;
 
   @media (max-width: 800px) {
     flex-wrap: wrap;
@@ -452,6 +451,7 @@ text-align: right;
   background-color: #293239;
   padding: 150px 0;
 }
+
 // #D2E5E9 немного темный
 // #293239 темный
 // #e3eced сероватый

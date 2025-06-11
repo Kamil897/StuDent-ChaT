@@ -3,7 +3,7 @@ import s from './MainPage.module.scss';
 import { useEffect, useState } from 'react';
 import Dock from '../Dock/Dock.jsx';
 
-const MainPage = () => {
+const  MainPage = () => {
     const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
 
@@ -35,10 +35,14 @@ const MainPage = () => {
                                 <p><b>Хобби:</b> {userData.hobby}</p>
                                 <p><b>Образование/Работа:</b> {userData.education}</p>
                                 <p></p>
+                     <Dock />
                             </div>
                         </div>
                     </div>
-                    <Dock />
+
+
+
+                    
                 </div>
             ) : (
                 <p>Загрузка...</p>

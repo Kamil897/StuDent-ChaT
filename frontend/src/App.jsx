@@ -33,7 +33,7 @@ const ChatGroup = lazy(() => import('./components/ChatGroup/ChatGroup'));
 const KnowledgeMaze = lazy(() => import('./components/KnowledgeMaze/KnowledgeMaze'));
 const MathBattle = lazy(() => import('./components/MathBattle/MathBattle'));
 const MyTituls = lazy(() => import('./components/MyTituls/MyTituls'));
-const AIChat = lazy(() => import('./components/AIChat/AIChat'));
+const AiChat = lazy(() => import('./components/AIChat/AiChat'));
 
 const App = () => {
   const location = useLocation();
@@ -44,11 +44,11 @@ const App = () => {
     const timer = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(timer);
   }, []);
-
+  
   const isNotFoundPage = ![
     "/", "/ChatGroup", "/Teacher", "/Register", "/Login", "/MainPage",
     "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake", "/flappybird",
-    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AIChat"
+    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat"
   ].includes(location.pathname);
 
   return (
@@ -84,7 +84,7 @@ const App = () => {
           <Route path='/don' element={ <Don/>} />
           <Route path='/MyTituls' element={ <MyTituls/>} />
           <Route path='/inviders' element={<Inviders/>}/>
-          <Route path="/AIChat" element={<AIChat />} />
+          <Route path="/AiChat" element={<AiChat />} />
         </Routes>
       </Suspense>
       {!isNotFoundPage && location.pathname !== "/ChatGroup" && <Footer />}

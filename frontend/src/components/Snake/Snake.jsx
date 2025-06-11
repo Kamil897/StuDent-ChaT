@@ -6,7 +6,7 @@ import { useUser } from '../../Context/UserContext';
 
 const TILE_SIZE = 20;
 const ROWS = 20;
-const COLS = 30;
+const COLS = 20;
 const INITIAL_SNAKE = [
   { x: Math.floor(COLS / 2), y: Math.floor(ROWS / 2) },
   { x: Math.floor(COLS / 2) - 1, y: Math.floor(ROWS / 2) },
@@ -204,8 +204,6 @@ const endGame = useCallback(() => {
     }
   }, [direction, isGameStarted]);
 
-
-
   const bestScore = Math.max(score, parseInt(localStorage.getItem('snakeScore')) || 0);
 
   return (
@@ -244,6 +242,7 @@ const endGame = useCallback(() => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
           >
+            
             {Array.from({ length: ROWS }).map((_, y) => (
               <div key={y} className={styles.row}>
                 {Array.from({ length: COLS }).map((_, x) => (
@@ -271,6 +270,42 @@ const endGame = useCallback(() => {
                 borderRadius: settings.foodShape === 'circle' ? '50%' : '0%',
               }}
             ></div>
+          </div>
+          
+
+          <div className={styles.mobileControls}>
+            <div className={styles.controlPad}>
+              <button 
+                className={styles.directionButton}
+                onClick={() => handleDirectionButtonClick('n')}
+                disabled={!isGameStarted || direction === 's'}
+              >
+                ↑
+              </button>
+              <div className={styles.horizontalControls}>
+                <button 
+                  className={styles.directionButton}
+                  onClick={() => handleDirectionButtonClick('w')}
+                  disabled={!isGameStarted || direction === 'e'}
+                >
+                  ←
+                </button>
+                <button 
+                  className={styles.directionButton}
+                  onClick={() => handleDirectionButtonClick('e')}
+                  disabled={!isGameStarted || direction === 'w'}
+                >
+                  →
+                </button>
+              </div>
+              <button 
+                className={styles.directionButton}
+                onClick={() => handleDirectionButtonClick('s')}
+                disabled={!isGameStarted || direction === 'n'}
+              >
+                ↓
+              </button>
+            </div>
           </div>
         </>
       )}

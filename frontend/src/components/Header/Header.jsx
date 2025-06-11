@@ -85,7 +85,7 @@ const Header = () => {
 
               <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>Учителя</Link>
 
-              <Link className={s.teach} onClick={CloseMenu} to={'/AIChat'}>ИИ помошник</Link>
+              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>ИИ помошник</Link>
 
               
               {!userData ? (
@@ -110,16 +110,11 @@ const Header = () => {
 
             <div
               onClick={toggleBurger}
-              className={`${s.burger} ${active ? s.active : ''}`}>
+              className={`${s.burger} ${active ? s.active : ''}`}
+            >
               <span></span>
               <span></span>
             </div>
-
-            {/* <div className={s.changeTheme}>
-              <button onClick={toggleTheme} className={s.button}>
-                {isDarkMode ? '☀️' : '🌑'}
-              </button>
-            </div> */}
           </nav>
         </div>
       </header>

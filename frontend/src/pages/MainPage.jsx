@@ -24,16 +24,6 @@ const MainPage = () => {
     return (
        <>
             {userData ? (
-            
-                    <div className={s.sects}>
-                    <div className={s.section}>
-                    <h2 >Группы</h2>
-                    <h3  className={s.groups}>Группа</h3>
-                    <h3  className={s.groups}>Группа</h3>
-                    <h3  className={s.groups}>Группа</h3>
-                    <h3  className={s.groups}>Группа</h3>
-
-                    </div>
                     <div className={s.section_2}>
                         <div className={s.main}>
                         <img className={s.pfp} src={userData.avatar} alt="" />
@@ -44,14 +34,10 @@ const MainPage = () => {
                         <p> <b>Хобби:</b> {userData.hobby}</p>
                         <p> <b>Образование/Работа:</b> {userData.education}</p>
                         </div>
-
-
-
                         <div className={s.inst}>
-                        
+    
                         </div>
                         </div>
-                    </div>
                     </div>
     
             ) : (

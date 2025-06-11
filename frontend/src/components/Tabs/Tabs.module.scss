@@ -29,6 +29,11 @@
    &:hover {
      color: #D2E5E9;
    }
+
+   @media (max-width: 520px) {
+      font-size: 14px;
+      padding-bottom: 12px;
+   }
  }
  
  .activeTab {
@@ -55,7 +60,8 @@
    color: #e3eced;
    text-align: center;
    font-family: sans-serif;
-
+   width: 420px;
+   margin: 0 auto;
  }
  
  // #D2E5E9 немного темный

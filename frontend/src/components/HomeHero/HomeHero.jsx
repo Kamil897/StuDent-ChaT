@@ -8,64 +8,6 @@ const HomeHero = () => {
     const tooltipRef = useRef(null);
 
     useEffect(() => {
-        const handleScroll = () => {
-            const triggerHeight = 200;
-            if (window.scrollY > triggerHeight) {
-                setShowNav(true);
-            } else {
-                setShowNav(false);
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
-
-    const [activeSection, setActiveSection] = useState("");
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const sections = document.querySelectorAll("section[id]");
-            const navHeight =
-                document.querySelector(".nav_nav")?.offsetHeight || 0;
-
-            let currentSection = "";
-
-            sections.forEach((section) => {
-                const top = section.offsetTop - navHeight - 180;
-                const bottom = top + section.offsetHeight;
-                const scrollY = window.scrollY;
-
-                if (scrollY >= top && scrollY <= bottom) {
-                    currentSection = section.id;
-                }
-            });
-
-            setActiveSection(currentSection);
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
-
-    const handleClick = (e, id) => {
-        e.preventDefault();
-        const section = document.getElementById(id);
-        const navHeight = document.querySelector(".nav_nav")?.offsetHeight || 0;
-
-        if (section) {
-            window.scrollTo({
-                top: section.offsetTop - navHeight - 180,
-                behavior: "smooth",
-            });
-        }
-    };
-
-    useEffect(() => {
         const handleMouseMove = (event) => {
             const tooltip = tooltipRef.current;
             if (!tooltip) return;
@@ -140,7 +82,7 @@ const HomeHero = () => {
                 <Tabs />
             </section>
 
-            <div className={s.spotlight__cards}>
+            <section className={s.spotlight__cards}>
                 <h1
                     style={{
                         textAlign: "center",
@@ -189,7 +131,7 @@ const HomeHero = () => {
                         </p>
                     </SpotlightCard>
                 </div>
-            </div>
+            </section>
 
             <section className={s.our_users}>
                 <h1
@@ -198,6 +140,7 @@ const HomeHero = () => {
                 >
                     Почему выбирают нас?
                 </h1>
+                
                 <div className={s.content_our}>
                     <div className={s.item}>
                         <img
