@@ -213,11 +213,11 @@ export class AuthService {
         }
 
         const admin = await this.adminService.findOne(decodedToken.id);
-        if (!admin || !admin.hashed_refreshToken) {
+        if (!admin || !admin.hashed_refresh_token) {
             throw new NotFoundException("Admin not found or no stored refresh token");
         }
 
-        const tokenMatch = await bcrypt.compare(refreshToken, admin.hashed_refreshToken);
+        const tokenMatch = await bcrypt.compare(refreshToken, admin.hashed_refresh_token);
         if (!tokenMatch) {
             throw new ForbiddenException("Invalid token");
         }
@@ -246,13 +246,13 @@ export class AuthService {
         }
 
         const admin = await this.adminService.findOne(decodedToken.id);
-        if (!admin || !admin.hashed_refreshToken) {
+        if (!admin || !admin.hashed_refresh_token) {
             throw new BadRequestException("Admin not found or no stored refresh token");
         }
 
-        console.log("Stored hashed_refreshToken:", admin.hashed_refreshToken);
+        console.log("Stored hashed_refreshToken:", admin.hashed_refresh_token);
 
-        const tokenMatch = await bcrypt.compare(refreshToken, admin.hashed_refreshToken);
+        const tokenMatch = await bcrypt.compare(refreshToken, admin.hashed_refresh_token);
         if (!tokenMatch) {
             throw new ForbiddenException("Invalid token");
         }
@@ -326,11 +326,11 @@ export class AuthService {
     }
     async findByRefreshToken(refreshToken: string) {
         const admins = await this.prismaService.admin.findMany({
-            select: { id: true, hashed_refreshToken: true }
+            select: { id: true, hashed_refresh_token: true }
         });
 
         for (const admin of admins) {
-            if (admin.hashed_refreshToken && (await bcrypt.compare(refreshToken, admin.hashed_refreshToken))) {
+            if (admin.hashed_refresh_token && (await bcrypt.compare(refreshToken, admin.hashed_refresh_token))) {
                 return admin;
             }
         }

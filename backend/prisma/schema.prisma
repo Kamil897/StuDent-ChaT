@@ -14,7 +14,7 @@ model Admin {
   last_name           String
   email               String   @unique
   hashed_password     String
-  hashed_refreshToken String?
+  hashed_refresh_token String?
   is_creator          Boolean  @default(false)
   is_active           Boolean  @default(true)
   createdAt           DateTime @default(now())
@@ -29,10 +29,8 @@ model Event {
   location        String
   date            DateTime
   max_preschooler Int
-
   admin         Admin               @relation(fields: [admin_id], references: [id])
   registrations EventRegistration[]
-
   @@map("event")
 }
 
@@ -43,13 +41,11 @@ model Preschooler {
   registration_date   DateTime
   born_date           DateTime
   gender              String
-
   groupPreschoolers   GroupPreschooler[]
   attendances         Attendance[]
   eventRegistrations  EventRegistration[]
   parentRelations     ParentAndPreschool[]
   teacherFeedbacks    TeacherFeedback[]
-
   @@map("preschooler")
 }
 
@@ -57,10 +53,8 @@ model GroupPreschooler {
   id             Int @id @default(autoincrement())
   group_id       Int
   preschooler_id Int
-
   group       Group       @relation(fields: [group_id], references: [id])
   preschooler Preschooler @relation(fields: [preschooler_id], references: [id])
-
   @@map("group_preschooler")
 }
 
@@ -70,10 +64,8 @@ model Group {
   min_age            Int
   max_age            Int
   createdAt          DateTime @default(now())
-
   main_teacher_id    Int?
   main_teacher       Teacher? @relation("MainTeacher")
-
   teachers           Teacher[]          @relation("GroupTeachers")
   groupTeachers      GroupTeacher[]
   groupPreschoolers  GroupPreschooler[]
@@ -85,9 +77,7 @@ model Attendance {
   check_in_time  DateTime
   check_out_time DateTime?
   preschooler_id Int
-
   preschooler Preschooler @relation(fields: [preschooler_id], references: [id])
-
   @@map("attendance")
 }
 
