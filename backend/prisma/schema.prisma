@@ -23,6 +23,7 @@ model Admin {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   events              Event[]
+  @@map("admin")
 }
 
 model Event {
@@ -72,6 +73,7 @@ model Group {
   teachers           Teacher[]          @relation("GroupTeachers")
   groupTeachers      GroupTeacher[]
   groupPreschoolers  GroupPreschooler[]
+  @@map("group")
 }
 
 model Attendance {
@@ -93,13 +95,11 @@ model Parent {
   address              String?
   hashed_password      String
   hashed_refresh_token String?
-
   parentRelations      ParentAndPreschool[]
   notifications        Notification[]
   teacherReviews       TeacherReview[]
   teacherFeedbacks     TeacherFeedback[]
   userGameStats        UserGameStats?
-
   @@map("parents")
 }
 
@@ -108,10 +108,8 @@ model ParentAndPreschool {
   preschooler_id Int
   parent_id      Int
   relation       String
-
   preschooler Preschooler @relation(fields: [preschooler_id], references: [id])
   parent      Parent      @relation(fields: [parent_id], references: [id])
-
   @@map("parent_and_preschool")
 }
 
@@ -120,11 +118,10 @@ model Notification {
   parent_id Int
   message   String
   sentAt    DateTime @default(now())
-
   parent Parent @relation(fields: [parent_id], references: [id])
-
   @@map("notifications")
 }
+
 
 model Teacher {
   id                   Int      @id @default(autoincrement())
@@ -142,15 +139,12 @@ model Teacher {
   avg_rating           Int?
   is_active            Boolean  @default(false)
   is_main              Boolean  @default(false)
-
   feedbacks       TeacherFeedback[]
   reviews         TeacherReview[]
   groupTeachers   GroupTeacher[]
   groups          Group[] @relation("GroupTeachers")
-
   main_group_id   Int?   @unique
   main_group      Group? @relation("MainTeacher", fields: [main_group_id], references: [id])
-
   @@map("teacher")
 }
 
@@ -162,11 +156,9 @@ model TeacherFeedback {
   title          String
   feedback       String
   writtenAt      DateTime @default(now()) 
-
   teacher     Teacher     @relation(fields: [teacher_id], references: [id])
   preschooler Preschooler @relation(fields: [preschooler_id], references: [id])
   parent      Parent      @relation(fields: [parent_id], references: [id])
-
   @@map("teacher_feedback")
 }
 
@@ -178,10 +170,8 @@ model TeacherReview {
   message    String
   rating     Int
   writtenAt  DateTime @default(now())
-
   teacher Teacher @relation(fields: [teacher_id], references: [id])
   parent  Parent  @relation(fields: [parent_id], references: [id])
-
   @@map("teacher_review")
 }
 
@@ -190,10 +180,8 @@ model EventRegistration {
   event_id          Int
   preschooler_id    Int
   registration_date DateTime @default(now())
-
   event       Event       @relation(fields: [event_id], references: [id])
   preschooler Preschooler @relation(fields: [preschooler_id], references: [id])
-
   @@map("event_registration")
 }
 
@@ -202,19 +190,18 @@ model GroupTeacher {
   group_id   Int
   teacher_id Int
   is_main    Boolean
-
   group   Group   @relation(fields: [group_id], references: [id], onDelete: Cascade)
   teacher Teacher @relation(fields: [teacher_id], references: [id], onDelete: Cascade)
-
   @@unique([group_id, teacher_id])
+  @@map("groupteacher")
 }
 
 model UserGameStats {
   id     Int @id @default(autoincrement())
   userId Int @unique
   score  Int @default(0)
-
   user Parent @relation(fields: [userId], references: [id])
+  @@map("usergamestats")
 }
 
 model User {
@@ -225,6 +212,7 @@ model User {
   institution String?
   createdAt   DateTime @default(now())
   messages    AiMessage[]
+  @@map("user")
 }
 
 model AiMessage {
@@ -233,6 +221,6 @@ model AiMessage {
   message    String
   response   String
   createdAt  DateTime @default(now())
-
   user       User     @relation(fields: [userId], references: [id])
+  @@map("aimessage")
 }
