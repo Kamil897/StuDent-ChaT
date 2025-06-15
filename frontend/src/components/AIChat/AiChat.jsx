@@ -10,7 +10,9 @@ export default function Chat({ userId }) {
     if (!message.trim()) return;
 
     try {
-      const res = await axios.post('/api/ai/ask', {
+      const baseURL = import.meta.env.VITE_API_URL || '/api';
+
+      const res = await axios.post(`${baseURL}/ai/ask`, {
         userId,
         message
       });
