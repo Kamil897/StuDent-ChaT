@@ -11,18 +11,18 @@ const Footer = () => {
         </div>
         <nav className={s.footer_nav}>
           <div className={s.links}>
-             <Link>Группы</Link>
-             <Link>Новости</Link> 
-             <Link>Институты</Link>
-             <Link>кк</Link> 
+             <Link to={"/ChatGroup"}>Группы</Link>
+             <Link to={"/news"}>Новости</Link> 
+             <Link to={"/news"}>Институты</Link>
+             <Link to={"/Teacher"}>Учителя</Link> 
              <br />
-             <Link>ааа</Link>
-             <Link>вввв</Link>
+             <Link to={"/AiChat"}>ИИ помошник</Link>
+             <Link to={"/MainPage"}>Мой аккаунт</Link>
           </div>
         </nav>
-      </div>
       <div className={s.footer_bottom}>
-        <p>&copy; {new Date().getFullYear()} StuDenChaT. Все права защищены.</p>
+        <p>&copy; 2025 OOO STUDENTCHAT. Все права защищены.</p>
+      </div>
       </div>
     </footer>
   );

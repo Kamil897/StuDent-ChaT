@@ -35,14 +35,10 @@ const  MainPage = () => {
                                 <p><b>Хобби:</b> {userData.hobby}</p>
                                 <p><b>Образование/Работа:</b> {userData.education}</p>
                                 <p></p>
-                     <Dock />
                             </div>
                         </div>
                     </div>
-
-
-
-                    
+                            <Dock />
                 </div>
             ) : (
                 <p>Загрузка...</p>

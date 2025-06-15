@@ -171,9 +171,11 @@ body {
 
 .avatar {
   width: 90px;
-  height: 75px;
+  height: 85px;
   border-radius: 50%;
   transition: 0.3s;
+  object-fit: contain;
+
 }
 
 .main {
@@ -181,6 +183,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  
 
   p {
     transition: 0.3s;
@@ -197,52 +200,73 @@ body {
   }
  }
 
- .dropdown {
+
+.dropdownWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
-  position: relative;
+  color: #c9c6c6;
+  text-decoration: none;
+  transition: 0.5s;
+  font-size: 20px;
 
-
-  div {
-    width: 160px;
-    top: 25px;
-    right: 0;   
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    background-color: #13072e ;
-    border-radius: 8px;
-    padding: 6px 8px;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.241);
-    transition: 0.4s;
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  svg {
-   transition: 0.3s;
-  }
-
-  &:hover {
-    
-    div {
-      opacity: 1;
-      visibility: visible;
-    }
-    svg {
-      rotate: 180deg;
-    }
-  }
-  
-a {
-  transition: 0.3s;
-  padding: 4px 8px;
-  color: #000000;
-  border-radius: 6px;
-
-  &:hover {
-    background-color: #293239;
-  }
+ &:hover {
+   color: #ffffff;
+ }
 }
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #252525 ;
+  border-radius: 8px;
+  padding: 10px 0;
+  z-index: 1000;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.241);
+  min-width: 160px;
+}
+
+.dropdownMenu li {
+  list-style: none;
+  margin: 0;
+  transition-duration: 0.5s ;
+}
+
+.dropdownMenu li:hover {
+  background-color: rgb(43, 43, 43);
+}
+
+
+.dropdownMenu li a {
+  display: block;
+  padding: 8px 16px;
+  color: rgb(53, 53, 53);
+  text-decoration: none;
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+  .dropdownWrapper {
+    width: 20%;
+    margin: 0 auto;
+  }
+
+  .dropdownMenu {
+    position: static;
+    box-shadow: none;
+    border: none;
+  }
+
+  .dropdownMenu li a {
+    padding: 10px;
+  }
 }

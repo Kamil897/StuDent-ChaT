@@ -60,8 +60,13 @@
    color: #e3eced;
    text-align: center;
    font-family: sans-serif;
-   width: 420px;
+   width: 520px;
    margin: 0 auto;
+
+   @media (max-width: 600px) {
+    width: 390px;
+    font-size: 14px;
+   }
  }
  
  // #D2E5E9 немного темный
