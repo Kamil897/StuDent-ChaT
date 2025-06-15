@@ -13,17 +13,13 @@ export class AiService {
       throw new ForbiddenException('Слишком много запросов. Повторите позже.');
     }
 
-    const user = await this.prisma.user.findUnique({ where: { id: +userId } });
 
-    if (!user) {
-      return 'Пользователь не найден.';
-    }
 
     const systemPrompt = `
     Ты — учебный ассистент. Отвечай строго по теме: учёба, ИТ-направления, институты, курсы, студенческая жизнь.
     Игнорируй вопросы вне этой темы. Отвечай ясно и кратко.
-    Институт: ${user.institution || 'не указан'}
-    Интересы: ${user.interests || 'не указаны'}
+    Институт: 'не указан'
+    Интересы: 'не указаны'
     `;
 
     try {
