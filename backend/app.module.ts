@@ -11,9 +11,16 @@ import { ParentsModule } from './src/parents/parents.module';
 import { NotificationsModule } from './src/notifications/notifications.module';
 import { AttendanceModule } from './src/attendance/attendance.module';
 import { PreschoolerModule } from './src/preschooler/preschooler.module';
+import { GruopPreschoolerModule } from './src/gruop_preschooler/gruop_preschooler.module';
+import { EventRegestrationModule } from './src/event_regestration/event_regestration.module';
 import { AuthModule } from './src/auth/auth.module';
+import { ParentAndPreschoolModule } from './src/parent_and_presschooler/parent_and_presschooler.module';
 import { GameModule } from './src/game/game.module';
-// import { AIController } from './src/controllers/ai.controller';  // Добавили AIController
+import { ChatModule } from './src/chat/chat.module';
+import { AiModule } from './src/ai/ai.module';
+import { AppController } from './app.controller';
+
+
 
 @Module({
   imports: [
@@ -30,15 +37,17 @@ import { GameModule } from './src/game/game.module';
     TeacherFeedbackModule,
     ParentsModule,
     NotificationsModule,
-    // ParentAndPreschoolerModule,
+    ParentAndPreschoolModule,
     AttendanceModule,
     PreschoolerModule,
-    // GroupPreschoolerModule,
-    // EventRegistrationModule,
+    GruopPreschoolerModule,
+    EventRegestrationModule,
     AuthModule,
-    GameModule
+    GameModule,
+    ChatModule,
+    AiModule,
   ],
-  // controllers: [AIController],  // Добавили AIController
-  // providers: [AIService], // Добавили AIService
+  controllers: [AppController],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }

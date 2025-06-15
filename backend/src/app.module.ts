@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { AdminModule } from './admin/admin.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TeacherModule } from './teacher/teacher.module';
@@ -20,6 +18,8 @@ import { ParentAndPreschoolModule } from './parent_and_presschooler/parent_and_p
 import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
 import { AiModule } from './ai/ai.module';
+import { AppController } from './app.controller';
+
 
 
 @Module({
@@ -45,9 +45,9 @@ import { AiModule } from './ai/ai.module';
     AuthModule,
     GameModule,
     ChatModule,
-    AiModule, // <-- не забудь про модуль AI
+    AiModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule { }

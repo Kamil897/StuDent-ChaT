@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConsoleLogger, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from 'cookie-parser';
 import { AllExceptionsFilter } from "./logger/error.handling";
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function start() {
   try {
