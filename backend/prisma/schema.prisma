@@ -205,15 +205,22 @@ model UserGameStats {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  username    String
-  email       String
-  interests   String?
-  institution String?
-  createdAt   DateTime @default(now())
-  messages    AiMessage[]
+  id                   Int       @id @default(autoincrement())
+  username             String    @unique
+  email                String    @unique
+  number               String?   @unique
+  hashed_password      String
+  hashed_refresh_token String?
+  interests            String?
+  institution          String?
+  is_active            Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  messages             AiMessage[]
+
   @@map("user")
 }
+
 
 model AiMessage {
   id         Int      @id @default(autoincrement())

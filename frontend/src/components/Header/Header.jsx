@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, createContext } from 'react';
 import s from './Header.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
-
+import GoogleTranslate from '../Google/GoogleTranslate';
 
 const Header = () => {
   const [active, setActive] = useState(false);
@@ -62,6 +62,7 @@ const Header = () => {
               <Link onClick={CloseMenu} to={'/'} className={s.h1__logo}>
                 StuDent ChaT
               </Link>
+
             </div>
 
             <div className={`${s.links} ${active ? s.active : ''}`}>
@@ -110,9 +111,8 @@ const Header = () => {
                   </Link>
                 </div>
               )}
-
             </div>
-
+            
             <div
               onClick={toggleBurger}
               className={`${s.burger} ${active ? s.active : ''}`}
@@ -120,6 +120,8 @@ const Header = () => {
               <span></span>
               <span></span>
             </div>
+            <GoogleTranslate />
+
           </nav>
         </div>
       </header>

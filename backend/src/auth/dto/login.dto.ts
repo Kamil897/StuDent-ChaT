@@ -1,5 +1,5 @@
 export class LoginDto {
   emailOrUsername: string;
   password: string;
-  role: 'admin' | 'parent' | 'teacher' | 'user';
+  role: 'admin' | 'teacher' | 'parent' | 'user';
 }

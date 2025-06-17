@@ -52,7 +52,7 @@ async function start() {
       console.log(`| |                                                                      | |`);
       console.log(`| | 🚀     Server is running at: https://student-chat.online             🚀 | |`);
       console.log(`| |                                                                      | |`);
-      console.log(`| | 📚 Swagger docs: https://student-chat.online/api/docs                📚 | |`);
+      console.log(`| | 📚 Swagger docs: http://159.198.65.254:7777/api/docs                📚 | |`);
       console.log(`| |                                                                      | |`);
       console.log(" + ====================================================================== +\n\n");
     });

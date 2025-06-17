@@ -1,9 +1,8 @@
-import * as sdk from 'matrix-js-sdk';
 import { useState, useEffect, useRef } from 'react';
 import Picker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 
-const socket = io('https://student-chat.online/api', {
+const socket = io('https://student-chat.online', {
   transports: ['websocket'],
 });
 
@@ -12,28 +11,12 @@ export default function GroupChat() {
   const [currentChatId, setCurrentChatId] = useState(null);
   const [input, setInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showMatrix, setShowMatrix] = useState(false);
-  const [matrixMessages, setMatrixMessages] = useState([]);
-  const [matrixInput, setMatrixInput] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const matrixClientRef = useRef(null);
-  const matrixRoomId = "!eMbakzRBTOyjeLiyIX:matrix.org";
   const containerRef = useRef(null);
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
   useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await fetch('/test.json');
-        const data = await response.json();
-        setChats(data);
-      } catch (error) {
-        console.error('Ошибка загрузки чатов:', error);
-        setChats([{ id: 1, messages: [] }]);
-      }
-    };
-    fetchChats();
+    setChats([{ id: 1, messages: [] }]); // начальный чат
   }, []);
 
   useEffect(() => {
@@ -46,58 +29,8 @@ export default function GroupChat() {
         )
       );
     });
-    return () => {
-      socket.off('receiveMessage');
-    };
+    return () => socket.off('receiveMessage');
   }, []);
-
-  useEffect(() => {
-    if (!showMatrix) return;
-    const startMatrix = async () => {
-      const client = sdk.createClient({ baseUrl: "https://matrix.org" });
-      try {
-        await client.loginWithPassword("@anton_danik_22:matrix.org", "KamilandDaniyar070884");
-        await client.startClient();
-        matrixClientRef.current = client;
-
-        const room = await client.getRoom(matrixRoomId);
-        const myUserId = client.getUserId();
-        const myPowerLevel = room?.getMyMembership() === 'join'
-          ? room.currentState.getStateEvents("m.room.power_levels", "")?.getContent()?.users?.[myUserId] ?? 0
-          : 0;
-
-        if (myPowerLevel >= 50) {
-          setIsAdmin(true);
-        } else {
-          alert("У вас нет прав для входа в Matrix чат.");
-          setShowMatrix(false);
-          return;
-        }
-
-        client.on("Room.timeline", (event, room) => {
-          if (event.getType() !== "m.room.message" || room.roomId !== matrixRoomId) return;
-          const sender = event.getSender();
-          const content = event.getContent();
-          const text = content.body;
-
-          setMatrixMessages((prev) => [
-            ...prev,
-            { id: event.getId(), user: sender, text },
-          ]);
-        });
-      } catch (err) {
-        console.error("Matrix подключение не удалось:", err);
-      }
-    };
-
-    startMatrix();
-
-    return () => {
-      if (matrixClientRef.current) {
-        matrixClientRef.current.stopClient();
-      }
-    };
-  }, [showMatrix]);
 
   const sendMessage = () => {
     if (!input.trim() || !currentChatId) return;
@@ -110,8 +43,7 @@ export default function GroupChat() {
       chatId: currentChatId,
     };
 
-    socket.emit('sendMessage', newMessage);
-
+    // локально
     setChats((prevChats) =>
       prevChats.map((chat) =>
         chat.id === currentChatId
@@ -120,22 +52,14 @@ export default function GroupChat() {
       )
     );
 
+    socket.emit('sendMessage', newMessage); // другим
     setInput('');
   };
 
-  const sendMatrixMessage = () => {
-    const client = matrixClientRef.current;
-    if (!client || !matrixInput.trim()) return;
-
-    client.sendTextMessage(matrixRoomId, matrixInput);
-    setMatrixInput('');
-  };
-
   const addChat = () => {
-    const newChatId = chats.length + 1;
+    const newChatId = chats.length ? Math.max(...chats.map(c => c.id)) + 1 : 1;
     setChats([...chats, { id: newChatId, messages: [] }]);
   };
-
 
   const removeChat = (chatId) => {
     setChats(chats.filter((chat) => chat.id !== chatId));
@@ -146,12 +70,8 @@ export default function GroupChat() {
     setCurrentChatId((prev) => (prev === chatId ? null : chatId));
   };
 
-  const handleEmojiClick = (emojiObject) => {
-    if (showMatrix) {
-      setMatrixInput((prev) => prev + emojiObject.emoji);
-    } else {
-      setInput((prev) => prev + emojiObject.emoji);
-    }
+  const handleEmojiClick = (emojiData) => {
+    setInput((prev) => prev + emojiData.emoji);
   };
 
   const currentChat = chats.find((chat) => chat.id === currentChatId);
@@ -164,7 +84,7 @@ export default function GroupChat() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [currentChat?.messages, matrixMessages]);
+  }, [currentChat?.messages]);
 
   const styles = {
     container: {
@@ -183,21 +103,18 @@ export default function GroupChat() {
       minWidth: '200px',
       transition: 'width 0.3s',
       backgroundColor: '#202c33',
-      // padding: '10px',
       display: isMobile && currentChatId ? 'none' : 'block',
     },
     chatListBtn: {
       display: 'block',
       width: '100%',
-      // marginBottom: '10px',
       padding: '15px',
-      // borderRadius: '10px',
       backgroundColor: '#2a2a2a',
       color: '#e9edef',
       border: 'none',
       cursor: 'pointer',
       textAlign: 'left',
-      borderTop: '2px solid #444444'
+      borderTop: '2px solid #444444',
     },
     chatArea: {
       flex: 1,
@@ -274,6 +191,15 @@ export default function GroupChat() {
             style={styles.chatListBtn}
           >
             Чат {chat.id}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                removeChat(chat.id);
+              }}
+              style={{ float: 'right', color: '#f55', cursor: 'pointer' }}
+            >
+              ×
+            </span>
           </button>
         ))}
         <button onClick={addChat} style={styles.chatListBtn}>➕ Добавить чат</button>
@@ -286,8 +212,7 @@ export default function GroupChat() {
           </button>
         )}
 
-
-{currentChatId && currentChat && (
+        {currentChatId && currentChat && (
           <div ref={containerRef} style={styles.chatWindow}>
             {currentChat.messages.map((msg) => (
               <div key={msg.id} style={styles.message(msg.msguser === 'Вы')}>
