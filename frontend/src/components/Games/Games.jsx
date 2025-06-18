@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Info, Play, Search } from 'lucide-react';
 
 import s from './Games.module.scss';
-import { getMaxPoints, addGamePoints } from '../utils/pointsHelper';
-import { fetchPoints, addPoints as addPointsAPI } from '../utils/api';
+import { getMaxPoints } from '../utils/pointsHelper';
 
 const Games = () => {
   const navigate = useNavigate();
@@ -13,11 +12,11 @@ const Games = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showCongrats, setShowCongrats] = useState(false);
 
-  // Инициализируем очки из localStorage, если они есть, иначе ставим 0
   const [currentPoints, setCurrentPoints] = useState(() => {
     const savedPoints = localStorage.getItem('currentPoints');
     return savedPoints ? parseInt(savedPoints, 10) : 0;
   });
+
   const maxPoints = getMaxPoints();
 
   useEffect(() => {
@@ -42,7 +41,6 @@ const Games = () => {
   const addPoints = (pointsToAdd = 500) => {
     const updated = currentPoints + pointsToAdd;
     setCurrentPoints(updated);
-
     localStorage.setItem('currentPoints', updated);
 
     if (updated >= maxPoints) {
@@ -61,15 +59,15 @@ const Games = () => {
     document.body.style.overflow = 'auto';
   };
 
-  const filteredGames = selectedCategory === 'All'
-    ? games
-    : games.filter(game => game.category === selectedCategory);
-
   const playGame = (link) => {
     addPoints();
     closeModal();
     navigate(link);
   };
+
+  const filteredGames = selectedCategory === 'All'
+    ? games
+    : games.filter(game => game.category === selectedCategory);
 
   return (
     <div className={s.container}>
@@ -110,20 +108,8 @@ const Games = () => {
         ) : filteredGames.length > 0 ? (
           filteredGames.map((game) => (
             <div key={game.id} className={s.gameCard}>
-              <div className={s.gameImageWrapper}>
-                <Link to={game.link}>
-                  <img src={game.image} alt={game.name} className={s.gameImage} />
-                  {game.video && (
-                    <iframe
-                      src={game.video}
-                      title={`${game.name} preview`}
-                      className={s.videoPreview}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  )}
-                </Link>
+              <div className={s.gameImageWrapper} onClick={() => openModal(game)}>
+                <img src={game.image} alt={game.name} className={s.gameImage} />
                 {game.category && <div className={s.categoryTag}>{game.category}</div>}
               </div>
               <div className={s.gameInfo}>
