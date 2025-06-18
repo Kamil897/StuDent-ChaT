@@ -53,7 +53,7 @@ async function start() {
     SwaggerModule.setup("api/docs", app, document, {
       swaggerOptions: { defaultModelsExpandDepth: -1 },
     });
-
+    app.setGlobalPrefix('api');
     await app.listen(PORT, () => {
       console.log("\n\n + ====================================================================== +");
       console.log(`| |                                                                      | |`);
