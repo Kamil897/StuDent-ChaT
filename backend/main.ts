@@ -6,12 +6,12 @@ import * as cookieParser from 'cookie-parser';
 import { AllExceptionsFilter } from "./src/logger/error.handling";
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useWebSocketAdapter(new IoAdapter(app));
-  await app.listen(7777);
-}
-bootstrap();
+// async function bootstrap() {
+//   const app = await NestFactory.create(AppModule);
+//   app.useWebSocketAdapter(new IoAdapter(app));
+//   await app.listen(7777);
+// }
+// bootstrap();
 
 async function start() {
   try {
