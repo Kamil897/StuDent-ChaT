@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Picker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
-import axios from 'axios';
+import api from '../../axios';
 
 const socket = io('https://student-chat.online', {
   transports: ['websocket'],
@@ -17,6 +17,7 @@ export default function GroupChat() {
   const [typing, setTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState([]);
   const [error, setError] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
   const containerRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -28,20 +29,24 @@ export default function GroupChat() {
   }, []);
 
   useEffect(() => {
-    axios.get('/api/chats')
+    api.get('/chats')
       .then(({ data }) => setChats(data))
       .catch((err) => setError('Ошибка при загрузке чатов.'));
   }, []);
 
   useEffect(() => {
+    if (currentChatId) {
+      api.get(`/messages/${currentChatId}`)
+        .then(({ data }) => setChatMessages(data))
+        .catch(() => setError('Ошибка при загрузке сообщений.'));
+    }
+  }, [currentChatId]);
+
+  useEffect(() => {
     socket.on('receiveMessage', (message) => {
-      setChats((prevChats) =>
-        prevChats.map((chat) =>
-          chat.id === message.chatId
-            ? { ...chat, messages: [...chat.messages, message] }
-            : chat
-        )
-      );
+      if (message.chatId === currentChatId) {
+        setChatMessages((prev) => [...prev, message]);
+      }
     });
 
     socket.on('typing', ({ chatId, username }) => {
@@ -86,7 +91,7 @@ export default function GroupChat() {
     form.append('msguser', user.name);
 
     try {
-      const { data } = await axios.post('/api/messages/file', form);
+      const { data } = await api.post('/messages/file', form);
       socket.emit('sendMessage', data);
     } catch (err) {
       setError('Ошибка при отправке файла.');
@@ -95,7 +100,7 @@ export default function GroupChat() {
 
   const addChat = async () => {
     try {
-      const { data } = await axios.post('/api/chats');
+      const { data } = await api.post('/chats');
       setChats((prev) => [...prev, data]);
     } catch (err) {
       setError('Ошибка при добавлении чата.');
@@ -104,7 +109,7 @@ export default function GroupChat() {
 
   const removeChat = async (id) => {
     try {
-      await axios.delete(`/api/chats/${id}`);
+      await api.delete(`/chats/${id}`);
       setChats(chats.filter((c) => c.id !== id));
       if (currentChatId === id) setCurrentChatId(null);
     } catch (err) {
@@ -139,8 +144,6 @@ export default function GroupChat() {
     }
   };
 
-  const currentChat = chats.find((c) => c.id === currentChatId);
-
   const scrollToBottom = () => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
@@ -149,7 +152,7 @@ export default function GroupChat() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [currentChat?.messages]);
+  }, [chatMessages]);
 
   const styles = {
     container: { display: 'flex', height: '90vh', borderRadius: '12px', backgroundColor: '#111b21', color: '#e9edef', overflow: 'hidden', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' },
@@ -200,9 +203,9 @@ export default function GroupChat() {
           </button>
         )}
 
-        {currentChatId && currentChat && (
+        {currentChatId && (
           <div ref={containerRef} style={styles.chatWindow}>
-            {currentChat.messages.map((msg) => (
+            {chatMessages.map((msg) => (
               <div key={msg.id || Math.random()} style={styles.message(msg.msguser === user.name)}>
                 <div><strong>{msg.msguser}</strong> <small>{msg.msgtime}</small></div>
                 {msg.msgtext && <div>{msg.msgtext}</div>}
