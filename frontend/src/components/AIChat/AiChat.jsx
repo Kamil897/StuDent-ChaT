@@ -46,7 +46,7 @@ export default function Chat({ userId }) {
 
   return (
     <div className={s.chatContainer}>
-      <h1 className={s.Aititle}>Учебный ассистент</h1>
+      <h1 className={s.Aititle}>StuDent AI</h1>
       <div className={s.chatBox}>
         {chat.length === 0 ? (
           <div className={s.placeholder}>Начни диалог, задав вопрос!</div>
