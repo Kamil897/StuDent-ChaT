@@ -91,7 +91,7 @@ const Header = () => {
 
               <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>Учителя</Link>
 
-              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>ИИ помошник</Link>
+              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>StuDent AI</Link>
 
               
               {!userData ? (
