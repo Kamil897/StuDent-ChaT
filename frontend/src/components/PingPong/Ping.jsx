@@ -296,7 +296,7 @@ const PongNeon = () => {
             onTouchStart={() => handleButtonDown("down")}
             onTouchEnd={() => handleButtonUp("down")}
           >
-            
+            DOWN
           </button>
         </div>
       )}
