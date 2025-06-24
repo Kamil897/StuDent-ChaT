@@ -28,9 +28,12 @@ async function start() {
     app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-      origin: ['https://student-chat.online'],
+      origin: [
+        'https://student-chat.online', // production
+        'http://localhost:5173',       // dev
+      ],
       credentials: true,
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     });
 
     const config = new DocumentBuilder()

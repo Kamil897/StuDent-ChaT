@@ -1,89 +1,35 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-
+import { createContext, useContext, useState, useEffect } from 'react';
+import api from '../utils/axios';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const loadUserData = () => {
+  const [user, setUser] = useState(null);
+
+  const fetchProfile = async () => {
     try {
-      const savedUser = localStorage.getItem("userData");
-      const parsedUser = savedUser ? JSON.parse(savedUser) : {};
-      return {
-        points: parsedUser.points ?? 0,
-        purchasedItems: parsedUser.purchasedItems ?? [],
-        ...parsedUser,
-      };
-    } catch (error) {
-      console.error("Ошибка при загрузке данных пользователя из localStorage:", error);
-      return { points: 5000, purchasedItems: [] }; // Значения по умолчанию
+      const res = await api.get('/auth/profile');
+      setUser(res.data);
+    } catch {
+      setUser(null);
     }
   };
-
-  const [user, setUser] = useState(loadUserData());
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem("userData", JSON.stringify(user));
-    }
-  }, [user]);
+    fetchProfile();
+  }, []);
 
-  const spendPoints = (amount, item) => {
-    if (user.points >= amount) {
-      const updatedUser = {
-        ...user,
-        points: user.points - amount,
-        purchasedItems: [...user.purchasedItems, item],
-      };
-
-      setUser(updatedUser);
-
-      return true; // Возвращаем просто флаг успеха
-    }
-    return false; // Если очков не хватает
-  };
-
-  const removePurchasedItem = (itemId) => {
-    setUser((prevUser) => {
-      const itemToRemove = prevUser.purchasedItems.find((item) => item.id === itemId);
-      if (!itemToRemove) {
-        console.warn(`Элемент с ID ${itemId} не найден в списке покупок.`);
-        return prevUser; // Возвращаем предыдущего пользователя без изменений
-      }
-
-      return {
-        ...prevUser,
-        points: prevUser.points + itemToRemove.price,
-        purchasedItems: prevUser.purchasedItems.filter((item) => item.id !== itemId),
-      };
-    });
-  };
-
-  const addPoints = (points) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      points: prevUser.points + points,
-    }));
+  const logout = async () => {
+    await api.post('/auth/logout');
+    setUser(null);
+    window.location.href = '/login';
   };
 
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        spendPoints,
-        removePurchasedItem,
-        addPoints, // Добавляем функцию addPoints в context
-      }}
-    >
+    <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => {
-  const context = useContext(UserContext);
-
-  if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
-  return context;
-};
+export const useUser = () => useContext(UserContext);

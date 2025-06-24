@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TeacherService } from 'src/teacher/teacher.service';
 import { SuperAdminGuard } from 'src/common/guards/super-admin.guard';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtAdminStrategy } from 'src/common/strategies/jwt.strategy';
+import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from 'src/common/strategies/refresh-jwt.strategy';
 import { AccessTokenStrategy } from 'src/common/strategies';
 import { MailModule } from 'src/mail/mail.module';  // Добавь импорт MailModule
@@ -38,7 +38,7 @@ import { MailService } from 'src/mail/mail.service'; // Добавь MailService
     JwtService,
     JwtRefreshStrategy,
     TeacherService,
-    JwtAdminStrategy,
+    JwtStrategy,
     SuperAdminGuard,
     AccessTokenStrategy,
     MailService, // Добавь MailService в providers

@@ -1,19 +1,20 @@
 import { createRoot } from 'react-dom/client';
 import { createContext } from 'react';
-import firebase from 'firebase/compat/app'; // Используем совместимость
+import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import { PreLoaderProvider } from './Context/PreLoaderContext.jsx';
 import { UserProvider } from './Context/UserContext.jsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
-// Конфигурация Firebase
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCXKd158nRrAWgC19N0fjt8qqSpYFGt2p8",
   authDomain: "online-group-sd.firebaseapp.com",
   projectId: "online-group-sd",
-  storageBucket: "online-group-sd.appspot.com", // ✅ Исправлено
+  storageBucket: "online-group-sd.appspot.com",
   messagingSenderId: "914123654980",
   appId: "1:914123654980:web:cc01f3f12bf8a5d53d7911",
   measurementId: "G-040GLWSYE0"
@@ -37,13 +38,14 @@ export const Context = createContext({
   firestore: firebase.firestore(),
 });
 
-
-createRoot(document.getElementById('root')).render( 
+createRoot(document.getElementById('root')).render(
   <PreLoaderProvider>
     <UserProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </GoogleOAuthProvider>
     </UserProvider>
   </PreLoaderProvider>
-)
+);
