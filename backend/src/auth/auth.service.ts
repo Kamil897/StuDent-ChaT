@@ -1,24 +1,21 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepo: Repository<User>,
+    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
   async login(dto: LoginDto) {
-    const user = await this.userRepo.findOne({ where: { email: dto.email } });
-    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
+    const user = await this.prisma.User.findUnique({ where: { email: dto.email } });
+    if (!user || !(await bcrypt.compare(dto.password, user.hashed_password))) {
+      throw new UnauthorizedException('Неверные учетные данные');
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
@@ -28,9 +25,22 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
-    const hashed = await bcrypt.hash(dto.password, 10);
-    const user = this.userRepo.create({ ...dto, password: hashed });
-    await this.userRepo.save(user);
-    return { message: 'Registered successfully' };
+    const existing = await this.prisma.User.findUnique({ where: { email: dto.email } });
+    if (existing) {
+      throw new BadRequestException('Пользователь с таким email уже существует');
+    }
+
+    const hashed_password = await bcrypt.hash(dto.password, 10);
+    await this.prisma.User.create({
+      data: {
+        username: dto.username,
+        email: dto.email,
+        hashed_password,
+        number: dto.number || '',
+        role: 'USER',
+      },
+    });
+
+    return { message: 'Успешная регистрация' };
   }
 }
