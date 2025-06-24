@@ -7,7 +7,7 @@ import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import { PreLoaderProvider } from './Context/PreLoaderContext.jsx';
 import { UserProvider } from './Context/UserContext.jsx';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Firebase config
 const firebaseConfig = {
@@ -41,11 +41,9 @@ export const Context = createContext({
 createRoot(document.getElementById('root')).render(
   <PreLoaderProvider>
     <UserProvider>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </GoogleOAuthProvider>
     </UserProvider>
   </PreLoaderProvider>
 );
