@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/axios';
+import api from '../components/utils/axios';
 import './AdminPanel.css';
 
 const AdminPanel = () => {

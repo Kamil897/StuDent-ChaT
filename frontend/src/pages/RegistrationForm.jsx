@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import s from './Registration.module.scss';
-import api from '../utils/axios';
+import api from '../components/utils/axios';
 
 const Registration = () => {
   const [formData, setFormData] = useState({
