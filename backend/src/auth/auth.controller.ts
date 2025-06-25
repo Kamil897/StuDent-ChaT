@@ -1,4 +1,3 @@
-// src/auth/auth.controller.ts
 import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -25,6 +24,6 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   @Get('profile')
   getProfile(@GetCurrentUser() user: any) {
-    return user; // сюда попадает user из JWT payload
+    return user; // payload из access токена
   }
 }
