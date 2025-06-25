@@ -21,7 +21,7 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  @UseGuards(AccessTokenGuard)
+  // @UseGuards(AccessTokenGuard)
   @Get('profile')
   getProfile(@GetCurrentUser() user) {
     return user;
