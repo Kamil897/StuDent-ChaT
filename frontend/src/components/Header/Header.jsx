@@ -82,9 +82,9 @@ const Header = () => {
                 {isOpen && (
                   <ul className={s.dropdownMenu}>
                     <li><Link onClick={closeAndToggle} to="/news">Все новости</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Society">Общество</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Tech">Технологии</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Culture">Культура</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Tech">Проблемы</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Society">Решение</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Culture">Будущее</Link></li>
                   </ul>
                 )}
               </div>

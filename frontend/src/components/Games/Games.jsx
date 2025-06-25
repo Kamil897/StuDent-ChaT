@@ -32,7 +32,7 @@ const Games = () => {
     { id: 7, name: 'Камень, ножницы, бумага', description: 'The classic game of chance...', link: '/don', image: 'https://habrastorage.org/r/w1560/getpro/geektimes/post_images/28e/2a3/577/28e2a357753505ae9a7eb40097e93dbf.png', category: 'Classic' },
     { id: 8, name: 'Space Invaders', description: 'Defend Earth...', link: '/inviders', image: 'https://play-lh.googleusercontent.com/0goocG7RJZDZ41ShfBPl-h7ctwHKHjqzn4nSImyL8_RWyXqeYNKw-CdGAKhgPGZG5Es=w240-h480-rw', category: 'Arcade' },
     { id: 9, name: 'Ping Pong', description: 'Test your reflexes...', link: '/pingpong', image: 'https://cdn6.aptoide.com/imgs/8/0/7/807f37e41bb078de90a11c67a7857032_screen.png?w=245', category: 'Sports' },
-    { id: 10, name: 'Meteors', description: 'Navigate your spaceship...', link: '/meteors', image: '/meteors.jpg', category: 'Action' },
+    { id: 10, name: 'Meteors', description: 'Navigate your spaceship...', link: '/meteors', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkao0DqcEwHg9_N1QjEFSWmWSpyV9wdTIy6vsyeMvxt1xmRsuxk-VnihlCauAkHBk1pes&usqp=CAU', category: 'Action' },
     { id: 11, name: 'Tituls', description: 'Your Tituls', link: '/MyTituls', image: 'https://img.freepik.com/free-psd/medals-3d-render-champion-award-composition_314999-3096.jpg?semt=ais_hybrid&w=740', category: 'My tituls' }
   ];
 
