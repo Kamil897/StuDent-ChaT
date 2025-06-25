@@ -1,121 +1,157 @@
 .newsPage {
-  padding: 40px 20px;
-  font-family: "Segoe UI", sans-serif;
-  color: #333;
+  padding: 20px;
+  background-color: #fafafa;
+  font-family: 'Helvetica', sans-serif;
 }
 
 .title {
-  text-align: center;
-  font-size: 32px;
-  margin-bottom: 30px;
-  color: #fff;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .newsList {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  max-width: 900px;
-  margin: 0 auto;
+  margin-top: 10px;
 }
 
 .newsItem {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
-  padding: 24px;
-  transition: transform 0.2s ease;
-  &:hover {
-    transform: translateY(-3px);
-  }
+  padding: 70px 30px;
+  border-bottom: 1px solid #ddd;
 }
 
 .newsTitle {
-  font-size: 24px;
+  font-size: 1.6rem;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #0a58ca;
+  color: #2c3e50;
+  margin: 0;
 }
 
 .newsContent {
-  font-size: 16px;
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 5px;
   line-height: 1.6;
-  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+p {
+  max-width: 800px;
+  width: 100%;
+  font-size: 22px;
+
+  @media (max-width: 1350px) {
+    justify-content: center;
+    gap: 60px;
+    flex-direction: column-reverse;
+  }
+}
+
+
+form {
+  margin-top: 16px;
+  display: flex;
+  color: black;
+
+  input {
+    width: calc(100% - 80px);
+    padding: 8px;
+    font-size: 15px;
+    border: 5px solid #000000;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  button {
+    padding: 12px 16px;
+    font-size: 17px;
+    background-color: #007bff;
+    border: 1px solid black;
+    border-radius: 6px;
+    cursor: pointer;
+    transition-property: background-color;
+    transition-duration: 0.4s;
+
+    &:hover {
+      background-color: #037dff;
+      box-shadow: 10px 10px 15px rgba(18, 61, 122, 0.3); /* Горизонтальное смещение, вертикальное смещение, размытие, цвет */
+
+    }
+  }
+}
+
+.newslogo {
+  img {
+     max-width: 300px;
+     width: 100%;
+  }
 }
 
 .likes {
   display: flex;
+  padding: 20px;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-}
+  gap: 15px;
+  color: #000000;
 
-.like {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  img {
-    width: 28px;
-    height: 28px;
-  }
-}
+  button {
+     padding: 7px;
+     border: none;
+     background: none;
+     cursor: pointer;
+     font-size: 20px;
+     transition-duration: 0.2s;
+     transition-property: transform;
 
-.podelis {
-  background-color: #0a58ca;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+     img {
+       width: 35px;
+       height: 35px;
+       transition: 0.3s;
+       
+        &:active {
+           width: 38px;
+           height: 38px;
+        }
+     }
 
-  &:hover {
-    background-color: #084298;
-  }
+     &:hover {
+       transform: scale(1.1);
+     }
+
+     &.podelis {
+       border: 1px solid black;
+       border-radius: 7px;
+       font-size: 18px;
+       color: #000000;
+       text-decoration: none;
+
+       &:hover {
+         color: #888888;
+       }
+     }
+   }
 }
 
 .shareOptions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-
-  button {
-    width: 32px;
-    height: 32px;
-    background-color: #e0e0e0;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-  }
+ position: absolute;
+ top: 50px;
+ left: 0;
+ background-color: white;
+ border: 1px solid #ccc;
+ border-radius: 12px;
+ padding: 10px;
+ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-form {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
+.shareOptions button {
+ display: block;
+ margin: 5px 0;
+ padding: 8px;
+ background-color: #f0f0f0;
+ border: none;
+ cursor: pointer;
+}
 
-  input {
-    flex-grow: 1;
-    padding: 10px 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-  }
-
-  button {
-    background-color: #198754;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-
-    &:hover {
-      background-color: #157347;
-    }
-  }
+.shareOptions button:hover {
+ background-color: #e0e0e0;
 }

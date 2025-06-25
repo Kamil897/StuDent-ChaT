@@ -82,16 +82,16 @@ const Header = () => {
                 {isOpen && (
                   <ul className={s.dropdownMenu}>
                     <li><Link onClick={closeAndToggle} to="/news">Все новости</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Tech">Проблемы</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Society">Решение</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Culture">Будущее</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Society">Общество</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Tech">Технологии</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Culture">Культура</Link></li>
                   </ul>
                 )}
               </div>
 
               <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>Учителя</Link>
 
-              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>StuDent AI</Link>
+              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>ИИ помошник</Link>
 
               
               {!userData ? (

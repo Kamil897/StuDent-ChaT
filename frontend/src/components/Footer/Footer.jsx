@@ -16,12 +16,12 @@ const Footer = () => {
              <Link to={"/news"}>Институты</Link>
              <Link to={"/Teacher"}>Учителя</Link> 
              <br />
-             <Link to={"/AiChat"}>StuDent AI</Link>
+             <Link to={"/AiChat"}>ИИ помошник</Link>
              <Link to={"/MainPage"}>Мой аккаунт</Link>
           </div>
         </nav>
       <div className={s.footer_bottom}>
-        <p>&copy; 2025 OOO STUDENTCHAT Все права защищены</p>
+        <p>&copy; 2025 OOO STUDENTCHAT. Все права защищены.</p>
       </div>
       </div>
     </footer>

@@ -4,17 +4,12 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import PreLoader from './components/PreLoader/PreLoader';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import ProductPage from './pages/ProductPage';
 import Doom from './components/Asteroids/Asteroids';
 import PongNeon from './components/PingPong/Ping';
-import Don from './components/Don/Don';
+import Don from './components/Don/Don'
 import Inviders from './components/Space/SpaceInviders';
-import { UserProvider } from './Context/UserContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import AdminPanel from './pages/AdminPanel';
-
 
 const Home = lazy(() => import('./pages/Home'));
 const Bought = lazy(() => import('./pages/Bought'));
@@ -25,6 +20,7 @@ const Society = lazy(() => import('./components/Society/Society'));
 const Tech = lazy(() => import('./components/Tech/Tech'));
 const Culture = lazy(() => import('./components/Culture/Culture'));
 const Register = lazy(() => import('./pages/Register'));
+const Log = lazy(() => import('./pages/Log'));
 const Personal = lazy(() => import('./pages/Personal'));
 const EditProfile = lazy(() => import('./components/EditProfile/Edit'));
 const TicTacToe = lazy(() => import('./components/TicTacToe/TicTacToe'));
@@ -38,8 +34,6 @@ const KnowledgeMaze = lazy(() => import('./components/KnowledgeMaze/KnowledgeMaz
 const MathBattle = lazy(() => import('./components/MathBattle/MathBattle'));
 const MyTituls = lazy(() => import('./components/MyTituls/MyTituls'));
 const AiChat = lazy(() => import('./components/AIChat/AiChat'));
-// const GoogleRedirect = lazy(() => import('./pages/GoogleRedirect'));
-// const GoogleLoginButton = lazy(() => import('./pages/GoogleRedirect'));
 
 const App = () => {
   const location = useLocation();
@@ -50,16 +44,15 @@ const App = () => {
     const timer = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(timer);
   }, []);
-
+  
   const isNotFoundPage = ![
-    '/', '/ChatGroup', '/Teacher', '/Register', '/Login', '/MainPage',
-    '/Society', '/Tech', '/Culture', '/TicTacToe', '/Snake', '/flappybird',
-    '/Games', '/Tetris', '/Tir', '/Shop', '/news', '/bought', '/KnowledgeMaze',
-    '/MathBattle', '/don', '/MyTituls', '/AiChat', '/edit', '/product/:id', '/pingpong', '/meteors', '/inviders', 
+    "/", "/ChatGroup", "/Teacher", "/Register", "/Login", "/MainPage",
+    "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake", "/flappybird",
+    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat"
   ].includes(location.pathname);
 
   return (
-    <UserProvider>
+    <>
       {loading && <PreLoader />}
       {!isNotFoundPage && <Header />}
       <Suspense fallback={<PreLoader />}>
@@ -69,17 +62,8 @@ const App = () => {
           <Route path="/news" element={<NewsHero />} />
           <Route path="/Society" element={<Society />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/MainPage" element={
-            <ProtectedRoute role="user">
-              <Personal />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-            <ProtectedRoute role="admin">
-              <AdminPanel />
-            </ProtectedRoute>
-          } />
+          <Route path="/login" element={<Log />} />
+          <Route path="/MainPage" element={<Personal />} />
           <Route path="/edit" element={<EditProfile />} />
           <Route path="/Tech" element={<Tech />} />
           <Route path="/Culture" element={<Culture />} />
@@ -91,22 +75,21 @@ const App = () => {
           <Route path="/Shop" element={<Magaz />} />
           <Route path="/Teacher" element={<Teacher />} />
           <Route path="/ChatGroup" element={<ChatGroup />} />
-          <Route path="/KnowledgeMaze" element={<KnowledgeMaze />} />
-          <Route path="/MathBattle" element={<MathBattle />} />
-          <Route path="/bought" element={<Bought purchasedItems={purchasedItems} setPurchasedItems={setPurchasedItems} />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/meteors" element={<Doom />} />
-          <Route path="/pingpong" element={<PongNeon />} />
-          <Route path="/don" element={<Don />} />
-          <Route path="/MyTituls" element={<MyTituls />} />
-          <Route path="/inviders" element={<Inviders />} />
+          <Route path="/KnowledgeMaze" element={<KnowledgeMaze/>}/>
+          <Route path="/MathBattle" element={<MathBattle/>}/>
+          <Route path='/bought' element={<Bought purchasedItems={purchasedItems} setPurchasedItems={setPurchasedItems} />} />
+          <Route path='/product/:id' element={<ProductPage/>}/>
+          <Route path='/meteors' element={<Doom/>}/>
+          <Route path='/pingpong' element={<PongNeon />} />
+          <Route path='/don' element={ <Don/>} />
+          <Route path='/MyTituls' element={ <MyTituls/>} />
+          <Route path='/inviders' element={<Inviders/>}/>
           <Route path="/AiChat" element={<AiChat />} />
-          {/* <Route path="/auth/google/redirect" element={<GoogleRedirect />} /> */}
         </Routes>
       </Suspense>
       {!isNotFoundPage && location.pathname !== "/ChatGroup" && <Footer />}
       <Analytics />
-    </UserProvider>
+    </>
   );
 };
 

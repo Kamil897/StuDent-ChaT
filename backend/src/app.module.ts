@@ -19,19 +19,16 @@ import { GameModule } from './game/game.module';
 import { ChatModule } from './chat/chat.module';
 import { AiModule } from './ai/ai.module';
 import { AppController } from './app.controller';
-import { UsersModule } from './users/users.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { RolesGuard } from './common/guards/roles.guard';
+
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
+      envFilePath: ".env",
+      isGlobal: true
     }),
     AdminModule,
-    UsersModule,
     PrismaModule,
     TeacherModule,
     EventModule,
@@ -51,15 +48,6 @@ import { RolesGuard } from './common/guards/roles.guard';
     AiModule,
   ],
   controllers: [AppController],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard, 
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,   
-    },
-  ],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }

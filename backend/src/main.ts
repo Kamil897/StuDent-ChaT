@@ -6,13 +6,6 @@ import * as cookieParser from 'cookie-parser';
 import { AllExceptionsFilter } from "./logger/error.handling";
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//   app.useWebSocketAdapter(new IoAdapter(app));
-//   await app.listen(7777);
-// }
-// bootstrap();
-
 async function start() {
   try {
     const PORT = process.env.PORT || 7777;
@@ -28,14 +21,11 @@ async function start() {
     app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-      origin: [
-        'https://student-chat.online', // production
-        'http://localhost:5173',       // dev
-      ],
+      origin: ['https://student-chat.online'],
       credentials: true,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
     });
-    
+
     const config = new DocumentBuilder()
       .setTitle("Student Chat")
       .setVersion("1.0")
@@ -56,7 +46,7 @@ async function start() {
     SwaggerModule.setup("api/docs", app, document, {
       swaggerOptions: { defaultModelsExpandDepth: -1 },
     });
-    app.setGlobalPrefix('api');
+
     await app.listen(PORT, () => {
       console.log("\n\n + ====================================================================== +");
       console.log(`| |                                                                      | |`);

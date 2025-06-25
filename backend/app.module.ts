@@ -19,10 +19,7 @@ import { GameModule } from './src/game/game.module';
 import { ChatModule } from './src/chat/chat.module';
 import { AiModule } from './src/ai/ai.module';
 import { AppController } from './app.controller';
-import { RolesGuard } from './src/common/guards/roles.guard';
-import { APP_GUARD } from '@nestjs/core/constants';
-import { UsersModule } from './src/users/users.module';
-// import { User } from './src/users/user.entity';
+
 
 
 @Module({
@@ -32,7 +29,6 @@ import { UsersModule } from './src/users/users.module';
       isGlobal: true
     }),
     AdminModule,
-    UsersModule,
     PrismaModule,
     TeacherModule,
     EventModule,
@@ -52,11 +48,6 @@ import { UsersModule } from './src/users/users.module';
     AiModule,
   ],
   controllers: [AppController],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-  ],
+  providers: [],
 })
 export class AppModule { }

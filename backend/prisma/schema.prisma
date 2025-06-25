@@ -10,12 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  TEACHER
-  ADMIN
-}
-
 model Admin {
   id                  Int      @id @default(autoincrement())
   username            String   @unique
@@ -223,7 +217,7 @@ model User {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
   messages             AiMessage[]
-  role                 Role      @default(USER)
+
   @@map("user")
 }
 

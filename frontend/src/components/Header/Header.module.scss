@@ -132,10 +132,7 @@ body {
   cursor: pointer;
   transition: transform 0.4s ease;  
   display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-
+  
   @media (max-width: 1100px) {
     display: flex;
   }
@@ -143,15 +140,14 @@ body {
   span {
     width: 100%;
     height: 4px;
-    background-color: grey;
+    background-color: black;
     border-radius: 8px;
     transition: transform 0.4s ease;  
   }
 
   &.active {
     span:nth-child(1) {
-      transform: rotate(45deg) translate(0, 10px);
-       
+      transform: rotate(45deg) translate(0, 10px);  
     }
 
     span:nth-child(2) {
@@ -220,7 +216,7 @@ body {
   color: #c9c6c6;
   text-decoration: none;
   transition: 0.5s;
-  font-size: 19px;
+  font-size: 20px;
 
  &:hover {
    color: #ffffff;
@@ -257,6 +253,7 @@ body {
   text-decoration: none;
 }
 
+/* Адаптив для мобильных */
 @media (max-width: 768px) {
   .dropdownWrapper {
     width: 20%;

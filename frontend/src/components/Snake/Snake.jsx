@@ -30,7 +30,8 @@ function Snake() {
     foodColor: '#f00',
     foodShape: 'circle',
   });
-  const {addPoints} = useUser()
+
+  const { addPoints } = useUser();
 
   const timerRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
@@ -81,20 +82,11 @@ function Snake() {
       const head = prevSnake[0];
       const newHead = getNextPosition(head, direction);
 
-      // Телепортация змеи через стены
-      if (newHead.x < 0) {
-        newHead.x = COLS - 1; // Появление с правой стороны
-      } else if (newHead.x >= COLS) {
-        newHead.x = 0; // Появление с левой стороны
-      }
+      if (newHead.x < 0) newHead.x = COLS - 1;
+      else if (newHead.x >= COLS) newHead.x = 0;
+      if (newHead.y < 0) newHead.y = ROWS - 1;
+      else if (newHead.y >= ROWS) newHead.y = 0;
 
-      if (newHead.y < 0) {
-        newHead.y = ROWS - 1; // Появление снизу
-      } else if (newHead.y >= ROWS) {
-        newHead.y = 0; // Появление сверху
-      }
-
-      // Проверка на столкновение с собой
       if (checkSelfCollision(newHead, prevSnake)) {
         endGame();
         return prevSnake;
@@ -102,7 +94,6 @@ function Snake() {
 
       const newSnake = [newHead, ...prevSnake];
 
-      // Если змея съела еду
       if (newHead.x === food.x && newHead.y === food.y) {
         setScore((prev) => prev + 1);
         setFood(generateFood(newSnake));
@@ -114,23 +105,21 @@ function Snake() {
     });
   };
 
-const endGame = useCallback(() => {
-  setIsGameOver(true);
-  setIsGameStarted(false);
-  clearInterval(timerRef.current);
+  const endGame = useCallback(() => {
+    setIsGameOver(true);
+    setIsGameStarted(false);
+    clearInterval(timerRef.current);
 
-  setScore((currentScore) => {
-    const bestScore = parseInt(localStorage.getItem('snakeScore')) || 0;
-    if (currentScore > bestScore) {
-      localStorage.setItem('snakeScore', currentScore.toString());
-    }
+    setScore((currentScore) => {
+      const bestScore = parseInt(localStorage.getItem('snakeScore')) || 0;
+      if (currentScore > bestScore) {
+        localStorage.setItem('snakeScore', currentScore.toString());
+      }
 
-    addPoints(currentScore);
-    
-    return currentScore; 
-  });
-}, [addPoints]);
-
+      addPoints(currentScore);
+      return currentScore;
+    });
+  }, [addPoints]);
 
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
@@ -155,7 +144,6 @@ const endGame = useCallback(() => {
     });
   };
 
-  // 🏆 Проверка на титул при достижении 20 очков
   useEffect(() => {
     if (score >= 20) {
       const title = 'Мастер змейки 🐍';
@@ -207,10 +195,10 @@ const endGame = useCallback(() => {
   const bestScore = Math.max(score, parseInt(localStorage.getItem('snakeScore')) || 0);
 
   return (
-    <div className={styles.app}>
+    <div className={styles.app} translate="no" data-no-translate="true">
       {!isGameStarted && !isGameOver ? (
         <div className={styles.menu}>
-          <h1>Snake Game</h1>
+          <h1 className="notranslate" data-no-translate="true">Snake Game</h1>
           <button onClick={() => setIsGameStarted(true)}>Play</button>
           <button onClick={openSettings}>Settings</button>
           <button onClick={() => navigate("/Games")}>Exit</button>
@@ -221,9 +209,9 @@ const endGame = useCallback(() => {
         </div>
       ) : isGameOver ? (
         <div className={styles.menu}>
-          <h1>Game Over</h1>
-          <p>Score: {score}</p>
-          <p>Best Score: {bestScore}</p>
+          <h1 className="notranslate" data-no-translate="true">Game Over</h1>
+          <p className="notranslate" data-no-translate="true">Score: {score}</p>
+          <p className="notranslate" data-no-translate="true">Best Score: {bestScore}</p>
           <button onClick={resetGame}>Play Again</button>
           <button onClick={openSettings}>Settings</button>
           <button onClick={() => navigate("/Games")}>Exit</button>
@@ -231,10 +219,11 @@ const endGame = useCallback(() => {
       ) : (
         <>
           <div className={styles.infoBar}>
-            <h1 className={styles.score}>Score: {score}</h1>
-            <h1 className={styles.timer}>Time Left: {timeLeft}s</h1>
+            <h1 className={`${styles.score} notranslate`} data-no-translate="true">Score: {score}</h1>
+            <h1 className={`${styles.timer} notranslate`} data-no-translate="true">Time Left: {timeLeft}s</h1>
             <button className={styles.menuButton} onClick={resetGame}>Menu</button>
           </div>
+
           <div
             ref={boardRef}
             className={styles.board}
@@ -242,7 +231,6 @@ const endGame = useCallback(() => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
           >
-            
             {Array.from({ length: ROWS }).map((_, y) => (
               <div key={y} className={styles.row}>
                 {Array.from({ length: COLS }).map((_, x) => (
@@ -271,40 +259,15 @@ const endGame = useCallback(() => {
               }}
             ></div>
           </div>
-          
 
           <div className={styles.mobileControls}>
             <div className={styles.controlPad}>
-              <button 
-                className={styles.directionButton}
-                onClick={() => handleDirectionButtonClick('n')}
-                disabled={!isGameStarted || direction === 's'}
-              >
-                ↑
-              </button>
+              <button className={styles.directionButton} onClick={() => handleDirectionButtonClick('n')} disabled={!isGameStarted || direction === 's'}>↑</button>
               <div className={styles.horizontalControls}>
-                <button 
-                  className={styles.directionButton}
-                  onClick={() => handleDirectionButtonClick('w')}
-                  disabled={!isGameStarted || direction === 'e'}
-                >
-                  ←
-                </button>
-                <button 
-                  className={styles.directionButton}
-                  onClick={() => handleDirectionButtonClick('e')}
-                  disabled={!isGameStarted || direction === 'w'}
-                >
-                  →
-                </button>
+                <button className={styles.directionButton} onClick={() => handleDirectionButtonClick('w')} disabled={!isGameStarted || direction === 'e'}>←</button>
+                <button className={styles.directionButton} onClick={() => handleDirectionButtonClick('e')} disabled={!isGameStarted || direction === 'w'}>→</button>
               </div>
-              <button 
-                className={styles.directionButton}
-                onClick={() => handleDirectionButtonClick('s')}
-                disabled={!isGameStarted || direction === 'n'}
-              >
-                ↓
-              </button>
+              <button className={styles.directionButton} onClick={() => handleDirectionButtonClick('s')} disabled={!isGameStarted || direction === 'n'}>↓</button>
             </div>
           </div>
         </>
@@ -315,16 +278,11 @@ const endGame = useCallback(() => {
 
 const getNextPosition = (head, direction) => {
   switch (direction) {
-    case 'n':
-      return { x: head.x, y: head.y - 1 };
-    case 's':
-      return { x: head.x, y: head.y + 1 };
-    case 'e':
-      return { x: head.x + 1, y: head.y };
-    case 'w':
-      return { x: head.x - 1, y: head.y };
-    default:
-      return head;
+    case 'n': return { x: head.x, y: head.y - 1 };
+    case 's': return { x: head.x, y: head.y + 1 };
+    case 'e': return { x: head.x + 1, y: head.y };
+    case 'w': return { x: head.x - 1, y: head.y };
+    default: return head;
   }
 };
 
@@ -345,35 +303,21 @@ const generateFood = (snake) => {
 
 const getDirection = (key, currentDirection) => {
   switch (key) {
-    case 'ArrowUp':
-    case 'w':
-      return currentDirection !== 's' ? 'n' : null;
-    case 'ArrowDown':
-    case 's':
-      return currentDirection !== 'n' ? 's' : null;
-    case 'ArrowLeft':
-    case 'a':
-      return currentDirection !== 'e' ? 'w' : null;
-    case 'ArrowRight':
-    case 'd':
-      return currentDirection !== 'w' ? 'e' : null;
-    default:
-      return null;
+    case 'ArrowUp': case 'w': return currentDirection !== 's' ? 'n' : null;
+    case 'ArrowDown': case 's': return currentDirection !== 'n' ? 's' : null;
+    case 'ArrowLeft': case 'a': return currentDirection !== 'e' ? 'w' : null;
+    case 'ArrowRight': case 'd': return currentDirection !== 'w' ? 'e' : null;
+    default: return null;
   }
 };
 
 const getOppositeDirection = (direction) => {
   switch (direction) {
-    case 'n':
-      return 's';
-    case 's':
-      return 'n';
-    case 'e':
-      return 'w';
-    case 'w':
-      return 'e';
-    default:
-      return null;
+    case 'n': return 's';
+    case 's': return 'n';
+    case 'e': return 'w';
+    case 'w': return 'e';
+    default: return null;
   }
 };
 
