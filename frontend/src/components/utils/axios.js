@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.PROD
-    ? 'https://student-chat.online'
+    ? 'https://student-chat.online/api'
     : 'http://localhost:7777/api',
   withCredentials: true,
 });
