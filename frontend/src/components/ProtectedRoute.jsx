@@ -9,6 +9,12 @@ const ProtectedRoute = ({ children, role }) => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
 
+    // Проверка на срок действия токена
+    if (payload.exp * 1000 < Date.now()) {
+      return <Navigate to="/login" />;
+    }
+
+    // Проверка роли
     if (role && payload.role !== role) {
       return <Navigate to="/login" />;
     }
@@ -20,3 +26,4 @@ const ProtectedRoute = ({ children, role }) => {
 };
 
 export default ProtectedRoute;
+

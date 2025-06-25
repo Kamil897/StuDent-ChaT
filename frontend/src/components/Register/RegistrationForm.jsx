@@ -23,7 +23,7 @@ const Registration = () => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        role: 'user',
+        role: 'USER',
       });
 
       alert('Успешно! Теперь войдите.');

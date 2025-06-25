@@ -2,8 +2,8 @@ import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { AccessTokenGuard } from '../common/guards/access-token.guard';
 import { GetCurrentUser } from '../common/decorators/get-current-user.decorator';
+import { AccessTokenGuard } from '../common/guards/access-token.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
@@ -23,7 +23,7 @@ export class AuthController {
 
   @UseGuards(AccessTokenGuard)
   @Get('profile')
-  getProfile(@GetCurrentUser() user: any) {
-    return user; // payload из access токена
+  getProfile(@GetCurrentUser() user) {
+    return user;
   }
 }

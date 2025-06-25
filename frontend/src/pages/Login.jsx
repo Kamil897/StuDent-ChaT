@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import s from './Login.module.scss';
-import api from '../components/utils/axios';
+import api from '../components/utils';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,10 +11,10 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/auth/login', { username, password });
+      const res = await api.post('/auth/login', { email, password }); // исправлено!
       const token = res.data.access_token;
   
-      localStorage.setItem('access_token', token); // если используешь токен в хранилище
+      localStorage.setItem('access_token', token);
   
       const payload = JSON.parse(atob(token.split('.')[1]));
   
@@ -29,6 +29,7 @@ const Login = () => {
       alert(err?.response?.data?.message || 'Ошибка входа');
     }
   };
+  
   
 
   return (
