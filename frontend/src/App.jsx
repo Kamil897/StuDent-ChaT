@@ -25,7 +25,6 @@ const Personal = lazy(() => import('./pages/Personal'));
 const EditProfile = lazy(() => import('./components/EditProfile/Edit'));
 const TicTacToe = lazy(() => import('./components/TicTacToe/TicTacToe'));
 const Snake = lazy(() => import('./components/Snake/Snake'));
-const FlappyBird = lazy(() => import('./components/FlappyBird/FlappyBird'));
 const Games = lazy(() => import('./components/Games/Games'));
 const Tir = lazy(() => import('./components/Tir/Tir'));
 const Teacher = lazy(() => import('./pages/Teacher'));
@@ -47,7 +46,7 @@ const App = () => {
   
   const isNotFoundPage = ![
     "/", "/ChatGroup", "/Teacher", "/Register", "/Login", "/MainPage",
-    "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake", "/flappybird",
+    "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake",
     "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat"
   ].includes(location.pathname);
 
@@ -69,7 +68,6 @@ const App = () => {
           <Route path="/Culture" element={<Culture />} />
           <Route path="/TicTacToe" element={<TicTacToe />} />
           <Route path="/Snake" element={<Snake />} />
-          <Route path="/flappybird" element={<FlappyBird />} />
           <Route path="/Games" element={<Games />} />
           <Route path="/Tir" element={<Tir />} />
           <Route path="/Shop" element={<Magaz />} />

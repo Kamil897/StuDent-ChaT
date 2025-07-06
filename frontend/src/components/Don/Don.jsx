@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import s from "./DonDon.module.css";
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../Context/UserContext'; 
+import { useUser } from '../../Context/UserContext';
+import { useTranslation } from "react-i18next";
 
 const choices = [
   { name: "Rock", image: '/rock.png' },
@@ -10,21 +11,23 @@ const choices = [
 ];
 
 const getResult = (playerChoice, computerChoice) => {
-  if (playerChoice === computerChoice) return "It's a Tie!";
+  if (playerChoice === computerChoice) return "tie";
   if (
     (playerChoice === "Rock" && computerChoice === "Scissors") ||
     (playerChoice === "Paper" && computerChoice === "Rock") ||
     (playerChoice === "Scissors" && computerChoice === "Paper")
   ) {
-    return "You Win!";
+    return "win";
   }
-  return "Computer Wins!";
+  return "lose";
 };
 
 const Don = () => {
+  const { t } = useTranslation(); // ❌ no namespace
   const [rpsWins, setRpsWins] = useState(0);
   const navigate = useNavigate();
   const { addPoints } = useUser();
+
   const [gameState, setGameState] = useState({
     playerChoice: null,
     computerChoice: null,
@@ -47,17 +50,17 @@ const Don = () => {
     const randomChoice = choices[Math.floor(Math.random() * choices.length)];
     const gameResult = getResult(choice.name, randomChoice.name);
 
-    setGameState((prevState) => {
-      const newWins = gameResult === "You Win!" ? prevState.wins + 1 : prevState.wins;
-      const newTies = gameResult === "It's a Tie!" ? prevState.ties + 1 : prevState.ties;
-      const newLosses = gameResult === "Computer Wins!" ? prevState.losses + 1 : prevState.losses;
+    setGameState((prev) => {
+      const newWins = gameResult === "win" ? prev.wins + 1 : prev.wins;
+      const newTies = gameResult === "tie" ? prev.ties + 1 : prev.ties;
+      const newLosses = gameResult === "lose" ? prev.losses + 1 : prev.losses;
 
-      if (gameResult === "You Win!") {
-        addPoints(1); 
+      if (gameResult === "win") {
+        addPoints(1);
       }
 
       return {
-        ...prevState,
+        ...prev,
         playerChoice: choice,
         computerChoice: randomChoice,
         result: gameResult,
@@ -70,40 +73,42 @@ const Don = () => {
 
   useEffect(() => {
     if (gameState.wins >= 30) {
-      const title = 'Чемпион РПС ✊✋✌️';
+      const title = 'rps';
       const titles = JSON.parse(localStorage.getItem('titlesUnlocked')) || [];
-  
+
       if (!titles.includes(title)) {
         const updated = [...titles, title];
         localStorage.setItem('titlesUnlocked', JSON.stringify(updated));
-        console.log(`🏆 Титул получен: ${title}`);
+        console.log(`🏆 Титул получен: ${t('titles.rps.title')}`);
       }
     }
-  }, [gameState.wins]);
-  
+  }, [gameState.wins, t]);
+
   const { playerChoice, computerChoice, result, wins, ties, losses } = gameState;
 
   return (
     <div className={s.game}>
       <button className={s.backButton} onClick={() => navigate('/Games')}>
-        <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024"><path d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z"></path></svg>
-        <span>Назад</span>
+        <svg height="16" width="16" viewBox="0 0 1024 1024">
+          <path d="..." />
+        </svg>
+        <span>{t("rps.back")}</span>
       </button>
 
-      <h1>Rock, Paper, Scissors</h1>
+      <h1>{t("rps.title")}</h1>
 
       <div className={s.scoreboard}>
-        <ScoreboardItem label="Wins" value={wins} />
-        <ScoreboardItem label="Ties" value={ties} />
-        <ScoreboardItem label="Losses" value={losses} />
+        <ScoreboardItem label={t("rps.wins")} value={wins} />
+        <ScoreboardItem label={t("rps.ties")} value={ties} />
+        <ScoreboardItem label={t("rps.losses")} value={losses} />
       </div>
 
       {playerChoice && (
         <div className={s.result}>
-          <ChoiceDisplay title="Computer's choice" choice={computerChoice} />
-          <ChoiceDisplay title="Your choice" choice={playerChoice} />
-          <h2 className={s.resultText}>{result}</h2>
-          <h2 className={s.resultText}>Choose one more time</h2>
+          <ChoiceDisplay title={t("rps.computerChoice")} choice={computerChoice} />
+          <ChoiceDisplay title={t("rps.yourChoice")} choice={playerChoice} />
+          <h2 className={s.resultText}>{t(`rps.result.${result}`)}</h2>
+          <h2 className={s.resultText}>{t("rps.chooseAgain")}</h2>
         </div>
       )}
 
@@ -115,11 +120,7 @@ const Don = () => {
             className={s.choiceButton}
             aria-label={`Select ${choice.name}`}
           >
-            <img
-              src={choice.image}
-              alt={choice.name}
-              className={s.choiceImage}
-            />
+            <img src={choice.image} alt={choice.name} className={s.choiceImage} />
           </button>
         ))}
       </div>
@@ -136,11 +137,7 @@ const ScoreboardItem = ({ label, value }) => (
 const ChoiceDisplay = ({ title, choice }) => (
   <div className={s.choiceDisplay}>
     <p>{title}: {choice.name}</p>
-    <img
-      src={choice.image}
-      alt={choice.name}
-      className={s.resultImage}
-    />
+    <img src={choice.image} alt={choice.name} className={s.resultImage} />
   </div>
 );
 

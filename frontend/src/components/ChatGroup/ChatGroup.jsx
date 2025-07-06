@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Picker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
+import { useTranslation } from "react-i18next";
 
 const socket = io('https://student-chat.online', {
   transports: ['websocket'],
@@ -12,6 +13,7 @@ export default function GroupChat() {
   const [input, setInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const containerRef = useRef(null);
+  const { t } = useTranslation();
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
@@ -190,7 +192,7 @@ export default function GroupChat() {
             onClick={() => toggleChatSelection(chat.id)}
             style={styles.chatListBtn}
           >
-            Чат {chat.id}
+            {t("chat.chat")} {chat.id}
             <span
               onClick={(e) => {
                 e.stopPropagation();
@@ -202,13 +204,15 @@ export default function GroupChat() {
             </span>
           </button>
         ))}
-        <button onClick={addChat} style={styles.chatListBtn}>➕ Добавить чат</button>
+        <button onClick={addChat} style={styles.chatListBtn}>
+          ➕ {t("chat.add_chat")}
+        </button>
       </div>
 
       <div style={styles.chatArea}>
         {isMobile && currentChatId && (
           <button onClick={() => setCurrentChatId(null)} style={styles.backBtn}>
-            ← Назад к чатам
+            ← {t("chat.back_to_chats")}
           </button>
         )}
 
@@ -228,15 +232,19 @@ export default function GroupChat() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Напишите сообщение..."
+              placeholder={t("chat.write_message")}
               style={styles.input}
             />
-            <button onClick={sendMessage} style={styles.sendBtn}>Отправить</button>
-            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} style={styles.emojiBtn}>😀</button>
+            <button onClick={sendMessage} style={styles.sendBtn}>
+              {t("chat.send")}
+            </button>
+            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} style={styles.emojiBtn}>
+              😀
+            </button>
             {showEmojiPicker && <Picker onEmojiClick={(_, emoji) => handleEmojiClick(emoji)} />}
           </div>
         )}
       </div>
-    </div>
+</div>
   );
 }

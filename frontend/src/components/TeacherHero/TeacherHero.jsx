@@ -1,46 +1,33 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import s from "./TeacherHero.module.scss";
 import TeacherCard from "../TeacherCard/TeacherCard";
+import { useTranslation } from "react-i18next";
 import { FaFlag, FaGlobeAmericas, FaGlobeEurope, FaGlobe } from "react-icons/fa";
 
-const TeacherHero = ({ langName }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState("Все");
+const TeacherHero = () => {
+  const { t } = useTranslation();
+
+  const [selectedLanguage, setSelectedLanguage] = useState("all");
 
   const languages = [
-    { id: "all", name: "Все" },
-    { id: "russian", name: "Русский" },
-    { id: "english", name: "Английский" },
-    { id: "german", name: "Немецкий" },
-    { id: "french", name: "Французский" },
+    { id: "all", icon: <FaGlobe /> },
+    { id: "russian", icon: <FaFlag /> },
+    { id: "english", icon: <FaGlobeAmericas /> },
+    { id: "german", icon: <FaGlobe /> },
+    { id: "french", icon: <FaGlobeEurope /> },
   ];
 
-  const getIcon = (langName) => {
-    switch (langName.toLowerCase()) {
-      case "русский":
-        return <FaFlag />;
-      case "английский":
-        return <FaGlobeAmericas />;
-      case "французский":
-        return <FaGlobeEurope />;
-      case "немецкий":
-        return <FaGlobe />;
-      default:
-        return <FaGlobe />;
-    }
-  };
-  
-
   const teachers = [
-    { id: 1, name: "Иван Иванов", teaches: ["Русский"] },
-    { id: 2, name: "John Smith", teaches: ["Английский"] },
-    { id: 3, name: "Hans Müller", teaches: ["Немецкий"] },
-    { id: 4, name: "Jean Dupont", teaches: ["Французский"] },
-    { id: 5, name: "Анна Петрова", teaches: ["Русский", "Английский"] },
-    { id: 6, name: "Emma Johnson", teaches: ["Английский", "Французский"] },
+    { id: 1, name: "Иван Иванов", teaches: ["russian"] },
+    { id: 2, name: "John Smith", teaches: ["english"] },
+    { id: 3, name: "Hans Müller", teaches: ["german"] },
+    { id: 4, name: "Jean Dupont", teaches: ["french"] },
+    { id: 5, name: "Анна Петрова", teaches: ["russian", "english"] },
+    { id: 6, name: "Emma Johnson", teaches: ["english", "french"] },
   ];
 
   const filteredTeachers =
-    selectedLanguage === "Все"
+    selectedLanguage === "all"
       ? teachers
       : teachers.filter((teacher) => teacher.teaches.includes(selectedLanguage));
 
@@ -49,15 +36,15 @@ const TeacherHero = ({ langName }) => {
       <div className={s.container}>
         {/* Фильтр-кнопки */}
         <div className={s.filter}>
-        {languages.map((lang) => (
+          {languages.map((lang) => (
             <button
               key={lang.id}
               className={`${s.languageButton} ${
-                selectedLanguage === lang.name ? s.active : ""
+                selectedLanguage === lang.id ? s.active : ""
               }`}
-              onClick={() => setSelectedLanguage(lang.name)}
+              onClick={() => setSelectedLanguage(lang.id)}
             >
-              {getIcon(lang.name)} {lang.name}
+              {lang.icon} {t(`teachers_hero.${lang.id}`)}
             </button>
           ))}
         </div>
@@ -71,7 +58,7 @@ const TeacherHero = ({ langName }) => {
               </div>
             ))
           ) : (
-            <p className={s.noResults}>Учителей с таким языком нет...</p>
+            <p className={s.noResults}>{t("teachers_hero.no_results")}</p>
           )}
         </div>
       </div>

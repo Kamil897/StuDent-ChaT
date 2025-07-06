@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import s from './Edit.module.scss';
 
 const EditProfile = () => {
@@ -15,6 +16,7 @@ const EditProfile = () => {
     });
 
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         const username = localStorage.getItem('loggedInUsername');
@@ -35,20 +37,21 @@ const EditProfile = () => {
 
     const handleSaveChanges = () => {
         localStorage.setItem(formData.username, JSON.stringify(formData));
-        alert('Изменения сохранены!');
+        alert(t('alertSaved'));
         navigate('/MainPage');
     };
 
     return (
         <div className="container__main">
             <div className={s.div}>
-                <h2 className={s.h2}>Редактирование профиля</h2>
+                <h2 className={s.h2}>{t('editTitle')}</h2>
+
                 <form onSubmit={(e) => { e.preventDefault(); handleSaveChanges(); }}>
                     <div className={s.img}>
                         <label htmlFor="avatar" className={s.imageUpload}>
                             <img
                                 src={formData.avatar || 'profileimg.png'}
-                                alt="Аватар"
+                                alt="Avatar"
                                 className={s.uploadImage}
                             />
                         </label>
@@ -73,9 +76,10 @@ const EditProfile = () => {
                             }}
                         />
                     </div>
+
                     <div className={s.form}>
                         <div>
-                            <label htmlFor="firstName">Имя</label>
+                            <label htmlFor="firstName">{t('labels.firstName')}</label>
                             <input
                                 className={s.input}
                                 type="text"
@@ -86,7 +90,7 @@ const EditProfile = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="lastName">Фамилия</label>
+                            <label htmlFor="lastName">{t('labels.lastName')}</label>
                             <input
                                 className={s.input}
                                 type="text"
@@ -97,7 +101,7 @@ const EditProfile = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="hobby">Хобби</label>
+                            <label htmlFor="hobby">{t('labels.hobby')}</label>
                             <input
                                 className={s.input}
                                 type="text"
@@ -108,7 +112,7 @@ const EditProfile = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="education">Образование/Работа</label>
+                            <label htmlFor="education">{t('labels.education')}</label>
                             <input
                                 className={s.input}
                                 type="text"
@@ -119,7 +123,7 @@ const EditProfile = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="avatarBorders">Стиль рамки аватара</label>
+                            <label htmlFor="avatarBorders">{t('labels.avatarBorders')}</label>
                             <select
                                 id="avatarBorders"
                                 name="avatarBorders"
@@ -127,14 +131,14 @@ const EditProfile = () => {
                                 value={formData.avatarBorders}
                                 onChange={handleChange}
                             >
-                                <option value="">Нет рамки</option>
-                                <option value="rounded">Скруглённая</option>
-                                <option value="circle">Круглая</option>
-                                <option value="bordered">С рамкой</option>
+                                <option value="">{t('avatarBorderOptions.none')}</option>
+                                <option value="rounded">{t('avatarBorderOptions.rounded')}</option>
+                                <option value="circle">{t('avatarBorderOptions.circle')}</option>
+                                <option value="bordered">{t('avatarBorderOptions.bordered')}</option>
                             </select>
                         </div>
                     </div>
-                    <button className={s.btn} type="submit">Сохранить изменения</button>
+                    <button className={s.btn} type="submit">{t('saveChanges')}</button>
                 </form>
             </div>
         </div>

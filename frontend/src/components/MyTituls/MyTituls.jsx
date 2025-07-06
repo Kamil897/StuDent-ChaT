@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import s from './MyTituls.module.scss';
 
 const MyTituls = ({ snakeScore, rpsWins, flappyScore }) => {
+  const { t } = useTranslation();
   const [titlesUnlocked, setTitlesUnlocked] = useState([]);
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
   const navigate = useNavigate();
@@ -11,20 +13,23 @@ const MyTituls = ({ snakeScore, rpsWins, flappyScore }) => {
   const missionConditions = useMemo(() => ({
     snakeScore20: {
       condition: snakeScore >= 20,
-      title: 'Мастер змейки 🐍',
-      requirement: 'Сделать счёт 20 в Змейке',
+      id: 'snake',
+      title: t('titles.snake.title'),
+      requirement: t('titles.snake.requirement'),
     },
     rpsWins30: {
       condition: rpsWins >= 30,
-      title: 'Чемпион РПС ✊✋✌️',
-      requirement: 'Выиграть 30 раз в Камень-Ножницы-Бумага',
+      id: 'rps',
+      title: t('titles.rps.title'),
+      requirement: t('titles.rps.requirement'),
     },
     flappyScore100: {
       condition: flappyScore >= 100,
-      title: 'Летун 100 уровня 🐤',
-      requirement: 'Сделать счёт 100 в Flappy Bird',
+      id: 'flappy',
+      title: t('titles.flappy.title'),
+      requirement: t('titles.flappy.requirement'),
     },
-  }), [snakeScore, rpsWins, flappyScore]);
+  }), [snakeScore, rpsWins, flappyScore, t]);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('titlesUnlocked')) || [];
@@ -33,14 +38,16 @@ const MyTituls = ({ snakeScore, rpsWins, flappyScore }) => {
 
   useEffect(() => {
     setTitlesUnlocked((prev) => {
-      const newTitles = Object.values(missionConditions)
-        .filter(({ condition, title }) => condition && !prev.includes(title))
-        .map(({ title }) => title);
+      const prevIds = prev || [];
 
-      if (newTitles.length === 0) return prev;
+      const newIds = Object.values(missionConditions)
+        .filter(({ condition, id }) => condition && !prevIds.includes(id))
+        .map(({ id }) => id);
 
-      const updated = [...prev, ...newTitles];
-      setNewlyUnlocked(newTitles);
+      if (newIds.length === 0) return prev;
+
+      const updated = [...prevIds, ...newIds];
+      setNewlyUnlocked(newIds);
       localStorage.setItem('titlesUnlocked', JSON.stringify(updated));
 
       if (audioRef.current) {
@@ -49,44 +56,42 @@ const MyTituls = ({ snakeScore, rpsWins, flappyScore }) => {
         });
       }
 
-      const timer = setTimeout(() => setNewlyUnlocked([]), 3000);
-      return () => clearTimeout(timer);
-
       return updated;
     });
+
+    const timer = setTimeout(() => setNewlyUnlocked([]), 3000);
+    return () => clearTimeout(timer);
   }, [missionConditions]);
-
-console.log('RPS Wins:', rpsWins);
-
 
   return (
     <section className={s.section}>
       <div className="container">
         <div className={s.wrap}>
           <button className={s.backButton} onClick={() => navigate(-1)}>
-            ← Назад
+            ← {t('titles.back')}
           </button>
 
-          <h2>Твои титулы</h2>
+          <h2>{t('titles.yourTitles')}</h2>
 
           <audio ref={audioRef} src="/success.mp3" preload="auto" />
 
           {newlyUnlocked.length > 0 && (
             <div className={s.congrats}>
-              🎉 Поздравляем! Вы получили титул:
-              <strong> {newlyUnlocked.join(', ')}</strong>
+              🎉 {t('titles.congrats')}: <strong>
+                {newlyUnlocked.map(id => t(`titles.${id}.title`)).join(', ')}
+              </strong>
             </div>
           )}
 
           <ul>
-            {Object.entries(missionConditions).map(([key, { title, requirement }]) => {
-              const unlocked = titlesUnlocked.includes(title);
+            {Object.entries(missionConditions).map(([key, { title, requirement, id }]) => {
+              const unlocked = titlesUnlocked.includes(id);
               return (
                 <li key={key} className={unlocked ? s.unlocked : s.locked}>
                   {unlocked ? (
                     <span>{title} ✅</span>
                   ) : (
-                    <span>{requirement} — титул заблокирован 🔒</span>
+                    <span>{requirement} — {t('titles.locked')}</span>
                   )}
                 </li>
               );

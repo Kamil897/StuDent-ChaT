@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './TicTacToe.module.scss';
-import { useUser } from '../../Context/UserContext';  
+import { useUser } from '../../Context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 const TicTacToe = () => {
-  const { addPoints } = useUser();  
+  const { addPoints } = useUser();
+  const { t } = useTranslation(); // без namespace
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [winner, setWinner] = useState(null);
@@ -15,18 +17,11 @@ const TicTacToe = () => {
 
   const checkWinner = (squares) => {
     const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
     ];
-
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
+    for (let [a, b, c] of lines) {
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
         return squares[a];
       }
@@ -36,7 +31,6 @@ const TicTacToe = () => {
 
   const getBestMove = (squares, computerSymbol) => {
     const playerSymbol = computerSymbol === 'X' ? 'O' : 'X';
-
     const isWinningMove = (symbol) => {
       for (let i = 0; i < squares.length; i++) {
         if (squares[i] === null) {
@@ -48,25 +42,19 @@ const TicTacToe = () => {
       return null;
     };
 
-    const winningMove = isWinningMove(computerSymbol);
-    if (winningMove !== null) return winningMove;
+    const win = isWinningMove(computerSymbol);
+    if (win !== null) return win;
 
-    const blockingMove = isWinningMove(playerSymbol);
-    if (blockingMove !== null) return blockingMove;
+    const block = isWinningMove(playerSymbol);
+    if (block !== null) return block;
 
-    const center = 4;
-    if (squares[center] === null) return center;
+    if (squares[4] === null) return 4;
 
-    const corners = [0, 2, 6, 8];
-    const availableCorners = corners.filter((index) => squares[index] === null);
-    if (availableCorners.length > 0) {
-      return availableCorners[Math.floor(Math.random() * availableCorners.length)];
-    }
+    const corners = [0, 2, 6, 8].filter(i => squares[i] === null);
+    if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
 
-    const availableMoves = squares
-      .map((square, index) => (square === null ? index : null))
-      .filter((index) => index !== null);
-    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    const others = squares.map((s, i) => s === null ? i : null).filter(i => i !== null);
+    return others[Math.floor(Math.random() * others.length)];
   };
 
   const computerMove = (squares) => {
@@ -74,16 +62,15 @@ const TicTacToe = () => {
     const move = getBestMove(squares, computerSymbol);
     if (move !== null) {
       setTimeout(() => {
-        squares[move] = computerSymbol;
-        setBoard(squares);
-        const gameWinner = checkWinner(squares);
+        const updated = [...squares];
+        updated[move] = computerSymbol;
+        setBoard(updated);
+        const gameWinner = checkWinner(updated);
         if (gameWinner) {
           setWinner(gameWinner);
           setGameState(gameWinner === playerSymbol ? 'win' : 'lose');
-          if (gameWinner === playerSymbol) {
-            addPoints(100); 
-          }
-        } else if (!squares.includes(null)) {
+          if (gameWinner === playerSymbol) addPoints(100);
+        } else if (!updated.includes(null)) {
           setGameState('draw');
         } else {
           setIsXNext(true);
@@ -94,39 +81,31 @@ const TicTacToe = () => {
 
   const handleClick = (index) => {
     if (board[index] || winner || !isXNext) return;
-
-    const newBoard = board.slice();
-    newBoard[index] = playerSymbol;
-    setBoard(newBoard);
-    const gameWinner = checkWinner(newBoard);
+    const updated = [...board];
+    updated[index] = playerSymbol;
+    setBoard(updated);
+    const gameWinner = checkWinner(updated);
     if (gameWinner) {
       setWinner(gameWinner);
       setGameState('win');
-      if (gameWinner === playerSymbol) {
-        addPoints(100); 
-      }
+      if (gameWinner === playerSymbol) addPoints(100);
     } else if (isVsComputer) {
       setIsXNext(false);
-      computerMove(newBoard);
+      computerMove(updated);
     } else {
       setIsXNext(!isXNext);
     }
   };
 
-  const renderSquare = (index) => {
-    return (
-      <div
-        className={`${styles.square} ${board[index] ? styles.occupied : ''}`}
-        onClick={() => handleClick(index)}
-      >
-        {board[index] && (
-          <div className={`${styles.symbol} ${board[index] === 'X' ? styles.x : styles.o}`}>
-            {board[index]}
-          </div>
-        )}
-      </div>
-    );
-  };
+  const renderSquare = (i) => (
+    <div className={`${styles.square} ${board[i] ? styles.occupied : ''}`} onClick={() => handleClick(i)}>
+      {board[i] && (
+        <div className={`${styles.symbol} ${board[i] === 'X' ? styles.x : styles.o}`}>
+          {board[i]}
+        </div>
+      )}
+    </div>
+  );
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
@@ -144,10 +123,10 @@ const TicTacToe = () => {
     <div className={styles['tic-tac-toe']}>
       {showSelection ? (
         <div className={styles.SelectionMenu}>
-          <h1>Кого ты выберешь?</h1>
+          <h1>{t("tictactoe.chooseSymbol")}</h1>
           <div className={styles.symbolButtons}>
             <button onClick={() => selectSymbol('X')} className={styles.symbolButton}>X</button>
-            <p>Или</p>
+            <p>{t("tictactoe.or")}</p>
             <button onClick={() => selectSymbol('O')} className={styles.symbolButton}>O</button>
           </div>
         </div>
@@ -156,41 +135,42 @@ const TicTacToe = () => {
           <div className={styles['turn-indicator']}>
             <div className={styles['turn-message']}>
               {isXNext
-                ? `Ход ${playerSymbol === 'X' ? 'игрока X' : 'игрока O'}`
-                : 'Ход компьютера'}
+                ? t(playerSymbol === 'X' ? "tictactoe.turn.playerX" : "tictactoe.turn.playerO")
+                : t("tictactoe.turn.computer")}
             </div>
           </div>
           <div className={styles.board}>
-            {Array.from({ length: 9 }).map((_, index) => (
-              <div key={index} className={styles['square-container']}>
-                {renderSquare(index)}
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className={styles['square-container']}>
+                {renderSquare(i)}
               </div>
             ))}
           </div>
           {gameState && (
             <div className={`${styles.menu} ${styles.centeredMenu} ${styles.visible}`}>
               <div className={styles['menu-header']}>
-                {gameState === 'win' && <h2 className={styles['menu-title']}>Поздравляем, победа!</h2>}
-                {gameState === 'lose' && <h2 className={styles['menu-title']}>Вы проиграли</h2>}
-                {gameState === 'draw' && <h2 className={styles['menu-title']}>Ничья</h2>}
+                <h2 className={styles['menu-title']}>
+                  {gameState === 'win' && t("tictactoe.result.win")}
+                  {gameState === 'lose' && t("tictactoe.result.lose")}
+                  {gameState === 'draw' && t("tictactoe.result.draw")}
+                </h2>
               </div>
               <button className={styles['menu-button']} onClick={resetGame}>
-                Играть снова
+                {t("tictactoe.playAgain")}
               </button>
-              <button
-                className={styles['menu-button']}
-                onClick={() => setShowSelection(true)}
-              >
-                Изменить выбор
+              <button className={styles['menu-button']} onClick={() => setShowSelection(true)}>
+                {t("tictactoe.changeSymbol")}
               </button>
               <Link to="/Games">
-                <button className={styles['menu-button']}>Выйти в меню игр</button>
+                <button className={styles['menu-button']}>
+                  {t("tictactoe.exit")}
+                </button>
               </Link>
             </div>
           )}
           {!gameState && (
             <button className={styles['reset-button']} onClick={resetGame}>
-              Переиграть
+              {t("tictactoe.reset")}
             </button>
           )}
         </>

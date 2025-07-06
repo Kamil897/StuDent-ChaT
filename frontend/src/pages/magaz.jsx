@@ -1,18 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Shop from "../components/Shop/Shop";
 import { useUser } from "../Context/UserContext";
 import s from "./Magaz.module.scss";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const products = [
-  { id: 1, name: "Радужный", description: "Яркие краски, позитив и свобода!", image: "/raduga.webp", price: 1200, category: "design", rarity: "common" },
-  { id: 3, name: "Просто но богато", image: "/luxary.webp", description: "Лаконичность и элегантность.", price: 600, category: "design", rarity: "common" },
-  { id: 4, name: "ОМГ", description: "Вау-эффект гарантирован!", image: "/omg.webp", price: 2000, category: "special", rarity: "rare" },
-  { id: 2, name: "Котики", description: "Мур-мур! С этой привилегией вы получаете пушистую дозу уюта.", image: "/kitty.webp", price: 15000, category: "premium", rarity: "legendary" }
+  {
+    id: 1,
+    name: "products.rainbow.name",
+    description: "products.rainbow.description",
+    image: "/raduga.webp",
+    price: 1200,
+    category: "design",
+    rarity: "common"
+  },
+  {
+    id: 3,
+    name: "products.luxary.name",
+    description: "products.luxary.description",
+    image: "/luxary.webp",
+    price: 600,
+    category: "design",
+    rarity: "common"
+  },
+  {
+    id: 4,
+    name: "products.omg.name",
+    description: "products.omg.description",
+    image: "/omg.webp",
+    price: 2000,
+    category: "special",
+    rarity: "rare"
+  },
+  {
+    id: 2,
+    name: "products.kitty.name",
+    description: "products.kitty.description",
+    image: "/kitty.webp",
+    price: 15000,
+    category: "premium",
+    rarity: "legendary"
+  }
 ];
+
 
 const Magaz = () => {
   const { user, spendPoints } = useUser();
+  const { t } = useTranslation();
+
   const [purchasedItems, setPurchasedItems] = useState([]);
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("name");
@@ -20,14 +56,23 @@ const Magaz = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState("");
 
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("purchasedItems") || "[]");
+    setPurchasedItems(saved);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("purchasedItems", JSON.stringify(purchasedItems));
+  }, [purchasedItems]);
+
   const handleBuy = async (product) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500));
     if (spendPoints(product.price)) {
       setPurchasedItems((prevItems) => [...prevItems, product]);
-      showNotification(`✅ ${product.name} успешно куплен!`, "success");
+      showNotification(`✅ ${t(product.name)} ${t("shop.success")}`, "success");
     } else {
-      showNotification("❌ Недостаточно средств!", "error");
+      showNotification(t("shop.insufficientFunds"), "error");
     }
     setIsLoading(false);
   };
@@ -46,8 +91,8 @@ const Magaz = () => {
     })
     .filter(product => {
       if (!searchQuery) return true;
-      return product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             product.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return t(product.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t(product.description).toLowerCase().includes(searchQuery.toLowerCase());
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -83,27 +128,27 @@ const Magaz = () => {
 
       <header className={s.header}>
         <div className={s.titleSection}>
-          <h1 className={s.title}>Магазин привилегий</h1>
+          <h1 className={s.title}>{t("shop.title")}</h1>
           <p className={s.subtitle}>
-            Доступно: {getAffordableCount()} из {products.length} товаров
+            {t("shop.available", { count: getAffordableCount(), total: products.length })}
           </p>
         </div>
-        
+
         <div className={s.userInfo}>
           <div className={s.balance}>
-            <span className={s.balanceLabel}>Баланс</span>
+            <span className={s.balanceLabel}>{t("shop.balance")}</span>
             <span className={s.balanceAmount}>{user.points.toLocaleString()}</span>
           </div>
-          
+
           {purchasedItems.length > 0 && (
             <div className={s.purchaseInfo}>
-              <span className={s.purchaseLabel}>Потрачено</span>
+              <span className={s.purchaseLabel}>{t("shop.spent")}</span>
               <span className={s.purchaseAmount}>{getTotalValue().toLocaleString()}</span>
             </div>
           )}
-          
+
           <Link className={s.boughtLink} to="/bought">
-            Куплено ({purchasedItems.length})
+            {t("shop.bought", { count: purchasedItems.length })}
           </Link>
         </div>
       </header>
@@ -112,7 +157,7 @@ const Magaz = () => {
         <div className={s.searchSection}>
           <input
             type="text"
-            placeholder="Поиск товаров..."
+            placeholder={t("shop.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={s.searchInput}
@@ -121,26 +166,26 @@ const Magaz = () => {
 
         <div className={s.filtersSection}>
           <div className={s.filterGroup}>
-            <label className={s.filterLabel}>Фильтр:</label>
+            <label className={s.filterLabel}>{t("shop.filter")}</label>
             <div className={s.filters}>
-              <button className={filter === "all" ? s.active : ""} onClick={() => setFilter("all")}>Все ({products.length})</button>
-              <button className={filter === "affordable" ? s.active : ""} onClick={() => setFilter("affordable")}>Доступные ({getAffordableCount()})</button>
-              <button className={filter === "unaffordable" ? s.active : ""} onClick={() => setFilter("unaffordable")}>Недоступные ({products.length - getAffordableCount()})</button>
-              <button className={filter === "purchased" ? s.active : ""} onClick={() => setFilter("purchased")}>Купленные ({purchasedItems.length})</button>
+              <button className={filter === "all" ? s.active : ""} onClick={() => setFilter("all")}>{t("shop.all", { count: products.length })}</button>
+              <button className={filter === "affordable" ? s.active : ""} onClick={() => setFilter("affordable")}>{t("shop.affordable", { count: getAffordableCount() })}</button>
+              <button className={filter === "unaffordable" ? s.active : ""} onClick={() => setFilter("unaffordable")}>{t("shop.unaffordable", { count: products.length - getAffordableCount() })}</button>
+              <button className={filter === "purchased" ? s.active : ""} onClick={() => setFilter("purchased")}>{t("shop.purchased", { count: purchasedItems.length })}</button>
             </div>
           </div>
 
           <div className={s.sortGroup}>
-            <label className={s.sortLabel}>Сортировка:</label>
+            <label className={s.sortLabel}>{t("shop.sort")}</label>
             <select 
               value={sortBy} 
               onChange={(e) => setSortBy(e.target.value)}
               className={s.sortSelect}
             >
-              <option value="name">По названию</option>
-              <option value="price-low">Сначала дешевые</option>
-              <option value="price-high">Сначала дорогие</option>
-              <option value="rarity">По редкости</option>
+              <option value="name">{t("shop.sortName")}</option>
+              <option value="price-low">{t("shop.sortLow")}</option>
+              <option value="price-high">{t("shop.sortHigh")}</option>
+              <option value="rarity">{t("shop.sortRarity")}</option>
             </select>
           </div>
         </div>
@@ -150,16 +195,16 @@ const Magaz = () => {
         {filteredProducts.length === 0 ? (
           <div className={s.emptyState}>
             <div className={s.emptyIcon}>🛍️</div>
-            <h3 className={s.emptyTitle}>Товары не найдены</h3>
+            <h3 className={s.emptyTitle}>{t("shop.empty")}</h3>
             <p className={s.emptyDescription}>
               {searchQuery 
-                ? `По запросу "${searchQuery}" ничего не найдено`
-                : "В данной категории пока нет товаров"
+                ? t("shop.emptySearch", { query: searchQuery })
+                : t("shop.emptyCategory")
               }
             </p>
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} className={s.clearSearch}>
-                Очистить поиск
+                {t("shop.clearSearch")}
               </button>
             )}
           </div>
@@ -167,12 +212,12 @@ const Magaz = () => {
           filteredProducts.map((product) => {
             const isPurchased = purchasedItems.some(item => item.id === product.id);
             const canAfford = user.points >= product.price;
-            
+
             return (
               <div key={product.id} className={s.productWrapper}>
-                {product.rarity === "legendary" && <div className={s.rarityBadge}>✨ Легендарный</div>}
-                {product.rarity === "rare" && <div className={s.rarityBadge}>💎 Редкий</div>}
-                
+                {product.rarity === "legendary" && <div className={s.rarityBadge}>✨ {t("shop.legendary")}</div>}
+                {product.rarity === "rare" && <div className={s.rarityBadge}>💎 {t("shop.rare")}</div>}
+
                 <Shop 
                   prefix={product} 
                   onBuy={() => handleBuy(product)}
@@ -180,8 +225,8 @@ const Magaz = () => {
                   isPurchased={isPurchased}
                   canAfford={canAfford}
                 />
-                
-                {isPurchased && <div className={s.purchasedOverlay}>✅ Куплено</div>}
+
+                {isPurchased && <div className={s.purchasedOverlay}>✅ {t("shop.purchasedLabel")}</div>}
               </div>
             );
           })
@@ -190,21 +235,21 @@ const Magaz = () => {
 
       {purchasedItems.length > 0 && (
         <div className={s.statistics}>
-          <h3 className={s.statsTitle}>Статистика покупок</h3>
+          <h3 className={s.statsTitle}>{t("shop.statsTitle")}</h3>
           <div className={s.statsGrid}>
             <div className={s.statItem}>
               <span className={s.statValue}>{purchasedItems.length}</span>
-              <span className={s.statLabel}>Товаров куплено</span>
+              <span className={s.statLabel}>{t("shop.statsPurchased")}</span>
             </div>
             <div className={s.statItem}>
               <span className={s.statValue}>{getTotalValue().toLocaleString()}</span>
-              <span className={s.statLabel}>Потрачено баллов</span>
+              <span className={s.statLabel}>{t("shop.statsSpent")}</span>
             </div>
             <div className={s.statItem}>
               <span className={s.statValue}>
                 {Math.round((purchasedItems.length / products.length) * 100)}%
               </span>
-              <span className={s.statLabel}>Коллекция</span>
+              <span className={s.statLabel}>{t("shop.statsCollection")}</span>
             </div>
           </div>
         </div>

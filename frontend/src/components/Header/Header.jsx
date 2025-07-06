@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef, createContext } from 'react';
 import s from './Header.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
-import GoogleTranslate from '../Google/GoogleTranslate';
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const [active, setActive] = useState(false);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
 
   const toggleDropdown = () => setIsOpen(!isOpen);
   const closeAndToggle = () => {
@@ -66,11 +68,11 @@ const Header = () => {
             </div>
 
             <div className={`${s.links} ${active ? s.active : ''}`}>
-              <a href="/ChatGroup">Группа</a>
+              <a href="/ChatGroup">{t("footer.groups")}</a>
 
               <div className={s.dropdownWrapper}>
                 <button className={s.dropdownToggle} onClick={toggleDropdown}>
-                  Новости
+                  {t("footer.news")}
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path
                       d="M13.5306 6.53063L8.53063 11.5306C8.46095 11.6005..."
@@ -81,23 +83,28 @@ const Header = () => {
 
                 {isOpen && (
                   <ul className={s.dropdownMenu}>
-                    <li><Link onClick={closeAndToggle} to="/news">Все новости</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Tech">Проблемы</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Society">Решение</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Culture">Будущее</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/news">{t("news_menu.all")}</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Tech">{t("news_menu.problems")}</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Society">{t("news_menu.solution")}</Link></li>
+                    <li><Link onClick={closeAndToggle} to="/Culture">{t("news_menu.future")}</Link></li>
                   </ul>
                 )}
               </div>
 
-              <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>Учителя</Link>
+              <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>
+                {t("footer.teachers")}
+              </Link>
 
-              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>StuDent AI</Link>
+              <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>
+                {t("footer.ai_assistant")}
+              </Link>
 
-              
               {!userData ? (
                 <>
                   <Link onClick={CloseMenu} to={'/register'}>
-                    <button className={s.reg}><img src="/user.svg" alt="profile" /></button>
+                    <button className={s.reg}>
+                      <img src="/user.svg" alt="profile" />
+                    </button>
                   </Link>
                 </>
               ) : (
@@ -112,6 +119,7 @@ const Header = () => {
                 </div>
               )}
             </div>
+
             
             <div
               onClick={toggleBurger}
@@ -120,8 +128,13 @@ const Header = () => {
               <span></span>
               <span></span>
             </div>
-            <GoogleTranslate />
 
+            
+            <div className={s.langSwitcher}>
+              <button onClick={() => i18n.changeLanguage('ru')}>RU</button>
+              <button onClick={() => i18n.changeLanguage('en')}>EN</button>
+              <button onClick={() => i18n.changeLanguage('uz')}>UZ</button>
+            </div>
           </nav>
         </div>
       </header>

@@ -1,8 +1,10 @@
 import s from './AiChat.module.scss';
 import { useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export default function Chat({ userId }) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
 
@@ -17,7 +19,7 @@ export default function Chat({ userId }) {
         message
       });
 
-      const reply = res.data?.reply || res.data || 'Ответ отсутствует';
+      const reply = res.data?.reply || res.data || t("ai_chat.no_reply");
 
       setChat(prev => [
         ...prev,
@@ -31,7 +33,7 @@ export default function Chat({ userId }) {
       setChat(prev => [
         ...prev,
         { role: 'user', text: message },
-        { role: 'ai', text: 'Ошибка соединения с сервером.' }
+        { role: 'ai', text: t("ai_chat.connection_error") }
       ]);
       setMessage('');
     }
@@ -49,12 +51,12 @@ export default function Chat({ userId }) {
       <h1 className={s.Aititle}>StuDent AI</h1>
       <div className={s.chatBox}>
         {chat.length === 0 ? (
-          <div className={s.placeholder}>Начни диалог, задав вопрос!</div>
+          <div className={s.placeholder}>{t("ai_chat.start_prompt")}</div>
         ) : (
           chat.map((c, i) => (
             <div key={i} className={s.message}>
               <strong className={c.role === 'user' ? s.user : s.ai}>
-                {c.role === 'user' ? 'Вы' : 'ИИ'}:
+                {c.role === 'user' ? t("ai_chat.you") : t("ai_chat.ai")}:
               </strong>{' '}
               {c.text}
             </div>
@@ -67,7 +69,7 @@ export default function Chat({ userId }) {
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Задай вопрос"
+          placeholder={t("ai_chat.input_placeholder")}
         />
         <button onClick={sendMessage} className={s.AiButton}>
           <svg className={s.svgIcon} viewBox="0 0 384 512">

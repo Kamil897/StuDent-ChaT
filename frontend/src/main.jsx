@@ -7,6 +7,10 @@ import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import { PreLoaderProvider } from './Context/PreLoaderContext.jsx';
 import { UserProvider } from './Context/UserContext.jsx';
+import './i18n'; // ⚠️ обязательно: твой i18n.js
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n'; // сам экземпляр
+
 
 // Конфигурация Firebase
 const firebaseConfig = {
@@ -41,9 +45,11 @@ export const Context = createContext({
 createRoot(document.getElementById('root')).render( 
   <PreLoaderProvider>
     <UserProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <I18nextProvider i18n={i18n}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </I18nextProvider>
     </UserProvider>
   </PreLoaderProvider>
 )

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../Context/UserContext';
+import { useTranslation } from 'react-i18next';
 import './Tir.css';
 
 const Tir = () => {
+  const { t } = useTranslation(); // без namespace
   const navigate = useNavigate();
-  const { user, addPoints } = useUser(); 
+  const { addPoints } = useUser(); 
   const [targets, setTargets] = useState([]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -54,14 +56,10 @@ const Tir = () => {
 
   const handleTargetClick = (id) => {
     setTargets((prev) => prev.filter((target) => target.id !== id));
-    setScore((prev) => {
-      const newScore = prev + 1;
-      return newScore;
-    });
+    setScore((prev) => prev + 1);
   };
 
   useEffect(() => {
-    
     if (timeLeft === 0) {
       addPoints(score); 
     }
@@ -71,28 +69,28 @@ const Tir = () => {
     <div className="tir">
       {isMenuOpen ? (
         <div className="menu">
-          <h1>Shooting Game</h1>
-          <button onClick={resetGame}>Play</button>
-          <button onClick={() => alert('Settings will be available soon!')}>Settings</button>
-          <button onClick={() => navigate('/Games')}>Exit</button>
+          <h1>{t("tir.title")}</h1>
+          <button onClick={resetGame}>{t("tir.play")}</button>
+          <button onClick={() => alert(t("tir.settings_alert"))}>{t("tir.settings")}</button>
+          <button onClick={() => navigate('/Games')}>{t("tir.exit")}</button>
         </div>
       ) : (
         <>
           {timeLeft > 0 && (
             <header className="header">
-              <h1>Тир</h1>
+              <h1>{t("tir.title")}</h1>
               <div className="info">
-                <p>Вы набрали: {score}</p>
-                <p>Время: {timeLeft}s</p>
+                <p>{t("tir.score")}: {score}</p>
+                <p>{t("tir.time")}: {timeLeft}s</p>
               </div>
             </header>
           )}
           <main>
             {timeLeft === 0 ? (
               <div className="game-over">
-                <h2>Игра завершена</h2>
-                <p>Вы набрали: {score}</p>
-                <button className="over-btn" onClick={() => setIsMenuOpen(true)}>Назад</button>
+                <h2>{t("tir.game_over")}</h2>
+                <p>{t("tir.score")}: {score}</p>
+                <button className="over-btn" onClick={() => setIsMenuOpen(true)}>{t("tir.back")}</button>
               </div>
             ) : (
               <div className="game-area">

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -9,13 +8,15 @@ export const UserProvider = ({ children }) => {
       const savedUser = localStorage.getItem("userData");
       const parsedUser = savedUser ? JSON.parse(savedUser) : {};
       return {
-        points: parsedUser.points ?? 0,
-        purchasedItems: parsedUser.purchasedItems ?? [],
+        points: parsedUser.points ?? 5000,
+        purchasedItems: Array.isArray(parsedUser.purchasedItems) 
+          ? parsedUser.purchasedItems.filter(item => item && item.id) 
+          : [],
         ...parsedUser,
       };
     } catch (error) {
       console.error("Ошибка при загрузке данных пользователя из localStorage:", error);
-      return { points: 5000, purchasedItems: [] }; // Значения по умолчанию
+      return { points: 5000, purchasedItems: [] };
     }
   };
 
@@ -28,7 +29,7 @@ export const UserProvider = ({ children }) => {
   }, [user]);
 
   const spendPoints = (amount, item) => {
-    if (user.points >= amount) {
+    if (user.points >= amount && item && item.id) {
       const updatedUser = {
         ...user,
         points: user.points - amount,
@@ -36,24 +37,24 @@ export const UserProvider = ({ children }) => {
       };
 
       setUser(updatedUser);
-
-      return true; // Возвращаем просто флаг успеха
+      return true;
     }
-    return false; // Если очков не хватает
+    return false;
   };
 
   const removePurchasedItem = (itemId) => {
     setUser((prevUser) => {
-      const itemToRemove = prevUser.purchasedItems.find((item) => item.id === itemId);
+      const safeItems = prevUser.purchasedItems.filter(item => item && item.id);
+      const itemToRemove = safeItems.find((item) => item.id === itemId);
       if (!itemToRemove) {
-        console.warn(`Элемент с ID ${itemId} не найден в списке покупок.`);
-        return prevUser; // Возвращаем предыдущего пользователя без изменений
+        console.warn(`Элемент с ID ${itemId} не найден.`);
+        return prevUser;
       }
 
       return {
         ...prevUser,
         points: prevUser.points + itemToRemove.price,
-        purchasedItems: prevUser.purchasedItems.filter((item) => item.id !== itemId),
+        purchasedItems: safeItems.filter((item) => item.id !== itemId),
       };
     });
   };
@@ -71,7 +72,7 @@ export const UserProvider = ({ children }) => {
         user,
         spendPoints,
         removePurchasedItem,
-        addPoints, // Добавляем функцию addPoints в context
+        addPoints,
       }}
     >
       {children}
@@ -81,7 +82,6 @@ export const UserProvider = ({ children }) => {
 
 export const useUser = () => {
   const context = useContext(UserContext);
-
   if (!context) {
     throw new Error("useUser must be used within a UserProvider");
   }

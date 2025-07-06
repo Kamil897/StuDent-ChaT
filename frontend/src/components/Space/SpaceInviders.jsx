@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from 'react';
 import s from './Space.module.css';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../Context/UserContext' // Adjust path if different
-
+import { useUser } from '../../Context/UserContext';
+import { useTranslation } from 'react-i18next'; // <-- добавлен импорт
 
 const PLAYER_WIDTH = 40;
 const PLAYER_HEIGHT = 20;
@@ -15,10 +15,11 @@ function Invider() {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const [gameState, setGameState] = useState('playing');
-  const { addPoints, user } = useUser();
-let canShoot = true;
-const shootCooldown = 300; 
+  const { addPoints } = useUser();
+  const { t } = useTranslation(); // <-- инициализация
 
+  let canShoot = true;
+  const shootCooldown = 300;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -60,39 +61,32 @@ const shootCooldown = 300;
       if (keys['ArrowRight']) player.x += player.speed;
       player.x = Math.max(0, Math.min(canvas.width - player.w, player.x));
     };
-    
 
+    const updateBullets = () => {
+      bullets = bullets.filter(b => b.y > 0 && !b.hit);
+      bullets.forEach(b => {
+        b.y -= 8;
+        enemies.forEach(e => {
+          if (
+            e.alive &&
+            b.x < e.x + e.w &&
+            b.x + b.w > e.x &&
+            b.y < e.y + e.h &&
+            b.y + b.h > e.y
+          ) {
+            e.alive = false;
+            b.hit = true;
+            addPoints(10);
+          }
+        });
+      });
 
-    
-
-const updateBullets = () => {
-  bullets = bullets.filter(b => b.y > 0 && !b.hit);
-  bullets.forEach(b => {
-    b.y -= 8;
-    enemies.forEach(e => {
-      if (
-        e.alive &&
-        b.x < e.x + e.w &&
-        b.x + b.w > e.x &&
-        b.y < e.y + e.h &&
-        b.y + b.h > e.y
-      ) {
-        e.alive = false;
-        b.hit = true;
-        addPoints(10);
+      const allEnemiesDead = enemies.every(e => !e.alive);
+      if (allEnemiesDead) {
+        cancelAnimationFrame(animationId);
+        setGameState('win');
       }
-    });
-  });
-
-
-  const allEnemiesDead = enemies.every(e => !e.alive);
-  if (allEnemiesDead) {
-    cancelAnimationFrame(animationId);
-    setGameState('win');
-  }
-};
-
-    
+    };
 
     const moveEnemies = () => {
       let hitEdge = false;
@@ -110,8 +104,6 @@ const updateBullets = () => {
         enemies.forEach(e => (e.y += 10));
       }
     };
-
-    
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -136,22 +128,21 @@ const updateBullets = () => {
       animationId = requestAnimationFrame(gameLoop);
     };
 
-const keyDown = e => {
-  keys[e.key] = true;
-  if (e.key === ' ' && canShoot) {
-    bullets.push({
-      x: player.x + player.w / 2 - BULLET_WIDTH / 2,
-      y: player.y,
-      w: BULLET_WIDTH,
-      h: BULLET_HEIGHT,
-    });
-    canShoot = false;
-    setTimeout(() => {
-      canShoot = true;
-    }, shootCooldown);
-  }
-};
-
+    const keyDown = e => {
+      keys[e.key] = true;
+      if (e.key === ' ' && canShoot) {
+        bullets.push({
+          x: player.x + player.w / 2 - BULLET_WIDTH / 2,
+          y: player.y,
+          w: BULLET_WIDTH,
+          h: BULLET_HEIGHT,
+        });
+        canShoot = false;
+        setTimeout(() => {
+          canShoot = true;
+        }, shootCooldown);
+      }
+    };
 
     const keyUp = e => {
       keys[e.key] = false;
@@ -182,21 +173,18 @@ const keyDown = e => {
     window.dispatchEvent(event);
   };
 
-  
-  
-
   return (
     <div className={s.wrapper}>
       {gameState !== 'playing' && (
         <div className={s.overlay}>
           <h1 className={s.title}>
-            {gameState === 'win' ? 'You Win! 🎉' : 'Game Over 💀'}
+            {gameState === 'win' ? t('space.win') : t('space.lose')}
           </h1>
           <button className={s.backButton} onClick={() => navigate('/Games')}>
-            ← Назад
+            {t('space.back')}
           </button>
           <button onClick={restartGame} className={s.button}>
-            Restart
+            {t('space.restart')}
           </button>
         </div>
       )}
@@ -210,10 +198,7 @@ const keyDown = e => {
         >
           ◀️
         </button>
-        <button
-          onTouchStart={() => simulateKey(' ')}
-          className={s.fire}
-        >
+        <button onTouchStart={() => simulateKey(' ')} className={s.fire}>
           🔥
         </button>
         <button

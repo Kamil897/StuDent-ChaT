@@ -257,6 +257,32 @@ body {
   text-decoration: none;
 }
 
+.langSwitcher {
+  display: flex;
+  gap: 8px;
+  button {
+    background: none;
+    border: 1px solid #ccc;
+    color: #fff;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  button:hover {
+    background-color: #333;
+  }
+}
+
+.langSelect {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #000;
+  color: #fff;
+}
+
+
 @media (max-width: 768px) {
   .dropdownWrapper {
     width: 20%;

@@ -1,26 +1,28 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import s from "./Tabs.module.scss";
-
-const tabs = [
-  {
-    id: 1,
-    title: "Стать наставником",
-    content: "Поделитесь своими знаниями и опытом, помогая детям и взрослым осваивать новые навыки. Присоединитесь к образовательным инициативам в вашем регионе."
-  },
-  {
-    id: 2,
-    title: "Поддержать проект",
-    content: "Ваши пожертвования помогут нам создавать учебные материалы, проводить бесплатные занятия и поддерживать образовательные платформы для всех желающих."
-  },
-  {
-    id: 3,
-    title: "Принять участие в обучении",
-    content: "Выберите интересующие вас курсы или мастер-классы и начните обучение уже сегодня. Мы поможем вам сделать шаг к новым знаниям и возможностям."
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const Tabs = () => {
+  const { t } = useTranslation();
+  const tabs = [
+    {
+      id: 1,
+      title: t("actions.mentor.title"),
+      content: t("actions.mentor.content"),
+    },
+    {
+      id: 2,
+      title: t("actions.support.title"),
+      content: t("actions.support.content"),
+    },
+    {
+      id: 3,
+      title: t("actions.learn.title"),
+      content: t("actions.learn.content"),
+    },
+  ];
+
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
   return (

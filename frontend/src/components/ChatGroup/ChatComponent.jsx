@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
 
 function ChatComponent() {
   const [chats, setChats] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -44,7 +46,7 @@ function ChatComponent() {
 
   return (
     <div>
-      <h2>Выберите чат:</h2>
+      <h2>{t("chat.select_chat")}</h2>
       <div>
         {chats.map((chat) => (
           <button key={chat.chatid} onClick={() => handleChatClick(chat.chatid)}>
@@ -55,7 +57,7 @@ function ChatComponent() {
       <div>
         {currentChat ? (
           <div>
-            <h3>Чат ID: {currentChat.chatid}</h3>
+            <h3>{t("chat.chat_id")}: {currentChat.chatid}</h3>
             {currentChat.messages.map((message) => (
               <p key={message.msgid}>
                 <strong>{message.msguser} ({message.msgtime}):</strong> {message.msgtext}
@@ -63,7 +65,7 @@ function ChatComponent() {
             ))}
           </div>
         ) : (
-          <p>Выберите чат</p>
+          <p>{t("chat.choose_prompt")}</p>
         )}
       </div>
     </div>

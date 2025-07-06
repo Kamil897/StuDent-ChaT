@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './asteroid.module.css';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Doom = () => {
   const canvasRef = useRef(null);
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const [gameState, setGameState] = useState({ score: 0, gameOver: false });
   const [numAsteroids, setNumAsteroids] = useState(10);
   const [shipColor, setShipColor] = useState('#ffffff');
@@ -13,13 +18,16 @@ const Doom = () => {
   const bulletsRef = useRef([]);
   const keysRef = useRef({});
   const animationFrameIdRef = useRef(null);
-  const joystickPos = useRef({ active: false, startX: 0, startY: 0, angle: 0 });
 
   const TAU = Math.PI * 2;
 
   useEffect(() => {
-    const handleKeyDown = (e) => (keysRef.current[e.key] = true);
-    const handleKeyUp = (e) => (keysRef.current[e.key] = false);
+    const handleKeyDown = (e) => {
+      keysRef.current[e.code] = true;
+    };
+    const handleKeyUp = (e) => {
+      keysRef.current[e.code] = false;
+    };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
     return () => {
@@ -59,29 +67,26 @@ const Doom = () => {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(angle);
-    
-      // Основной корпус
+
       ctx.beginPath();
-      ctx.moveTo(size, 0); // Нос
-      ctx.lineTo(-size, size / 2); // Нижняя задняя часть
-      ctx.lineTo(-size, -size / 2); // Верхняя задняя часть
+      ctx.moveTo(size, 0);
+      ctx.lineTo(-size, size / 2);
+      ctx.lineTo(-size, -size / 2);
       ctx.closePath();
       ctx.fillStyle = 'white';
       ctx.fill();
       ctx.strokeStyle = shipColor;
       ctx.stroke();
-    
-      // Крылья
+
       ctx.beginPath();
-      ctx.moveTo(-size / 2, -size); // Верхнее крыло
+      ctx.moveTo(-size / 2, -size);
       ctx.lineTo(0, 0);
-      ctx.lineTo(-size / 2, size); // Нижнее крыло
+      ctx.lineTo(-size / 2, size);
       ctx.closePath();
       ctx.fillStyle = 'gray';
       ctx.fill();
       ctx.stroke();
-    
-      // Хвостик
+
       ctx.beginPath();
       ctx.moveTo(-size, -size / 4);
       ctx.lineTo(-size - size / 2, 0);
@@ -90,10 +95,9 @@ const Doom = () => {
       ctx.fillStyle = 'red';
       ctx.fill();
       ctx.stroke();
-    
+
       ctx.restore();
     };
-    
 
     const drawAsteroid = (asteroid) => {
       const { x, y, size, angle } = asteroid;
@@ -123,24 +127,19 @@ const Doom = () => {
 
     const updateShip = () => {
       const ship = shipRef.current;
-      if (keysRef.current["ArrowUp"]) {
+      if (keysRef.current["ArrowUp"] || keysRef.current["KeyW"]) {
         ship.velocityX += Math.cos(ship.angle) * 0.1;
         ship.velocityY += Math.sin(ship.angle) * 0.1;
       }
-      if (keysRef.current["ArrowLeft"]) ship.angle -= 0.05;
-      if (keysRef.current["ArrowRight"]) ship.angle += 0.05;
+      if (keysRef.current["ArrowLeft"] || keysRef.current["KeyA"]) ship.angle -= 0.05;
+      if (keysRef.current["ArrowRight"] || keysRef.current["KeyD"]) ship.angle += 0.05;
 
       ship.velocityX *= 0.99;
       ship.velocityY *= 0.99;
-      ship.x += ship.velocityX;
-      ship.y += ship.velocityY;
+      ship.x = (ship.x + canvas.width) % canvas.width;
+      ship.y = (ship.y + canvas.height) % canvas.height;
 
-      if (ship.x > canvas.width) ship.x = 0;
-      if (ship.x < 0) ship.x = canvas.width;
-      if (ship.y > canvas.height) ship.y = 0;
-      if (ship.y < 0) ship.y = canvas.height;
-
-      if (keysRef.current[" "] && bulletsRef.current.length < 5) {
+      if ((keysRef.current["Space"] || keysRef.current["Spacebar"]) && bulletsRef.current.length < 5) {
         bulletsRef.current.push({
           x: ship.x,
           y: ship.y,
@@ -149,6 +148,9 @@ const Doom = () => {
           lifetime: 100,
         });
       }
+
+      ship.x += ship.velocityX;
+      ship.y += ship.velocityY;
     };
 
     const updateAsteroids = () => {
@@ -166,7 +168,7 @@ const Doom = () => {
         bullet.x += bullet.velocityX;
         bullet.y += bullet.velocityY;
         bullet.lifetime--;
-        return bullet.lifetime > 0 && bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height;
+        return bullet.lifetime > 0;
       });
     };
 
@@ -205,12 +207,15 @@ const Doom = () => {
     };
 
     const gameLoop = () => {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       if (gameState.gameOver) {
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.textAlign = "center";
-        ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
+        ctx.fillText(t('doom.game_over'), canvas.width / 2, canvas.height / 2);
         return;
       }
 
@@ -225,7 +230,7 @@ const Doom = () => {
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.textAlign = "center";
-        ctx.fillText("You Win!", canvas.width / 2, canvas.height / 2);
+        ctx.fillText(t('doom.win'), canvas.width / 2, canvas.height / 2);
         return;
       }
 
@@ -234,7 +239,7 @@ const Doom = () => {
 
       ctx.fillStyle = "white";
       ctx.font = "20px Arial";
-      ctx.fillText("Score: " + gameState.score, 10, 30);
+      ctx.fillText(`${t('doom.score')}: ${gameState.score}`, 10, 30);
 
       animationFrameIdRef.current = requestAnimationFrame(gameLoop);
     };
@@ -243,7 +248,7 @@ const Doom = () => {
     return () => {
       if (animationFrameIdRef.current) cancelAnimationFrame(animationFrameIdRef.current);
     };
-  }, [gameState.gameOver, numAsteroids, shipColor, asteroidColor]);
+  }, [gameState.gameOver, numAsteroids, shipColor, asteroidColor, t]);
 
   const resetGame = () => {
     shipRef.current = { x: 400, y: 300, angle: 0, velocityX: 0, velocityY: 0, size: 15 };
@@ -252,48 +257,22 @@ const Doom = () => {
     setGameState({ score: 0, gameOver: false });
   };
 
-  const handleJoystickMove = (e) => {
-    if (!joystickPos.current.active) return;
-    const touch = e.touches[0];
-    const dx = touch.clientX - joystickPos.current.startX;
-    const dy = touch.clientY - joystickPos.current.startY;
-    const angle = Math.atan2(dy, dx);
-    shipRef.current.angle = angle;
-    keysRef.current["ArrowUp"] = true;
-  };
-
-  const handleJoystickStart = (e) => {
-    const touch = e.touches[0];
-    joystickPos.current = {
-      active: true,
-      startX: touch.clientX,
-      startY: touch.clientY,
-      angle: 0,
-    };
-  };
-
-  const handleJoystickEnd = () => {
-    joystickPos.current.active = false;
-    keysRef.current["ArrowUp"] = false;
-  };
-
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Meteors</div>
-      
+      <div className={styles.title}>{t('doom.title')}</div>
 
       <div className={styles.gameControlBar}>
-        <button onClick={resetGame}>Start New Game</button>
+        <button onClick={resetGame}>{t('doom.start')}</button>
+        <button onClick={() => navigate('/Games')}>{t('doom.exit')}</button>
         <button className={styles.settingsToggle} onClick={() => setShowSettings(prev => !prev)}>
-          ⚙️ Settings
+          ⚙️ {t('doom.settings')}
         </button>
-        <button>press before play</button>
       </div>
-  
+
       {showSettings && (
         <div className={styles.controls}>
           <label>
-            Asteroids:
+            {t('doom.asteroids')}:
             <input
               type="number"
               value={numAsteroids}
@@ -303,7 +282,7 @@ const Doom = () => {
             />
           </label>
           <label>
-            Ship Color:
+            {t('doom.ship_color')}:
             <input
               type="color"
               value={shipColor}
@@ -311,7 +290,7 @@ const Doom = () => {
             />
           </label>
           <label>
-            Asteroid Color:
+            {t('doom.asteroid_color')}:
             <input
               type="color"
               value={asteroidColor}
@@ -320,31 +299,16 @@ const Doom = () => {
           </label>
         </div>
       )}
-  
+
       <canvas ref={canvasRef} className={styles.canvas} />
-      
+
       {gameState.gameOver && (
-        <button className={styles.restartButton} onClick={resetGame}>Restart Game</button>
-      )}
-      
-      <div className={styles.mobileControls}>
-        <div
-          className={styles.joystick}
-          onTouchStart={handleJoystickStart}
-          onTouchMove={handleJoystickMove}
-          onTouchEnd={handleJoystickEnd}
-        >
-          🎮 Move
-        </div>
-        <button
-          className={styles.shootButton}
-          onTouchStart={() => keysRef.current[" "] = true}
-          onTouchEnd={() => keysRef.current[" "] = false}
-        >
-          🔫 Shoot
+        <button className={styles.restartButton} onClick={resetGame}>
+          {t('doom.restart')}
         </button>
-      </div>
+      )}
     </div>
-  );}
+  );
+};
 
 export default Doom;

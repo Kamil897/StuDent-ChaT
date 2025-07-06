@@ -3,6 +3,7 @@ import styles from './Snake.module.scss';
 import { getMaxPoints, addGamePoints } from '../utils/pointsHelper';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../Context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 const TILE_SIZE = 20;
 const ROWS = 20;
@@ -31,6 +32,7 @@ function Snake() {
     foodShape: 'circle',
   });
   const {addPoints} = useUser()
+  const { t } = useTranslation();
 
   const timerRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
@@ -155,19 +157,18 @@ const endGame = useCallback(() => {
     });
   };
 
-  // 🏆 Проверка на титул при достижении 20 очков
   useEffect(() => {
     if (score >= 20) {
-      const title = 'Мастер змейки 🐍';
       const titles = JSON.parse(localStorage.getItem('titlesUnlocked')) || [];
-
-      if (!titles.includes(title)) {
-        const updated = [...titles, title];
+  
+      if (!titles.includes('snake')) {
+        const updated = [...titles, 'snake'];
         localStorage.setItem('titlesUnlocked', JSON.stringify(updated));
-        console.log(`🏆 Титул получен: ${title}`);
+        console.log('🏆 Титул получен: snake');
       }
     }
   }, [score]);
+  
 
   const handleTouchStart = useCallback((e) => {
     const touch = e.touches[0];
@@ -210,30 +211,31 @@ const endGame = useCallback(() => {
     <div className={styles.app}>
       {!isGameStarted && !isGameOver ? (
         <div className={styles.menu}>
-          <h1>Snake Game</h1>
-          <button onClick={() => setIsGameStarted(true)}>Play</button>
-          <button onClick={openSettings}>Settings</button>
-          <button onClick={() => navigate("/Games")}>Exit</button>
+          <h1>{t('snake.title')}</h1>
+          <button onClick={() => setIsGameStarted(true)}>{t('snake.play')}</button>
+          <button onClick={openSettings}>{t('snake.settings')}</button>
+          <button onClick={() => navigate("/Games")}>{t('snake.exit')}</button>
+
           <div className={styles.instructions}>
-            <p>Mobile: Use on-screen arrows or swipe to control</p>
-            <p>Desktop: Use arrow keys or WASD to control</p>
+            <p>{t('snake.instructions.mobile')}</p>
+            <p>{t('snake.instructions.desktop')}</p>
           </div>
         </div>
       ) : isGameOver ? (
         <div className={styles.menu}>
-          <h1>Game Over</h1>
-          <p>Score: {score}</p>
-          <p>Best Score: {bestScore}</p>
-          <button onClick={resetGame}>Play Again</button>
-          <button onClick={openSettings}>Settings</button>
-          <button onClick={() => navigate("/Games")}>Exit</button>
+          <h1>{t('snake.gameOver')}</h1>
+          <p>{t('snake.score')}: {score}</p>
+          <p>{t('snake.bestScore')}: {bestScore}</p>
+          <button onClick={resetGame}>{t('snake.playAgain')}</button>
+          <button onClick={openSettings}>{t('snake.settings')}</button>
+          <button onClick={() => navigate("/Games")}>{t('snake.exit')}</button>
         </div>
       ) : (
         <>
           <div className={styles.infoBar}>
-            <h1 className={styles.score}>Score: {score}</h1>
-            <h1 className={styles.timer}>Time Left: {timeLeft}s</h1>
-            <button className={styles.menuButton} onClick={resetGame}>Menu</button>
+            <h1 className={styles.score}>{t('snake.score')}: {score}</h1>
+            <h1 className={styles.timer}>{t('snake.timeLeft')}: {timeLeft}s</h1>
+            <button className={styles.menuButton} onClick={resetGame}>{t('snake.menu')}</button>
           </div>
           <div
             ref={boardRef}
