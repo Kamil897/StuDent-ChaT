@@ -541,6 +541,8 @@
           "all": "Barcha yangiliklar",
           "society": "Jamiyat",
           "tech": "Texnologiya",
+          "project": "Loyiha yangiliklari",
+          "other": "Boshqa yangiliklar",
           "culture": "Madaniyat",
           "notFound": "Hech narsa topilmadi",
           "tryAnother": "Iltimos, qidiruv so‘rovini o‘zgartirib ko‘ring",
@@ -594,6 +596,99 @@
               "title": "“Kelajak maktabini qur” dasturi",
               "content": "2024-yil oxirida boshlangan tashabbus orqali fuqarolar yangi maktablar qurilishi va jihozlanishiga xayriya qilish imkoniga ega. Mablag‘lar sinflar, laboratoriyalar va qulay sharoitlar yaratishga sarflanadi."
             }
+          },
+
+          "purchases": {
+            "title": "Sotib olinganlar",
+            "back": "Do'konga qaytish",
+            "points": "ochko",
+            "items": "Umumiy mahsulotlar",
+            "totalSpent": "Jami sarflangan",
+            "remove": "O'chirish",
+            "empty": "Siz hali hech narsa sotib olmadingiz.",
+            "sell": "Sotish",
+            "sold": "Mahsulot savdoga qo'yildi!",
+            "enterPrice": "Sotish narxini kiriting",
+            "confirmSell": "Tasdiqlash"
+          },
+
+          "shop_items": {
+            "id": "Mahsulot IDsi",
+            "categoryLabel": "Kategoriya",
+            "status": "Holat",
+            "statusAvailable": "Mavjud",
+            "statusBought": "Allaqachon xarid qilingan",
+            "estimatedDelivery": "Taxminiy yetkazib berish",
+            "days": "kun",
+
+            "shop": "Do'kon",
+            "notFound": "Mahsulot topilmadi",
+            "notFoundDescription": "Afsuski, bu ID raqamli mahsulot mavjud emas.",
+            "backToShop": "Do'konga qaytish",
+
+            "premium": "Premium",
+            "features": "Xususiyatlar",
+            "points": "ball",
+            "need": "Yana kerak",
+            "morePoints": "ball",
+            "buy": "Xarid qilish",
+            "back": "Orqaga",
+            "success": "Xarid muvaffaqiyatli amalga oshirildi!",
+            "fail": "Xarid qilish uchun ball yetarli emas.",
+            "confirmPurchase": "Xaridni tasdiqlang",
+            "confirmMessage": "{{name}} mahsulotini {{price}} ballga sotib olmoqchimisiz?",
+            "confirmBuy": "Tasdiqlash",
+            "cancel": "Bekor qilish",
+
+            "rainbow": {
+              "name": "Kamalak Mavzusi",
+              "description": "Profilingiz uchun yorqin va rang-barang mavzu.",
+              "feature1": "Kamalak animatsiyasi",
+              "feature2": "Qorong'i rejimni qo'llab-quvvatlash",
+              "feature3": "E'tiborni tortadi"
+            },
+            "kitty": {
+              "name": "Mushukcha Mavzusi",
+              "description": "Mushuklarni yaxshi ko'radiganlar uchun yoqimli mavzu.",
+              "feature1": "Miyovlaydigan tovush",
+              "feature2": "Mushukcha fon rasmi",
+              "feature3": "Animatsion ikonlar"
+            },
+            "luxary": {
+              "name": "Hashamatli Mavzu",
+              "description": "Oltin elementlarga ega nafis dizayn.",
+              "feature1": "Oltin palitra",
+              "feature2": "Premium interfeys"
+            },
+            "omg": {
+              "name": "'Voy!' Mavzusi",
+              "description": "Ko'tarinki kayfiyat uchun quvnoq mavzu.",
+              "feature1": "Portlash effektlari",
+              "feature2": "Ajablanarli tovushlar",
+              "feature3": "Yaltirab turadigan elementlar"
+            },
+            "kitty_2": {
+              "name": "Mushukcha Mavzusi PRO",
+              "description": "Mushuklarni chin dildan sevuvchilar uchun yangi versiya!",
+              "feature1": "3D Miyovlash",
+              "feature2": "Yangi animatsiyalar",
+              "feature3": "Maxsus yumshoqlik"
+            },
+            "luxary_2": {
+              "name": "Elita Mavzusi",
+              "description": "Yana ko'proq hashamat va porloqlik.",
+              "feature1": "Brilliant effekti",
+              "feature2": "Eksklyuziv ikonlar"
+            }
+          },
+
+          "subjects": {
+            "math": "Matematika",
+            "physics": "Fizika",
+            "biology": "Biologiya",
+            "chemistry": "Kimyo",
+            "history": "Tarix",
+            "literature": "Adabiyot"
           }
 }
   

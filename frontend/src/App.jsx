@@ -47,7 +47,7 @@ const App = () => {
   const isNotFoundPage = ![
     "/", "/ChatGroup", "/Teacher", "/Register", "/Login", "/MainPage",
     "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake",
-    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat"
+    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat",
   ].includes(location.pathname);
 
   return (
@@ -75,8 +75,8 @@ const App = () => {
           <Route path="/ChatGroup" element={<ChatGroup />} />
           <Route path="/KnowledgeMaze" element={<KnowledgeMaze/>}/>
           <Route path="/MathBattle" element={<MathBattle/>}/>
-          <Route path='/bought' element={<Bought purchasedItems={purchasedItems} setPurchasedItems={setPurchasedItems} />} />
-          <Route path='/product/:id' element={<ProductPage/>}/>
+          <Route path="/bought" element={<Bought/>}/>
+          <Route path= '/product/:id' element={<ProductPage/>}/>
           <Route path='/meteors' element={<Doom/>}/>
           <Route path='/pingpong' element={<PongNeon />} />
           <Route path='/don' element={ <Don/>} />

@@ -1,16 +1,28 @@
 .h1 {
    font-size: 30px;
    padding: 60px;
-   border: 1px solid #D2E5E9;
-   border-left:  none;
-   border-right:  none;
+   border-left: none;
+   border-right: none;
    color: #fbfbfb;
-}
-
-.Text {
+ 
+   &.project {
+     background: linear-gradient(to right, #1f3b4d, #2a607c);
+     border-top: 3px solid #4dc2d1;
+     border-bottom: 3px solid #4dc2d1;
+   }
+ 
+   &.general {
+     background: linear-gradient(to right, #3a3a3a, #575757);
+     border-top: 3px solid #999;
+     border-bottom: 3px solid #999;
+   }
+ }
+ 
+ .Text {
    font-size: 41px;
    color: white;
-}
+ }
+ 
 
 .df {
    display: flex;

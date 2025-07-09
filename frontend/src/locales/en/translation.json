@@ -535,8 +535,9 @@
       "news": {
         "search": "Search news...",
         "searchResults": "Search results",
-        "all": "All News",
-        "society": "Society",
+        "project": "Project News",
+        "other": "Other News",
+        "society": "Society",        
         "tech": "Technology",
         "culture": "Culture",
         "notFound": "No results found",
@@ -590,5 +591,98 @@
           "title": "Build a School for the Future Program",
           "content": "Launched at the end of 2024, the 'Build a School for the Future' initiative allows citizens of Uzbekistan to contribute to the construction and equipping of new schools. Donations go toward building classrooms, purchasing lab equipment, and creating comfortable learning environments."
         }
+      },
+
+      "purchases": {
+        "title": "Bought Items",
+        "back": "Back to Shop",
+        "points": "points",
+        "items": "Total items",
+        "totalSpent": "Total spent",
+        "remove": "Remove",
+        "empty": "You haven’t bought anything yet.",
+        "sell": "Sell",
+        "sold": "Item listed for sale!",
+        "enterPrice": "Enter sell price",
+        "confirmSell": "Confirm Sell"
+      },
+
+      "shop_items": {
+        "id": "Product ID",
+        "categoryLabel": "Category",
+        "status": "Status",
+        "statusAvailable": "Available",
+        "statusBought": "Already Purchased",
+        "estimatedDelivery": "Estimated Delivery",
+        "days": "days",
+
+        "shop": "Shop",
+        "notFound": "Product Not Found",
+        "notFoundDescription": "Unfortunately, a product with this ID does not exist.",
+        "backToShop": "Back to Shop",
+
+        "premium": "Premium",
+        "features": "Features",
+        "points": "points",
+        "need": "Need",
+        "morePoints": "more points",
+        "buy": "Buy",
+        "back": "Back",
+        "success": "Purchase successful!",
+        "fail": "Not enough points to make the purchase.",
+        "confirmPurchase": "Confirm Purchase",
+        "confirmMessage": "Are you sure you want to buy {{name}} for {{price}} points?",
+        "confirmBuy": "Confirm",
+        "cancel": "Cancel",
+
+        "rainbow": {
+          "name": "Rainbow Theme",
+          "description": "A bright and colorful theme for your profile.",
+          "feature1": "Rainbow animation",
+          "feature2": "Dark mode support",
+          "feature3": "Eye-catching"
+        },
+        "kitty": {
+          "name": "Cat Theme",
+          "description": "A cute cat-themed style for fluff lovers.",
+          "feature1": "Meowing sound",
+          "feature2": "Kitten wallpapers",
+          "feature3": "Animated icons"
+        },
+        "luxary": {
+          "name": "Luxury Theme",
+          "description": "Elegant design with golden elements.",
+          "feature1": "Gold color palette",
+          "feature2": "Premium interface"
+        },
+        "omg": {
+          "name": "OMG Theme",
+          "description": "A crazy fun theme for special moods.",
+          "feature1": "Explosion effects",
+          "feature2": "Surprise sounds",
+          "feature3": "Sparkling elements"
+        },
+        "kitty_2": {
+          "name": "Cat Theme PRO",
+          "description": "An updated version for true cat lovers!",
+          "feature1": "3D Meowing",
+          "feature2": "New animations",
+          "feature3": "Extra fluffiness"
+        },
+        "luxary_2": {
+          "name": "Elite Theme",
+          "description": "Even more luxury and sparkle.",
+          "feature1": "Diamond effect",
+          "feature2": "Exclusive icons"
+        }
+      },
+      
+      "subjects": {
+        "math": "Mathematics",
+        "physics": "Physics",
+        "biology": "Biology",
+        "chemistry": "Chemistry",
+        "history": "History",
+        "literature": "Literature"
       }
 }

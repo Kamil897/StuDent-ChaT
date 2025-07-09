@@ -1,120 +1,250 @@
-$primary-color: #293239;
-$secondary-color: #d2e5e9;
-$accent-color: #ff9800;
-$background-light: #f7f9fa;
-$border-radius: 16px;
-$shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+$main-color: #2c3e50;
+$accent-color: #3498db;
+$light-color: #ecf0f1;
+$text-color: #ecf0f1;
+$danger-color: #e74c3c;
+$success-color: #2ecc71;
 
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: $background-light;
-  padding: 20px;
+  padding: 2rem;
+  background-color: $main-color;
+  color: $text-color;
+  min-height: 100vh;
 }
 
 .productCard {
   display: flex;
-  max-width: 900px;
-  width: 100%;
-  background: white;
-  border-radius: $border-radius;
-  box-shadow: $shadow;
+  flex-direction: column;
+  background-color: lighten($main-color, 5%);
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+
+  &.premium {
+    border: 2px solid gold;
+  }
+
+  &.loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 .imageSection {
-  flex: 1;
-  background: #f0f0f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  text-align: center;
+  background-color: darken($main-color, 10%);
 }
 
-.image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+.imageContainer {
+  position: relative;
+  padding: 1rem;
+
+  .image {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+
+    &.loaded {
+      opacity: 1;
+    }
+  }
+
+  .premiumBadge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: gold;
+    color: black;
+    padding: 0.4rem 0.7rem;
+    border-radius: 5px;
+    font-weight: bold;
+  }
 }
 
 .detailsSection {
-  flex: 1;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  padding: 2rem;
 }
 
 .title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: $primary-color;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .description {
-  font-size: 16px;
-  margin-bottom: 15px;
-  color: #555;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
 }
 
-.price {
-  font-size: 20px;
-  font-weight: bold;
-  color: $primary-color;
+.features {
+  margin-bottom: 1.5rem;
+
+  .featuresTitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .featuresList {
+    list-style: none;
+    padding: 0;
+
+    .featureItem {
+      margin: 0.25rem 0;
+      display: flex;
+      align-items: center;
+
+      .featureIcon {
+        color: $success-color;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.priceSection {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+
+  .insufficientFunds {
+    color: $danger-color;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.5rem;
+  }
 }
 
 .actions {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1rem;
+
+  .buyButton {
+    background-color: $accent-color;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &.cantAfford {
+      background-color: darken($accent-color, 20%);
+    }
+  }
+
+  .disabledButton {
+    background-color: $success-color;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .backButton {
+    background-color: transparent;
+    color: $text-color;
+    border: 1px solid $text-color;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+
+    .backIcon {
+      margin-right: 0.3rem;
+    }
+  }
 }
 
-.buyButton {
-  background: $accent-color;
-  color: white;
-  font-size: 22px;
-  padding: 12px;
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(44, 62, 80, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modal {
+    background-color: $light-color;
+    color: #333;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+
+    .modalTitle {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .modalText {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modalActions {
+      display: flex;
+      justify-content: space-between;
+
+      .confirmButton {
+        background-color: $success-color;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+      }
+
+      .cancelButton {
+        background-color: $danger-color;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+      }
+    }
+  }
+}
+
+.breadcrumb {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: $text-color;
+
+  .breadcrumbLink {
+    color: $accent-color;
+    text-decoration: none;
+  }
+
+  .breadcrumbSeparator {
+    margin: 0 0.25rem;
+  }
+
+  .breadcrumbCurrent {
+    font-weight: bold;
+  }
+}
+
+.statsBox {
+  background-color: lighten($main-color, 10%);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.divider {
+  margin: 1.5rem 0;
   border: none;
-  border-radius: $border-radius;
-  cursor: pointer;
-  transition: background 0.3s;
-
-  &:hover {
-    background: rgba(52, 152, 219, 0.9);
-  }
+  border-top: 1px solid lighten($main-color, 20%);
 }
 
-.disabledButton {
-  background: #ccc;
-  color: #666;
-  font-size: 22px;
-  padding: 12px;
-  border-radius: $border-radius;
-  cursor: not-allowed;
-}
-
-.backButton {
-  display: inline-block;
-  background: $primary-color;
-  color: white;
-  font-size: 16px;
-  padding: 12px;
-  border-radius: $border-radius;
-  text-decoration: none;
-  text-align: center;
-  transition: background 0.3s;
-
-  &:hover {
-    background: rgba(52, 152, 219, 0.9);
-  }
-}
-
-.notFound {
-  font-size: 24px;
-  text-align: center;
-  margin-top: 50px;
-  color: $primary-color;
+.spinner {
+  margin-right: 0.5rem;
 }

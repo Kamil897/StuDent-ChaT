@@ -5,7 +5,7 @@ import { FaFlag, FaGlobeAmericas, FaGlobeEurope, FaGlobe } from "react-icons/fa"
 import { FaTelegram, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { useTranslation } from 'react-i18next'; // ✅
 
-const TeacherCard = ({ name, languages }) => {
+const TeacherCard = ({ name, languages, subjects }) => {
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation(); // ✅
 
@@ -38,9 +38,18 @@ const TeacherCard = ({ name, languages }) => {
           <div className={s.teacher__card__text}>
             {languages.map((lang) => (
               <h4 key={lang}>
-                {getIcon(lang)} {t('teachers_card.teaches')} <span>{lang}</span>
+                {getIcon(lang)} {t("teachers_card.teaches")} <span>{t(`teachers_hero.${lang}`)}</span>
               </h4>
             ))}
+
+            {subjects.length > 0 && (
+              <div className={s.subjects}>
+                {subjects.map((subj) => (
+                  <h4 key={subj}>📘 {t(`subjects.${subj}`)}</h4>
+                ))}
+              </div>
+            )}
+
             <p className={s.card__text}>
               {t('teachers_card.bio')}
             </p>
@@ -50,7 +59,7 @@ const TeacherCard = ({ name, languages }) => {
             </button>
           </div>
         </div>
-      </div>
+
 
       <AnimatePresence>
         {showModal && (
@@ -69,6 +78,7 @@ const TeacherCard = ({ name, languages }) => {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
     </div>
   );
 };

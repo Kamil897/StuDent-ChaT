@@ -3,65 +3,66 @@ import NewsText from '../NewsText/NewsText';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const newsArray = [
+const projectNews = [
   {
-    id: 'society',
-    category: 'news.society',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/BBC_World_News_2022_%28Boxed%29.svg',
-    content: 'news.societyText'
-  },
-  {
-    id: 'tech',
+    id: 'tech1',
     category: 'news.tech',
     img: '/openday.jpg',
     content: 'news.techText1'
-  },
-  {
-    id: 'tech',
-    category: 'news.tech',
-    img: '/openday.jpg',
-    content: 'news.techText2'
   },
   {
     id: 'culture',
     category: 'news.culture',
     img: '/agile.jpg',
     content: 'news.cultureText'
+  },
+  {
+    id: 'tech2',
+    category: 'news.tech',
+    img: '/openday.jpg',
+    content: 'news.techText2'
+  }
+];
+
+const generalNews = [
+  {
+    id: 'society',
+    category: 'news.society',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/BBC_World_News_2022_%28Boxed%29.svg',
+    content: 'news.societyText'
   }
 ];
 
 const NewsHero = () => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredSections, setFilteredSections] = useState({
-    allnews: true,
-    society: true,
-    tech: true,
-    culture: true
-  });
+  const [filteredProjectNews, setFilteredProjectNews] = useState(projectNews);
+  const [filteredGeneralNews, setFilteredGeneralNews] = useState(generalNews);
 
   useEffect(() => {
     if (!searchTerm.trim()) {
-      setFilteredSections({
-        allnews: true,
-        society: true,
-        tech: true,
-        culture: true
-      });
+      setFilteredProjectNews(projectNews);
+      setFilteredGeneralNews(generalNews);
       return;
     }
 
     const searchLower = searchTerm.toLowerCase();
-    const newFiltered = {};
 
-    newsArray.forEach(({ id, category, content }) => {
-      const match =
-        t(category).toLowerCase().includes(searchLower) ||
-        t(content).toLowerCase().includes(searchLower);
-      newFiltered[id] = true;
-    });
+    setFilteredProjectNews(
+      projectNews.filter(
+        ({ category, content }) =>
+          t(category).toLowerCase().includes(searchLower) ||
+          t(content).toLowerCase().includes(searchLower)
+      )
+    );
 
-    setFilteredSections(newFiltered);
+    setFilteredGeneralNews(
+      generalNews.filter(
+        ({ category, content }) =>
+          t(category).toLowerCase().includes(searchLower) ||
+          t(content).toLowerCase().includes(searchLower)
+      )
+    );
   }, [searchTerm, t]);
 
   const handleSearchChange = (e) => {
@@ -119,34 +120,42 @@ const NewsHero = () => {
         )}
       </div>
 
-      <div className={`${s.h1} ${s.df}`}>
-        <h1 className={s.Text} id="allnews">{t('news.all')}</h1>
-        <div className={s.nav}>
-          <a href="#society">{t('news.society')}</a>
-          <a href="#tech">{t('news.tech')}</a>
-          <a href="#culture">{t('news.culture')}</a>
-        </div>
+      <div className={`${s.h1} ${s.project}`}>
+        <h1 className={s.Text}>{t('news.project')}</h1>
       </div>
-
-      {newsArray.map(({ id, category, img, content }, index) => (
-        filteredSections[id] && (
-          <div key={id + index}>
-            <div className={s.h1}>
-              <h1 className={s.Text} id={id}>{t(category)}</h1>
-            </div>
-            <div className={s.new}>
-              <NewsText ImgSrc={img} p={t(content)} />
-            </div>
+      {filteredProjectNews.map(({ id, category, img, content }) => (
+        <div key={id}>
+          <div className={s.h1}>
+            <h2 className={s.Text}>{t(category)}</h2>
           </div>
-        )
+          <div className={s.new}>
+            <NewsText ImgSrc={img} p={t(content)} />
+          </div>
+        </div>
       ))}
 
-      {searchTerm && !Object.values(filteredSections).some(Boolean) && (
-        <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
-          <h3>{t('news.notFound')}</h3>
-          <p>{t('news.tryAnother')}</p>
+      <div className={`${s.h1} ${s.general}`}>
+        <h1 className={s.Text}>{t('news.other')}</h1>
+      </div>
+      {filteredGeneralNews.map(({ id, category, img, content }) => (
+        <div key={id}>
+          <div className={s.h1}>
+            <h2 className={s.Text}>{t(category)}</h2>
+          </div>
+          <div className={s.new}>
+            <NewsText ImgSrc={img} p={t(content)} />
+          </div>
         </div>
-      )}
+      ))}
+
+      {searchTerm &&
+        filteredProjectNews.length === 0 &&
+        filteredGeneralNews.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+            <h3>{t('news.notFound')}</h3>
+            <p>{t('news.tryAnother')}</p>
+          </div>
+        )}
     </div>
   );
 };

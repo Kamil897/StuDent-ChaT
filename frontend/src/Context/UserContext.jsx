@@ -7,10 +7,11 @@ export const UserProvider = ({ children }) => {
     try {
       const savedUser = localStorage.getItem("userData");
       const parsedUser = savedUser ? JSON.parse(savedUser) : {};
+
       return {
         points: parsedUser.points ?? 5000,
-        purchasedItems: Array.isArray(parsedUser.purchasedItems) 
-          ? parsedUser.purchasedItems.filter(item => item && item.id) 
+        purchasedItems: Array.isArray(parsedUser.purchasedItems)
+          ? parsedUser.purchasedItems
           : [],
         ...parsedUser,
       };
@@ -23,19 +24,17 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(loadUserData());
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem("userData", JSON.stringify(user));
-    }
+    localStorage.setItem("userData", JSON.stringify(user));
   }, [user]);
 
-  const spendPoints = (amount, item) => {
-    if (user.points >= amount && item && item.id) {
+  // ✅ Accept productId here!
+  const spendPoints = (amount, productId) => {
+    if (user.points >= amount && !user.purchasedItems.includes(productId)) {
       const updatedUser = {
         ...user,
         points: user.points - amount,
-        purchasedItems: [...user.purchasedItems, item],
+        purchasedItems: [...user.purchasedItems, productId],
       };
-
       setUser(updatedUser);
       return true;
     }
@@ -43,20 +42,10 @@ export const UserProvider = ({ children }) => {
   };
 
   const removePurchasedItem = (itemId) => {
-    setUser((prevUser) => {
-      const safeItems = prevUser.purchasedItems.filter(item => item && item.id);
-      const itemToRemove = safeItems.find((item) => item.id === itemId);
-      if (!itemToRemove) {
-        console.warn(`Элемент с ID ${itemId} не найден.`);
-        return prevUser;
-      }
-
-      return {
-        ...prevUser,
-        points: prevUser.points + itemToRemove.price,
-        purchasedItems: safeItems.filter((item) => item.id !== itemId),
-      };
-    });
+    setUser((prevUser) => ({
+      ...prevUser,
+      purchasedItems: prevUser.purchasedItems.filter((id) => id !== itemId),
+    }));
   };
 
   const addPoints = (points) => {
