@@ -70,44 +70,23 @@ const Header = () => {
             <div className={`${s.links} ${active ? s.active : ''}`}>
               <a href="/ChatGroup">{t("footer.groups")}</a>
 
-              <div className={s.dropdownWrapper}>
-                <button className={s.dropdownToggle} onClick={toggleDropdown}>
-                  {t("footer.news")}
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M13.5306 6.53063L8.53063 11.5306C8.46095 11.6005..."
-                      fill="black"
-                    />
-                  </svg>
-                </button>
-
-                {isOpen && (
-                  <ul className={s.dropdownMenu}>
-                    <li><Link onClick={closeAndToggle} to="/news">{t("news_menu.all")}</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Tech">{t("news_menu.problems")}</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Society">{t("news_menu.solution")}</Link></li>
-                    <li><Link onClick={closeAndToggle} to="/Culture">{t("news_menu.future")}</Link></li>
-                  </ul>
-                )}
-              </div>
-
-              <Link className={s.teach} onClick={CloseMenu} to={'/Teacher'}>
-                {t("footer.teachers")}
-              </Link>
 
               <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>
                 {t("footer.ai_assistant")}
               </Link>
 
-              {!userData ? (
-                <>
-                  <Link onClick={CloseMenu} to={'/register'}>
-                    <button className={s.reg}>
-                      <img src="/user.svg" alt="profile" />
-                    </button>
+                            {!userData ? (
+                <div className={s.authButtons}>
+                  <Link onClick={CloseMenu} to={'/login'}>
+                    <button className={s.loginBtn}>{t("menu.login")}</button>
                   </Link>
-                </>
+                  <Link onClick={CloseMenu} to={'/register'}>
+                    <button className={s.registerBtn}>{t("menu.register")}</button>
+                  </Link>
+                </div>
               ) : (
+                
+
                 <div className={s.userSection}>
                   <Link className={s.main} onClick={CloseMenu} to={'/MainPage'}>
                     <img

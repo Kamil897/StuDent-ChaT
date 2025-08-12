@@ -4,6 +4,7 @@ import SpotlightCard from "../SpotlightCard/SpotlightCard.jsx";
 import Tabs from "../Tabs/Tabs.jsx";
 import TextCursor from "../TextCursor/TextCursor.jsx";
 import { useTranslation } from "react-i18next";
+import { FaRobot, FaLightbulb, FaBookOpen, FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 const HomeHero = () => {
     const tooltipRef = useRef(null);
@@ -36,6 +37,34 @@ const HomeHero = () => {
         };
     }, []);
 
+
+    const steps = [
+        {
+          icon: <FaRobot />,
+          title: "1. Открой ИИ-помощника",
+          description: "Перейди на страницу помощника и выбери нужную категорию: задания, тесты, объяснение тем и т.д.",
+        },
+        {
+          icon: <FaLightbulb />,
+          title: "2. Сформулируй запрос",
+          description: "Напиши чёткий и конкретный вопрос. Например: «Объясни, что такое производная» или «Помоги решить уравнение».",
+        },
+        {
+          icon: <FaBookOpen />,
+          title: "3. Получи ответ и учись",
+          description: "ИИ даст объяснение, решение или пошаговую инструкцию. Используй ответ как материал для изучения, а не как готовую шпаргалку.",
+        },
+        {
+          icon: <FaCheck />,
+          title: "4. Применяй знания",
+          description: "После получения ответа — проверь себя, повтори материал, задай дополнительные вопросы.",
+        },
+        {
+          icon: <FaExclamationTriangle />,
+          title: "5. Используй ИИ правильно",
+          description: "ИИ — это учебный помощник. Не используй его для списывания или обмана. Он создан, чтобы помогать тебе понимать и учиться.",
+        },
+      ];
     return (
         <>
             <section className={s.welcome_section}>
@@ -128,6 +157,22 @@ const HomeHero = () => {
                         <h2 className={s.item_text_desc}>{t("why_us.reasons.safe_space.title")}</h2>
                         <p className={s.item_text_decor}>{t("why_us.reasons.safe_space.content")}</p>
                     </div>
+                </div>
+            </section>
+
+            <section className={s.AI_usage}>
+                <div className={s.container_usage}>
+                    <h1 className={s.title_usage}>{t("ai_usage.title")}</h1>
+                    <div className={s.steps}>
+                    {steps.map((step, index) => (
+                        <div key={index} className={s.step}>
+                        <div className={s.icon}>{step.icon}</div>
+                        <h2 className={s.stepTitle}>{t(`ai_usage.steps.${index}.title`)}</h2>
+                        <p className={s.description_usage}>{t(`ai_usage.steps.${index}.description`)}</p>
+                        </div>
+                    ))}
+                    </div>
+                    <p className={s.note}>{t("ai_usage.note")}</p>
                 </div>
             </section>
         </>

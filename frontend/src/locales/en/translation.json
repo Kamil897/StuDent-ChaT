@@ -1,8 +1,9 @@
 {
     "menu": {
       "group": "Group",
-      "news": "News",
-      "teachers": "Teachers"
+      "news": "Instruction for using AI",
+      "login": "login",
+      "register": "Register"
     },
     "help": "Help center – for whom?",
     "text_cursor": "students!",
@@ -73,9 +74,8 @@
 
     "footer": {
       "groups": "Groups",
-      "news": "News",
+      "news": "Intructions for using AI",
       "institutions": "Institutions",
-      "teachers": "Teachers",
       "ai_assistant": "StuDent AI",
       "account": "My Account"
     },
@@ -91,30 +91,23 @@
       "send": "Send"
     },
 
-    "teachers_card": {
-      "teaches": "Teaches:",
-      "bio": "Meet Botirjon Tojiboev, head of the events department and a graduate of a public school. Combining interests in music, art, space, and teaching, Botirjon is an artist who loves playing the piano and guitar.",
-      "contacts": "Contacts",
-      "socials": "Social Media",
-      "close": "Close"
-    },
-
-    "teachers_hero": {
-      "all": "All",
-      "russian": "Russian",
-      "english": "English",
-      "german": "German",
-      "french": "French",
-      "no_results": "No teachers found for this language..."
-    },
-
     "ai_chat": {
       "start_prompt": "Start the conversation by asking a question!",
       "you": "You",
       "ai": "AI",
       "input_placeholder": "Ask a question",
       "connection_error": "Connection to server failed.",
-      "no_reply": "No response"
+      "no_reply": "No response",
+      "chats": "Chats",
+      "new_chat": "New Chat",
+      "search": "Search",
+      "chat": "Chat",
+      "library": "Library",
+      "settings": "Settings",
+      "theme": "Theme",
+      "logged_in_as": "Logged in as",
+      "welcome": "Welcome!",
+      "thinking": "Thinking"
     },
 
     "main": {
@@ -684,5 +677,37 @@
         "chemistry": "Chemistry",
         "history": "History",
         "literature": "Literature"
+      },
+      
+      "ai_usage": {
+        "title": "How to use the AI assistant for learning",
+        "note": "⚠️ Remember: AI is a tool, not a replacement for independent learning!",
+        "steps": [
+          {
+            "title": "1. Open the AI assistant",
+            "description": "Go to the assistant page and choose a category: tasks, tests, topic explanations, etc."
+          },
+          {
+            "title": "2. Formulate your question",
+            "description": "Write a clear and specific question. For example: “Explain what a derivative is” or “Help me solve an equation.”"
+          },
+          {
+            "title": "3. Get the answer and learn",
+            "description": "The AI will give you an explanation, solution, or step-by-step guide. Use it to study, not as a cheat sheet."
+          },
+          {
+            "title": "4. Apply your knowledge",
+            "description": "After receiving the answer — test yourself, repeat the material, ask follow-up questions."
+          },
+          {
+            "title": "5. Use AI responsibly",
+            "description": "AI is a learning tool. Don’t use it to cheat. It's meant to help you understand and grow."
+          },
+          {
+            "title": "6. Get the most from AI by using it wisely",
+            "description": "Consistent and honest use of AI helps deepen understanding and build critical thinking skills."
+          }
+        ]
       }
+      
 }

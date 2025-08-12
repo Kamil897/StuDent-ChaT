@@ -452,6 +452,70 @@ text-align: right;
   padding: 150px 0;
 }
 
+.AI_usage {
+  background-color: #293239 ;
+}
+
+.container_usage {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.title_usage {
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #e3eced;
+}
+
+.steps {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.step {
+  background: #f9f9f9;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 35px;
+  margin: 15px 0;
+  text-align: center;
+  transition: transform 0.3s ease;
+  min-height: 310px;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+}
+
+.icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  color: #3498db;
+}
+
+.stepTitle {
+  font-size: 25px;
+  margin-bottom: 10px;
+  color: #34495e;
+}
+
+.description_usage {
+  font-size: 20px;
+  color: #555;
+}
+
+.note {
+  margin-top: 40px;
+  font-size: 16px;
+  text-align: center;
+  color: #999;
+}
+
+
 // #D2E5E9 немного темный
 // #293239 темный
 // #e3eced сероватый

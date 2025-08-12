@@ -1,8 +1,10 @@
 {
     "menu": {
       "group": "Guruh",
-      "news": "Yangiliklar",
-      "teachers": "O‘qituvchilar"
+      "news": "AI uchun ko'rsatmalar",
+      "login": "Kirish",
+      "register": "Registrasiya"
+
     },
 
     "help": "Yordam markazi – kimlar uchun?",
@@ -75,9 +77,8 @@
     
     "footer": {
       "groups": "Guruhlar",
-      "news": "Yangiliklar",
+      "news": "AI uchun ko'rsatmalar",
       "institutions": "Institutlar",
-      "teachers": "O‘qituvchilar",
       "ai_assistant": "StuDent AI",
       "account": "Mening akkauntim"
     },
@@ -116,7 +117,17 @@
       "ai": "II",
       "input_placeholder": "Savolingizni yozing",
       "connection_error": "Server bilan aloqa muvaffaqiyatsiz tugadi.",
-      "no_reply": "Javob mavjud emas"
+      "no_reply": "Javob mavjud emas",
+      "chats": "Suhbatlar",
+      "new_chat": "Yangi suhbat",
+      "search": "Qidirish",
+      "chat": "Suhbat",
+      "library": "Kutubxona",
+      "settings": "Sozlamalar",
+      "theme": "Mavzu",
+      "logged_in_as": "Sizning ismingiz",
+      "welcome": "Xush kelibsiz!",
+      "thinking": "O‘ylayapman"
     },
 
     "main": {
@@ -689,6 +700,38 @@
             "chemistry": "Kimyo",
             "history": "Tarix",
             "literature": "Adabiyot"
+          },
+
+          "ai_usage": {
+            "title": "AI yordamchisidan o‘qish uchun qanday foydalanish kerak",
+            "note": "⚠️ Eslab qol: AI bu — vosita, lekin mustaqil ta’lim o‘rnini bosmaydi!",
+            "steps": [
+              {
+                "title": "1. AI yordamchisini oching",
+                "description": "Yordamchi sahifasiga o‘ting va kerakli bo‘limni tanlang: vazifalar, testlar, mavzular tushuntirishi va boshqalar."
+              },
+              {
+                "title": "2. Savolni aniq yozing",
+                "description": "Aniq va tushunarli savol yozing. Masalan: “Hosila nima?” yoki “Tenglamani yechishda yordam bering.”"
+              },
+              {
+                "title": "3. Javobni oling va o‘rganing",
+                "description": "AI sizga tushuntirish, yechim yoki bosqichma-bosqich ko‘rsatma beradi. Uni faqat o‘rganish uchun foydalaning, ko‘chirish uchun emas."
+              },
+              {
+                "title": "4. Bilimingizni sinab ko‘ring",
+                "description": "Javobni olgach — o‘zingizni sinang, mavzuni takrorlang, qo‘shimcha savollar bering."
+              },
+              {
+                "title": "5. AI'dan to‘g‘ri foydalaning",
+                "description": "AI — bu ta’lim yordamchisi. Uni ko‘chirish yoki aldayotgan kabi ishlatmang. U tushunishga yordam berish uchun yaratilgan."
+              },
+              {
+                "title": "6. AI'dan maksimal foyda olish uchun uni to‘g‘ri foydalaning",
+                "description": "AI'dan muntazam va halol foydalanish mavzuni chuqurroq tushunishga va tanqidiy fikrlashni rivojlantirishga yordam beradi."
+              }
+            ]
           }
+                  
 }
   

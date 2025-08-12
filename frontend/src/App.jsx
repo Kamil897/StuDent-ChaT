@@ -15,7 +15,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Bought = lazy(() => import('./pages/Bought'));
 const Magaz = lazy(() => import('./pages/magaz'));
 const NotFoundPage = lazy(() => import('./components/NotFoundPage/NotFoundPage'));
-const NewsHero = lazy(() => import('./components/NewsHero/NewsHero'));
+const AIAssistantGuide = lazy(() => import('./components/NewsHero/AIAssistantGuide'));
 const Society = lazy(() => import('./components/Society/Society'));
 const Tech = lazy(() => import('./components/Tech/Tech'));
 const Culture = lazy(() => import('./components/Culture/Culture'));
@@ -27,7 +27,6 @@ const TicTacToe = lazy(() => import('./components/TicTacToe/TicTacToe'));
 const Snake = lazy(() => import('./components/Snake/Snake'));
 const Games = lazy(() => import('./components/Games/Games'));
 const Tir = lazy(() => import('./components/Tir/Tir'));
-const Teacher = lazy(() => import('./pages/Teacher'));
 const ChatGroup = lazy(() => import('./components/ChatGroup/ChatGroup'));
 const KnowledgeMaze = lazy(() => import('./components/KnowledgeMaze/KnowledgeMaze'));
 const MathBattle = lazy(() => import('./components/MathBattle/MathBattle'));
@@ -46,7 +45,7 @@ const App = () => {
   }, []);
   
   const isNotFoundPage = ![
-    "/", "/ChatGroup", "/Teacher", "/Register", "/Login", "/MainPage",
+    "/", "/ChatGroup", "/Register", "/Login", "/MainPage",
     "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake",
     "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat", "/AdminPanel"
   ].includes(location.pathname);
@@ -59,7 +58,7 @@ const App = () => {
         <Routes>
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/" element={<Home />} />
-          <Route path="/news" element={<NewsHero />} />
+          <Route path="/news" element={<AIAssistantGuide />} />
           <Route path="/Society" element={<Society />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Log />} />
@@ -72,7 +71,6 @@ const App = () => {
           <Route path="/Games" element={<Games />} />
           <Route path="/Tir" element={<Tir />} />
           <Route path="/Shop" element={<Magaz />} />
-          <Route path="/Teacher" element={<Teacher />} />
           <Route path="/ChatGroup" element={<ChatGroup />} />
           <Route path="/KnowledgeMaze" element={<KnowledgeMaze/>}/>
           <Route path="/MathBattle" element={<MathBattle/>}/>

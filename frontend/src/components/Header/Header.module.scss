@@ -17,6 +17,8 @@
   font-display: swap;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 body {
   margin: 0;
   font-family: "Soyuz Grotesk";
@@ -298,4 +300,35 @@ body {
   .dropdownMenu li a {
     padding: 10px;
   }
+}
+
+
+.loginBtn {
+  box-shadow: 0 20px 24px 0 rgba(0, 0, 0, 0.03);
+  border-radius: 80px;
+  width: 100px;
+  height: 35px;
+  font-family: "Roboto";
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: #5b5b5b;
+  border: none;
+  cursor: pointer;
+}
+
+.registerBtn {
+  border-radius: 80px;
+  width: 100px;
+  height: 35px;
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 20px 24px 0 rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+}
+
+.authButtons {
+  display: flex;
+  gap: 26px;
 }

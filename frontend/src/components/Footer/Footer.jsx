@@ -1,33 +1,39 @@
 import React from 'react';
-import s from './Footer.module.scss';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import s from './Footer.module.scss';
 
 const Footer = () => {
   const { t } = useTranslation();
 
   return (
     <footer className={s.footer}>
-      <div className={s.footer_content}>
-        <div className={s.logo}>
-          <img src="/Sdct.png" alt="" className={s.sdct} width="200" height="200" />
+      <div className={s.container}>
+
+        {/* Логотип */}
+        <div className={s.logoSection}>
+          <img src="/Sdct.png" alt="SDCT Logo" className={s.logo} />
+          <span className={s.logoText}>STUDENTCHAT</span>
         </div>
 
-        <nav className={s.footer_nav}>
-          <div className={s.links}>
-            <Link to="/ChatGroup">{t("footer.groups")}</Link>
-            <Link to="/news">{t("footer.news")}</Link>
-            <Link to="/news">{t("footer.institutions")}</Link>
-            <Link to="/Teacher">{t("footer.teachers")}</Link>
-            <br />
-            <Link to="/AiChat">{t("footer.ai_assistant")}</Link>
-            <Link to="/MainPage">{t("footer.account")}</Link>
-          </div>
+        <div className={s.center} aria-hidden={false}>
+          <blockquote className={s.quote}>
+            «Учись. Общайся. Развивайся.»
+          </blockquote>
+        </div>
+
+        {/* Ссылки */}
+        <nav className={s.nav}>
+          <Link to="/ChatGroup">{t("footer.groups")}</Link>
+          <Link to="/AiChat">{t("footer.ai_assistant")}</Link>
+          <Link to="/MainPage">{t("footer.account")}</Link>
         </nav>
 
-        <div className={s.footer_bottom}>
-          <p>&copy; 2025 OOO STUDENTCHAT. Все права защищены.</p>
-        </div>
+      </div>
+
+      {/* Нижняя часть */}
+      <div className={s.bottom}>
+        <p>© 2025 OOO STUDENTCHAT. Все права защищены.</p>
       </div>
     </footer>
   );
