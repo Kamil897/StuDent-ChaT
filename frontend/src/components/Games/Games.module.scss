@@ -252,7 +252,7 @@
     margin-bottom: 1.8rem;
     font-size: 1.1rem;
     line-height: 1.6;
-    color: #555;
+    color: #c0c0c0;
   }
   
   @media (max-width: 768px) {
@@ -282,6 +282,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  color: #f0f0f0;
 }
 
 .closeButton {
@@ -345,6 +346,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  margin: 0 auto;
   
   &:hover {
     background-color: #3451d1;
@@ -528,6 +530,7 @@
 .modalHeader h2 {
   font-size: 24px;
   margin-bottom: 12px;
+  color: #f0f0f0;
 }
 
 @keyframes fadeIn {

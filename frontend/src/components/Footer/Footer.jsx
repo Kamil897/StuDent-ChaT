@@ -18,7 +18,7 @@ const Footer = () => {
 
         <div className={s.center} aria-hidden={false}>
           <blockquote className={s.quote}>
-            «Учись. Общайся. Развивайся.»
+            {t("footer.slogan")}
           </blockquote>
         </div>
 
@@ -34,6 +34,7 @@ const Footer = () => {
       {/* Нижняя часть */}
       <div className={s.bottom}>
         <p>© 2025 OOO STUDENTCHAT. Все права защищены.</p>
+        <p>contact@student-chat.online</p>
       </div>
     </footer>
   );

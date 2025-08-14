@@ -25,6 +25,7 @@ const TeacherCard = ({ name, languages, subjects }) => {
   };
 
   return (
+    <>
     <div className={s.card}>
       <div className={s.inner}>
         <div className={s.front}>
@@ -61,25 +62,28 @@ const TeacherCard = ({ name, languages, subjects }) => {
         </div>
 
 
-      <AnimatePresence>
-        {showModal && (
-          <motion.div className={s.modalOverlay} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className={s.modal} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }} transition={{ duration: 0.3 }}>
-              <h2>{t('teachers_card.socials')}</h2>
-              <div className={s.socialIcons}>
-                <a href="#"><FaTelegram /></a>
-                <a href="#"><FaInstagram /></a>
-                <a href="#"><FaLinkedin /></a>
-              </div>
-              <button className={s.closeBtn} onClick={() => setShowModal(false)}>
-                {t('teachers_card.close')}
-              </button>
+    </div>
+    </div>
+    
+    {/* Вынесено наружу, чтобы не отражалось */}
+    <AnimatePresence>
+          {showModal && (
+            <motion.div className={s.modalOverlay} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.div className={s.modal} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }} transition={{ duration: 0.3 }}>
+                <h2>{t('teachers_card.socials')}</h2>
+                <div className={s.socialIcons}>
+                  <a href="#"><FaTelegram /></a>
+                  <a href="#"><FaInstagram /></a>
+                  <a href="#"><FaLinkedin /></a>
+                </div>
+                <button className={s.closeBtn} onClick={() => setShowModal(false)}>
+                  {t('teachers_card.close')}
+                </button>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-    </div>
+          )}
+        </AnimatePresence>
+      </>
   );
 };
 

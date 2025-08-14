@@ -10,6 +10,7 @@ import Doom from './components/Asteroids/Asteroids';
 import PongNeon from './components/PingPong/Ping';
 import Don from './components/Don/Don'
 import Inviders from './components/Space/SpaceInviders';
+import PointsShop from './pages/PointsShop';
 
 const Home = lazy(() => import('./pages/Home'));
 const Bought = lazy(() => import('./pages/Bought'));
@@ -83,6 +84,7 @@ const App = () => {
           <Route path='/inviders' element={<Inviders/>}/>
           <Route path="/AiChat" element={<AiChat />} />
           <Route path="/AdminPanel" element={<AdminPanel />} />
+          <Route path="/Points" element={<PointsShop/>}/>
         </Routes>
       </Suspense>
       {!isNotFoundPage && location.pathname !== "/ChatGroup" && <Footer />}

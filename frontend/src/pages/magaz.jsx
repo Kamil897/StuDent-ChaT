@@ -1,58 +1,78 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useUser } from "../Context/UserContext";
 import Shop from "../components/Shop/Shop";
 import s from "./Magaz.module.scss";
-import { PRODUCTS } from "../data/products";
 
 const Magaz = () => {
-  const { user, spendPoints } = useUser();
   const { t } = useTranslation();
 
-  const [purchasedIds, setPurchasedIds] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [user, setUser] = useState({ points: 0, purchased: [] });
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingProductId, setLoadingProductId] = useState(null);
   const [notification, setNotification] = useState(null);
 
-  useEffect(() => {
-    const storedIds = JSON.parse(localStorage.getItem("purchasedItems") || "[]");
-    setPurchasedIds(storedIds);
-  }, []);
+useEffect(() => {
 
-  useEffect(() => {
-    localStorage.setItem("purchasedItems", JSON.stringify(purchasedIds));
-  }, [purchasedIds]);
+  fetch("http://localhost:5000/products")
+    .then(res => res.json())
+    .then(data => setProducts(data))
+    .catch(err => console.error("Error loading products:", err));
 
-  const handleBuy = async (product) => {
-    setIsLoading(true);
-    await new Promise((res) => setTimeout(res, 500));
 
-    if (spendPoints(product.price)) {
-      if (!purchasedIds.includes(product.id)) {
-        setPurchasedIds((prev) => [...prev, product.id]);
-      }
-      showNotification(`✅ ${t(product.name)} ${t("shop.success")}`, "success");
-    } else {
-      showNotification(t("shop.insufficientFunds"), "error");
-    }
+  fetch("http://localhost:5000/user")
+    .then(res => res.json())
+    .then(userData => {
+      setUser({
+        points: userData.points,
+        purchased: userData.purchasedItems || []
+      });
+    })
+    .catch(err => console.error("Error loading user data:", err));
+}, []);
 
-    setIsLoading(false);
-  };
+const handleBuy = async (product) => {
+  setLoadingProductId(product.id);
+
+const res = await fetch("http://localhost:5000/user/buy", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ productId: product.id })
+});
+
+
+  const data = await res.json();
+
+  if (res.ok) {
+
+    setUser(prev => ({
+      ...prev,
+      points: prev.points - product.price,
+      purchased: data.purchasedItems
+    }));
+    showNotification(`✅ ${t(product.name)} ${t("shop.success")}`, "success");
+  } else {
+    showNotification(data.error || t("shop.insufficientFunds"), "error");
+  }
+
+  setLoadingProductId(null);
+};
+
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const affordableCount = PRODUCTS.filter((p) => user.points >= p.price).length;
+  const affordableCount = products.filter((p) => user.points >= p.price).length;
 
-  const filteredProducts = PRODUCTS
+  const filteredProducts = products
     .filter((product) => {
       if (filter === "affordable") return user.points >= product.price;
       if (filter === "unaffordable") return user.points < product.price;
-      if (filter === "purchased") return purchasedIds.includes(product.id);
+      if (filter === "purchased") return user.purchased.includes(product.id);
       return true;
     })
     .filter((product) => {
@@ -79,7 +99,9 @@ const Magaz = () => {
     });
 
   const getTotalValue = () => {
-    return PRODUCTS.filter((p) => purchasedIds.includes(p.id)).reduce((sum, item) => sum + item.price, 0);
+    return products
+      .filter((p) => user.purchased.includes(p.id))
+      .reduce((sum, item) => sum + item.price, 0);
   };
 
   return (
@@ -94,7 +116,7 @@ const Magaz = () => {
         <div className={s.titleSection}>
           <h1 className={s.title}>{t("shop.title")}</h1>
           <p className={s.subtitle}>
-            {t("shop.available", { count: affordableCount, total: PRODUCTS.length })}
+            {t("shop.available", { count: affordableCount, total: products.length })}
           </p>
         </div>
 
@@ -104,7 +126,7 @@ const Magaz = () => {
             <span className={s.balanceAmount}>{user.points.toLocaleString()}</span>
           </div>
 
-          {purchasedIds.length > 0 && (
+          {user.purchased.length > 0 && (
             <div className={s.purchaseInfo}>
               <span className={s.purchaseLabel}>{t("shop.spent")}</span>
               <span className={s.purchaseAmount}>{getTotalValue().toLocaleString()}</span>
@@ -129,16 +151,16 @@ const Magaz = () => {
             <label className={s.filterLabel}>{t("shop.filter")}</label>
             <div className={s.filters}>
               <button className={filter === "all" ? s.active : ""} onClick={() => setFilter("all")}>
-                {t("shop.all", { count: PRODUCTS.length })}
+                {t("shop.all", { count: products.length })}
               </button>
               <button className={filter === "affordable" ? s.active : ""} onClick={() => setFilter("affordable")}>
                 {t("shop.affordable", { count: affordableCount })}
               </button>
               <button className={filter === "unaffordable" ? s.active : ""} onClick={() => setFilter("unaffordable")}>
-                {t("shop.unaffordable", { count: PRODUCTS.length - affordableCount })}
+                {t("shop.unaffordable", { count: products.length - affordableCount })}
               </button>
               <button className={filter === "purchased" ? s.active : ""} onClick={() => setFilter("purchased")}>
-                {t("shop.purchased", { count: purchasedIds.length })}
+                {t("shop.purchased", { count: user.purchased.length })}
               </button>
             </div>
           </div>
@@ -154,6 +176,7 @@ const Magaz = () => {
           </div>
         </div>
       </div>
+
 
       <div className={s.productGrid}>
         {filteredProducts.length === 0 ? (
@@ -171,8 +194,9 @@ const Magaz = () => {
           </div>
         ) : (
           filteredProducts.map((product) => {
-            const isPurchased = purchasedIds.includes(product.id);
+            const isPurchased = user.purchased.includes(product.id);
             const canAfford = user.points >= product.price;
+            const isLoading = loadingProductId === product.id;
 
             return (
               <div key={product.id} className={s.productWrapper}>
@@ -192,12 +216,12 @@ const Magaz = () => {
         )}
       </div>
 
-      {purchasedIds.length > 0 && (
+      {user.purchased.length > 0 && (
         <div className={s.statistics}>
           <h3 className={s.statsTitle}>{t("shop.statsTitle")}</h3>
           <div className={s.statsGrid}>
             <div className={s.statItem}>
-              <span className={s.statValue}>{purchasedIds.length}</span>
+              <span className={s.statValue}>{user.purchased.length}</span>
               <span className={s.statLabel}>{t("shop.statsPurchased")}</span>
             </div>
             <div className={s.statItem}>
@@ -206,7 +230,7 @@ const Magaz = () => {
             </div>
             <div className={s.statItem}>
               <span className={s.statValue}>
-                {Math.round((purchasedIds.length / PRODUCTS.length) * 100)}%
+                {Math.round((user.purchased.length / products.length) * 100)}%
               </span>
               <span className={s.statLabel}>{t("shop.statsCollection")}</span>
             </div>

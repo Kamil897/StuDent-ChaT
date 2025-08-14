@@ -35,7 +35,7 @@ canvas {
 
 .start-button {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.7);
@@ -55,6 +55,28 @@ canvas {
   background: rgba(0, 255, 255, 0.2);
 }
 
+
+.back-button {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #0ff;
+  border: 2px solid #0ff;
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px #0ff;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+.back-button:hover {
+  background: rgba(0, 255, 255, 0.2);
+}
 
 .control-buttons {
   display: flex;

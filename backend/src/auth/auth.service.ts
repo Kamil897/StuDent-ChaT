@@ -18,7 +18,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { TeacherService } from "src/teacher/teacher.service";
 import { CreateTeacherDto } from "src/teacher/dto/create-teacher.dto";
 import { TeacherSignInDto } from "src/teacher/dto/sign_in-teacher.dto";
-import { Teacher } from "@prisma/client";
+import { teacher as Teacher } from "@prisma/client";
 import { MailService } from "src/mail/mail.service";
 
 

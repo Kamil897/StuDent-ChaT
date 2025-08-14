@@ -1,28 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useUser } from "../Context/UserContext";
 import { useTranslation } from "react-i18next";
 import s from "./ProductPage.module.scss";
-import { PRODUCTS } from "../data/products";
+
+const API_URL = "http://localhost:5000"; // backend URL
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, spendPoints } = useUser();
   const { t } = useTranslation();
 
-  const product = PRODUCTS.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState(null);
+  const [user, setUser] = useState({ points: 0, purchasedItems: [] });
   const [isBought, setIsBought] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  // Load product and user from backend
+  useEffect(() => {
+    // Fetch all products and find the one with this id
+    fetch(`${API_URL}/products`)
+      .then((res) => res.json())
+      .then((data) => {
+        const found = data.find((p) => p.id === Number(id));
+        setProduct(found || null);
+      })
+      .catch((err) => console.error("Error loading product:", err));
+
+    // Fetch user
+    fetch(`${API_URL}/user`)
+      .then((res) => res.json())
+      .then((userData) => setUser(userData))
+      .catch((err) => console.error("Error loading user:", err));
+  }, [id]);
+
+  // Update bought state
   useEffect(() => {
     if (product && user?.purchasedItems) {
-      const alreadyBought = user.purchasedItems
-        .filter((item) => item && typeof item === "object" && "id" in item)
-        .some((item) => item.id === product.id);
-
+      const alreadyBought = user.purchasedItems.includes(product.id);
       setIsBought(alreadyBought);
     }
   }, [product, user]);
@@ -43,7 +59,6 @@ const ProductPage = () => {
 
   const handleBuyClick = () => {
     if (isBought) return;
-
     if (user.points >= product.price) {
       setShowConfirmModal(true);
     } else {
@@ -51,22 +66,33 @@ const ProductPage = () => {
     }
   };
 
-  const handleConfirmBuy = () => {
+  const handleConfirmBuy = async () => {
     setIsLoading(true);
     setShowConfirmModal(false);
 
-    setTimeout(() => {
-      const success = spendPoints(product.price, product.id);
-      setIsLoading(false);
+    try {
+      const res = await fetch(`${API_URL}/user/buy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+      });
 
-      if (success) {
+      const data = await res.json();
+
+      if (res.ok) {
+        setUser(data);
         setIsBought(true);
         alert(t("shop_items.success"));
         navigate("/bought");
       } else {
-        alert(t("shop_items.fail"));
+        alert(data.error || t("shop_items.fail"));
       }
-    }, 2000);
+    } catch (error) {
+      console.error("Error buying product:", error);
+      alert(t("shop_items.fail"));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancelBuy = () => {
@@ -112,7 +138,7 @@ const ProductPage = () => {
             </div>
             <div>
               <strong>{t("shop_items.categoryLabel")}:</strong>{" "}
-              {product.category}
+              {product.category || "—"}
             </div>
             <div>
               <strong>{t("shop_items.status")}:</strong>{" "}
@@ -163,9 +189,9 @@ const ProductPage = () => {
               <button
                 className={s.buyButton}
                 onClick={handleBuyClick}
-                disabled={!canAfford || isLoading}
+                disabled={!canAfford}
               >
-                {t("shop_items.buy")}
+                {canAfford ? t("shop_items.buy") : t("shop_items.fail")}
               </button>
             )}
 

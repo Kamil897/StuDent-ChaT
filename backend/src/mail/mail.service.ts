@@ -1,6 +1,6 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { Teacher } from "@prisma/client";
+import { teacher as Teacher } from "@prisma/client";
 
 @Injectable()
 export class MailService {

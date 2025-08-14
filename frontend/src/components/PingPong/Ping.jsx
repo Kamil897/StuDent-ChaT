@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./Ping.module.css";
 import { useUser } from "../../Context/UserContext";
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // <-- добавлен импорт
 
 const PongNeon = () => {
   const canvasRef = useRef(null);
@@ -11,6 +13,8 @@ const PongNeon = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [score, setScore] = useState(0)
   const {addPoints} = useUser()
+  const navigate = useNavigate();
+  const { t } = useTranslation(); // <-- инициализация
 
   const gameStateRef = useRef({
     ballX: 0,
@@ -301,17 +305,23 @@ const PongNeon = () => {
         </div>
       )}
       {!isRunning && (
-        <button
-          className={styles["start-button"]}
-          onClick={() => {
-            setIsRunning(true);
-            const state = gameStateRef.current;
-            state.playerScore = 0;
-            state.aiScore = 0;
-          }}
-        >
-          {isMobile ? "Tap to Start" : "Start Game"}
-        </button>
+        <>
+          <button
+            className={styles["start-button"]}
+            onClick={() => {
+              setIsRunning(true);
+              const state = gameStateRef.current;
+              state.playerScore = 0;
+              state.aiScore = 0;
+            }}
+          >
+            {isMobile ? "Tap to Start" : "Start Game"}
+          </button>
+
+          <button className={styles["back-button"]} onClick={() => navigate('/Games')}>
+            {t('space.back')}
+          </button>
+        </>
       )}
     </div>
   );

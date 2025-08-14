@@ -19,6 +19,22 @@ const Games = () => {
     return savedPoints ? parseInt(savedPoints, 10) : 0;
   });
 
+  // ✅ Load points from backend
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/user`);
+        const data = await res.json();
+        setCurrentPoints(data.points || 0);
+      } catch (err) {
+        console.error('Failed to fetch user:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const maxPoints = getMaxPoints();
 
   useEffect(() => {
@@ -41,17 +57,30 @@ const Games = () => {
     'My tituls': t('games.categories.myTituls')
   };
 
-  const addPoints = (pointsToAdd = 500) => {
-    const updated = currentPoints + pointsToAdd;
-    setCurrentPoints(updated);
-    localStorage.setItem('currentPoints', updated);
 
-    if (updated >= maxPoints) {
-      setShowCongrats(true);
-      document.body.style.overflow = 'hidden';
+  // ✅ Call backend to add points
+  const addPoints = async (pointsToAdd = 500) => {
+    try {
+      const res = await fetch(`${API_BASE}/user/add-points`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: pointsToAdd })
+      });
+      const updatedUser = await res.json();
+
+      if (res.ok) {
+        setCurrentPoints(updatedUser.points);
+        if (updatedUser.points >= maxPoints) {
+          setShowCongrats(true);
+          document.body.style.overflow = 'hidden';
+        }
+      } else {
+        console.error('Error adding points:', updatedUser.error);
+      }
+    } catch (err) {
+      console.error('Failed to add points:', err);
     }
   };
-
   const openModal = (game) => {
     setSelectedGame(game);
     document.body.style.overflow = 'hidden';

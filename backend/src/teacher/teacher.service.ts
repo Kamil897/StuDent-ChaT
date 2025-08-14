@@ -8,7 +8,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import * as bcrypt from "bcrypt";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
-import { Teacher } from '@prisma/client';
+import { teacher as Teacher } from '@prisma/client';
 import { JwtService } from "@nestjs/jwt";
 import * as uuid from 'uuid'
 import { MailService } from "src/mail/mail.service";
