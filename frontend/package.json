@@ -27,7 +27,7 @@
         "@react-spring/web": "^9.7.5",
         "@vercel/analytics": "^1.4.1",
         "@vitejs/plugin-react": "^4.3.4",
-        "axios": "^1.10.0",
+        "axios": "^1.11.0",
         "compass-mixins": "^0.12.12",
         "emoji-picker-react": "^4.12.2",
         "firebase": "^11.3.0",

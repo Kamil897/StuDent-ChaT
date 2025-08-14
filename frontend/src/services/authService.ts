@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = 'http://localhost:3000/auth'; // заменишь на свой IP / domain
+const API = 'https://student-chat.online'; // заменишь на свой IP / domain
 
 export const register = async (data: {
   email: string;
