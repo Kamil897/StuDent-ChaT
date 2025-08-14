@@ -52,7 +52,7 @@ async function bootstrap() {
 
   await app.listen(PORT);
   // eslint-disable-next-line no-console
-  console.log(`Backend running on http://localhost:${PORT} (client: ${CLIENT_URL})`);
+  console.log(`Backend running on http://159.198.65.254:${PORT} (client: ${CLIENT_URL})`);
 
   app.useGlobalFilters(new AllExceptionsFilter());
 }
