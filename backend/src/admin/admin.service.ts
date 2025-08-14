@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateAdminDto, UpdateAdminDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { admin as Admin } from '@prisma/client';
+import { Admin } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
