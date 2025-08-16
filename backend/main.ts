@@ -1,60 +1,66 @@
-import 'reflect-metadata';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ConsoleLogger, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from 'cookie-parser';
-import helmet from 'helmet';
-import { AllExceptionsFilter } from './src/common/filters/http-exception.filter';
+import { AllExceptionsFilter } from "./src/logger/error.handling";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    bufferLogs: true,
-  });
+async function start() {
+  try {
+    const PORT = process.env.PORT || 7777;
+    const app = await NestFactory.create(AppModule, {
+      logger: new ConsoleLogger({
+        colors: true,
+        prefix: "StudentChat"
+      })
+    });
 
-  const PORT = Number(process.env.PORT ?? 3000);
-  const CLIENT_URL = process.env.CLIENT_URL ?? 'https://student-chat.online';
+    app.use(cookieParser());
+    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Безопасность
-  app.use(
-    helmet({
-      // В dev часто мешает strict CSP, оставим дефолт
-    }),
-  );
+    app.enableCors({
+      origin: ['https://student-chat.online'],
+      credentials: true,
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+    });
 
-  // CORS для фронта (cookies + credentials)
-  app.enableCors({
-    origin: (origin, cb) => {
-      // Разрешаем фронт из .env, а также origin=null для нативных клиентов
-      if (!origin || origin === CLIENT_URL) return cb(null, true);
-      return cb(new Error(`CORS blocked: ${origin}`), false);
-    },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  });
+    const config = new DocumentBuilder()
+      .setTitle("Student Chat")
+      .setVersion("1.0")
+      .addBearerAuth(
+        {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          name: "JWT",
+          description: "Enter JWT token",
+          in: "header",
+        },
+        "JWT"
+      )
+      .build();
 
-  // Cookies для refresh токенов и т.п.
-  app.use(
-    cookieParser(),
-  );
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("api/docs", app, document, {
+      swaggerOptions: { defaultModelsExpandDepth: -1 },
+    });
 
-  // Глобальные пайпы валидации DTO
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,        // отбрасывает лишние поля
-      transform: true,        // преобразует примитивы к типам DTO
-      forbidNonWhitelisted: false, // не валим запрос, просто чистим
-    }),
-  );
+    await app.listen(PORT, () => {
+      console.log("\n\n + ====================================================================== +");
+      console.log(`| |                                                                          | |`);
+      console.log(`| | 🚀     Server is running at: http://localhost:7777                   🚀 | |`);
+      console.log(`| |                                                                          | |`);
+      console.log(`| | 📚 Swagger docs: http://localhost:7777/api/docs                      📚 | |`);
+      console.log(`| |                                                                          | |`);
+      console.log(" + ======================================================================    +\n\n");
+    });
 
-  // Версионирование API (опционально, но удобно): /api/v1/...
-  app.setGlobalPrefix('api/v1');
-
-  await app.listen(PORT);
-  // eslint-disable-next-line no-console
-  console.log(`Backend running on http://159.198.65.254:${PORT} (client: ${CLIENT_URL})`);
-
-  app.useGlobalFilters(new AllExceptionsFilter());
+  } catch (error) {
+    console.error("❌ Error starting server:", error);
+  }
 }
 
-bootstrap();
+start();

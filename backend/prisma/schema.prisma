@@ -1,9 +1,9 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["clientExtensions"]
-  output   = "./node_modules/.prisma/client"
-  engineType = "binary"
+  engineType      = "binary"
 }
+
 
 datasource db {
   provider = "mysql"

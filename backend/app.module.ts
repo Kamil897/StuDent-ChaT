@@ -19,7 +19,7 @@ import { GameModule } from './src/game/game.module';
 import { ChatModule } from './src/chat/chat.module';
 import { AiModule } from './src/ai/ai.module';
 import { AppController } from './app.controller';
-
+import { ShopModule } from './src/shop/shop.module';
 
 
 @Module({
@@ -46,6 +46,7 @@ import { AppController } from './app.controller';
     GameModule,
     ChatModule,
     AiModule,
+    ShopModule,
   ],
   controllers: [AppController],
   providers: [],

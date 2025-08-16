@@ -8,14 +8,14 @@ export default defineConfig(({ mode }) => {
     base: '/',
     plugins: [react()],
     server: {
-      host: '0.0.0.0',
       proxy: {
-        '/api': {
-          target: 'http://localhost:7777',
+        "/api": {
+          target: "http://localhost:7777",
           changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, "")
         }
       }
-    },
+    },    
     build: {
       outDir: 'dist',
     },

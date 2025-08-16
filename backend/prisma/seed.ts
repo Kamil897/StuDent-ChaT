@@ -143,8 +143,10 @@ async function main() {
     data: {
       username: 'student1',
       email: 'student1@example.com',
+      hashed_password: hashedPassword, // добавлено
     },
   });
+  
 
   await prisma.aiMessage.create({
     data: {

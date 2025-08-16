@@ -9,7 +9,9 @@ dist
 
 .log
 
-
+.env
+.env.local
+.env.*.local
 
 .vscode/
 .idea/
@@ -19,3 +21,4 @@ dist
 
 Thumbs.db
 EOL
+.env

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import s from "./PointsShop.module.css";
 
-const API_BASE = "http://159.198.65.254:7777"; // backend URL
+const API_BASE = " http://localhost:5173/shop";
 
 const pointPackages = [
     { id: 1, amount: 500, label: "500 Points (Free)", free: true },

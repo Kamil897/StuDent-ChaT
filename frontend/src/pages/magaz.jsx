@@ -16,13 +16,13 @@ const Magaz = () => {
 
 useEffect(() => {
 
-  fetch("http://localhost:5000/products")
+  fetch("http://localhost:7777/products")
     .then(res => res.json())
     .then(data => setProducts(data))
     .catch(err => console.error("Error loading products:", err));
 
 
-  fetch("http://localhost:5000/user")
+  fetch("http://localhost:7777/user")
     .then(res => res.json())
     .then(userData => {
       setUser({
@@ -36,7 +36,7 @@ useEffect(() => {
 const handleBuy = async (product) => {
   setLoadingProductId(product.id);
 
-const res = await fetch("http://localhost:5000/user/buy", {
+const res = await fetch("http://localhost:7777/user/buy", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ productId: product.id })
