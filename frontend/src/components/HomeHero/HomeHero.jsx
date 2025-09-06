@@ -92,7 +92,7 @@ const HomeHero = () => {
                     <img src="/hi.svg" alt="" />
                 </div>
             </section>
-
+{/* 
             <section className={s.services} id="section-Наши преимущество">
                 <h1 style={{
                         textAlign: "center",
@@ -104,7 +104,7 @@ const HomeHero = () => {
                     {t("actions_section_title")}
                 </h1>
                 <Tabs />
-            </section>
+            </section> */}
 
             <section className={s.spotlight__cards}>
                 <h1 style={{

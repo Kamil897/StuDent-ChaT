@@ -146,7 +146,7 @@ const Wallet = () => {
             <div className={`${styles['balance-card']} ${styles.karma}`}>
               <div className={styles['balance-icon']}>🌟</div>
               <div className={styles['balance-info']}>
-                <h3>Карма</h3>
+                <h3>Баллы</h3>
                 <p className={styles['balance-amount']}>{balance.karmaPoints.toLocaleString()}</p>
               </div>
             </div>

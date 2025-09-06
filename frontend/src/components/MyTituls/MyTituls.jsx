@@ -92,9 +92,14 @@ const MyTituls = () => {
                     У вас пока нет титулов. Играйте в игры, чтобы получить их!
                   </div>
                 ) : (
-                  <ul className={s.titlesList}>
-                    {titles.map((title, index) => (
-                      <li key={title.id} className={s.titleItem}>
+                <ul className={s.titlesList}>
+                  {titles.map((title, index) => {
+                    const isNew = newlyUnlocked.includes(title.id); // <-- отмечаем новые титулы
+                    return (
+                      <li 
+                        key={title.id} 
+                        className={`${s.titleItem} ${isNew ? s.newTitle : ''}`}
+                      >
                         <div className={s.titleInfo}>
                           <span className={s.titleName}>
                             {titleLabels[title.titleName] || title.titleName}
@@ -105,8 +110,9 @@ const MyTituls = () => {
                         </div>
                         <span className={s.titleBadge}>🏆</span>
                       </li>
-                    ))}
-                  </ul>
+                    );
+                  })}
+                </ul>
                 )}
               </div>
             </>

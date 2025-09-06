@@ -125,9 +125,9 @@ const Dock = () => {
           </li>
         </ul>
 
-        <div className="separator"></div>
+        {/* <div className="separator"></div> */}
 
-        <ul className="list">
+        {/* <ul className="list">
           <div className="dropdown-group">
             <label htmlFor="privilege">{t('dock.privilege')}</label>
             <select
@@ -140,9 +140,9 @@ const Dock = () => {
               ))}
             </select>
           </div>
-        </ul>
+        </ul> */}
 
-        <ul className="list">
+        {/* <ul className="list">
           <div className="dropdown-group">
             <label htmlFor="title">{t('dock.title')}</label>
             <select
@@ -155,7 +155,7 @@ const Dock = () => {
               ))}
             </select>
           </div>
-        </ul>
+        </ul> */}
       </div>
     </StyledWrapper>
   );

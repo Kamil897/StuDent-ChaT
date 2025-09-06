@@ -32,10 +32,9 @@ export class FriendsService {
 
   async addFriend(userId: number, friendId: number) {
     if (userId === friendId) {
-      return { message: 'Cannot add yourself as a friend' } as any;
+      throw new Error('Cannot add yourself as a friend');
     }
 
-    // Check if relation already exists in any direction
     const existing = await this.prisma.friend.findFirst({
       where: {
         OR: [
@@ -50,7 +49,6 @@ export class FriendsService {
     });
 
     if (existing) {
-      // If inverse pending exists, accept it
       if (existing.status === 'PENDING' && existing.userId === friendId) {
         const accepted = await this.prisma.friend.update({
           where: { id: existing.id },
@@ -70,7 +68,6 @@ export class FriendsService {
         };
       }
 
-      // Otherwise return existing relation info
       return {
         friendshipId: existing.id,
         status: existing.status,
@@ -80,7 +77,6 @@ export class FriendsService {
       };
     }
 
-    // Create a new pending request
     const request = await this.prisma.friend.create({
       data: { userId, friendId, status: 'PENDING' },
       include: {
@@ -111,7 +107,7 @@ export class FriendsService {
 
   async acceptFriendRequest(userId: number, friendId: number) {
     return this.prisma.friend.updateMany({
-      where: { userId: friendId, friendId: userId },
+      where: { userId: friendId, friendId: userId, status: 'PENDING' },
       data: { status: 'ACCEPTED' },
     });
   }
@@ -125,8 +121,8 @@ export class FriendsService {
     });
 
     return requests.map((r) => ({
-      id: r.id, // это id friendship
-      user: r.user, // тот, кто отправил заявку
+      id: r.id,
+      user: r.user,
       createdAt: r.createdAt,
     }));
   }

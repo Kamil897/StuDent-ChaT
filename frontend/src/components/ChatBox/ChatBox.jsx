@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import './ChatBox.module.scss';
+import styles from './ChatBox.module.scss';
 
 const ChatBox = () => {
   const { friendId } = useParams();
@@ -11,9 +11,11 @@ const ChatBox = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (friendId) {
+    if (friendId && !isNaN(parseInt(friendId))) {
       loadMessages();
       loadFriendInfo();
+    } else {
+      setLoading(false);
     }
   }, [friendId]);
 
@@ -28,6 +30,8 @@ const ChatBox = () => {
   const loadMessages = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) return;
+
       const response = await fetch(`http://localhost:3000/messages/${friendId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -46,14 +50,16 @@ const ChatBox = () => {
   const loadFriendInfo = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/friends/${friendId}`, {
+      if (!token) return;
+
+      const response = await fetch(`http://localhost:3000/friends`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.ok) {
         const friendsData = await response.json();
         const friendData = friendsData.find(f => f.id === parseInt(friendId));
-        setFriend(friendData);
+        setFriend(friendData || null);
       }
     } catch (error) {
       console.error('Error loading friend info:', error);
@@ -65,6 +71,8 @@ const ChatBox = () => {
 
     try {
       const token = localStorage.getItem('token');
+      if (!token) return;
+
       const response = await fetch('http://localhost:3000/messages/send', {
         method: 'POST',
         headers: {
@@ -109,74 +117,76 @@ const ChatBox = () => {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    if (date.toDateString() === today.toDateString()) {
-      return 'Сегодня';
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Вчера';
-    } else {
-      return date.toLocaleDateString();
-    }
+    if (date.toDateString() === today.toDateString()) return 'Сегодня';
+    if (date.toDateString() === yesterday.toDateString()) return 'Вчера';
+    return date.toLocaleDateString();
   };
 
   if (loading) {
     return (
-      <div className="chat-container">
-        <div className="loading">Загрузка чата...</div>
+      <div className={styles.chatContainer}>
+        <div className={styles.loading}>Загрузка чата...</div>
       </div>
     );
   }
 
   if (!friend) {
     return (
-      <div className="chat-container">
-        <div className="error">Пользователь не найден</div>
+      <div className={styles.chatContainer}>
+        <div className={styles.error}>Пользователь не найден</div>
       </div>
     );
   }
 
   return (
-    <div className="chat-container">
-      <div className="chat-header">
-        <div className="friend-info">
-          <div className="friend-avatar">
+    <div className={styles.chatContainer}>
+      <div className={styles.chatHeader}>
+        <div className={styles.friendInfo}>
+          <div className={styles.friendAvatar}>
             {friend.avatar ? (
-              <img src={friend.avatar} alt={friend.name} />
+              <img src={friend.avatar} alt={friend.name || 'User'} />
             ) : (
-              <div className="avatar-placeholder">
-                {friend.name.charAt(0).toUpperCase()}
+              <div className={styles.avatarPlaceholder}>
+                {(friend.name?.charAt(0) || '?').toUpperCase()}
               </div>
             )}
           </div>
-          <div className="friend-details">
-            <h3 className="friend-name">{friend.name}</h3>
-            <p className="friend-status">В сети</p>
+          <div className={styles.friendDetails}>
+            <h3 className={styles.friendName}>{friend.name || 'Без имени'}</h3>
+            <p className={styles.friendStatus}>В сети</p>
           </div>
         </div>
       </div>
 
-      <div className="messages-container">
+      <div className={styles.messagesContainer}>
         {messages.length === 0 ? (
-          <div className="empty-chat">
-            <p>Начните разговор с {friend.name}!</p>
+          <div className={styles.emptyChat}>
+            <p>Начните разговор с {friend.name || 'пользователем'}!</p>
           </div>
         ) : (
-          <div className="messages-list">
+          <div className={styles.messagesList}>
             {messages.map((message, index) => {
-              const isOwnMessage = message.fromUserId === parseInt(localStorage.getItem('userId') || '0');
-              const showDate = index === 0 || 
+              const isOwnMessage =
+                message.fromUserId === parseInt(localStorage.getItem('userId') || '0');
+              const showDate =
+                index === 0 ||
                 formatDate(message.createdAt) !== formatDate(messages[index - 1]?.createdAt);
 
               return (
                 <div key={message.id}>
                   {showDate && (
-                    <div className="date-separator">
+                    <div className={styles.dateSeparator}>
                       {formatDate(message.createdAt)}
                     </div>
                   )}
-                  <div className={`message ${isOwnMessage ? 'own' : 'other'}`}>
-                    <div className="message-content">
-                      <p className="message-text">{message.content}</p>
-                      <span className="message-time">
+                  <div
+                    className={`${styles.message} ${
+                      isOwnMessage ? styles.own : styles.other
+                    }`}
+                  >
+                    <div className={styles.messageContent}>
+                      <p className={styles.messageText}>{message.content}</p>
+                      <span className={styles.messageTime}>
                         {formatTime(message.createdAt)}
                       </span>
                     </div>
@@ -189,18 +199,18 @@ const ChatBox = () => {
         )}
       </div>
 
-      <div className="message-input">
+      <div className={styles.messageInput}>
         <textarea
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Введите сообщение..."
-          className="message-textarea"
+          className={styles.messageTextarea}
           rows="1"
         />
-        <button 
-          onClick={sendMessage} 
-          className="send-button"
+        <button
+          onClick={sendMessage}
+          className={styles.sendButton}
           disabled={!newMessage.trim()}
         >
           📤
@@ -211,7 +221,3 @@ const ChatBox = () => {
 };
 
 export default ChatBox;
-
-
-
-
