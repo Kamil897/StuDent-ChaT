@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styles from './TicTacToe.module.scss';
 import { useUser } from '../../Context/UserContext';
 import { useTranslation } from 'react-i18next';
+import { saveGameProgress } from '../utils/gamesApi';
 
 const TicTacToe = () => {
   const { addPoints } = useUser();
@@ -66,15 +67,24 @@ const TicTacToe = () => {
         updated[move] = computerSymbol;
         setBoard(updated);
         const gameWinner = checkWinner(updated);
-        if (gameWinner) {
-          setWinner(gameWinner);
-          setGameState(gameWinner === playerSymbol ? 'win' : 'lose');
-          if (gameWinner === playerSymbol) addPoints(100);
-        } else if (!updated.includes(null)) {
-          setGameState('draw');
-        } else {
-          setIsXNext(true);
-        }
+            if (gameWinner) {
+      setWinner(gameWinner);
+      setGameState(gameWinner === playerSymbol ? 'win' : 'lose');
+      if (gameWinner === playerSymbol) {
+        addPoints(100);
+        // Сохраняем прогресс в backend
+        saveGameProgress('tictactoe', {
+          score: 100,
+          level: 1,
+          timeSpent: 0,
+          completed: true
+        });
+      }
+    } else if (!updated.includes(null)) {
+      setGameState('draw');
+    } else {
+      setIsXNext(true);
+    }
       }, 500);
     }
   };
@@ -88,7 +98,16 @@ const TicTacToe = () => {
     if (gameWinner) {
       setWinner(gameWinner);
       setGameState('win');
-      if (gameWinner === playerSymbol) addPoints(100);
+      if (gameWinner === playerSymbol) {
+        addPoints(100);
+        // Сохраняем прогресс в backend
+        saveGameProgress('tictactoe', {
+          score: 100,
+          level: 1,
+          timeSpent: 0,
+          completed: true
+        });
+      }
     } else if (isVsComputer) {
       setIsXNext(false);
       computerMove(updated);

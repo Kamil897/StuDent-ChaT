@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Shop from "../components/Shop/Shop";
 import s from "./Magaz.module.scss";
+import { Link } from "react-router-dom";
+
+const API_MAIN = "http://localhost:7777/shop";
+const API_LOGIN = "http://localhost:3000";
 
 const Magaz = () => {
   const { t } = useTranslation();
@@ -14,50 +18,118 @@ const Magaz = () => {
   const [loadingProductId, setLoadingProductId] = useState(null);
   const [notification, setNotification] = useState(null);
 
-useEffect(() => {
+  // Загружаем товары и данные юзера
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Товары — backend-main
+        const productsRes = await fetch(`${API_MAIN}/products`);
+        const productsData = await productsRes.json();
+        setProducts(productsData);
 
-  fetch("http://localhost:7777/products")
-    .then(res => res.json())
-    .then(data => setProducts(data))
-    .catch(err => console.error("Error loading products:", err));
+        // Пользователь — backend-login
+        const token = localStorage.getItem("token");
+        if (token) {
+          const userRes = await fetch(`${API_LOGIN}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const userData = await userRes.json();
+          setUser({
+            id: userData.id,
+            points: userData.karmaPoints || 0,
+            purchased: (userData.purchasedItems || []).map(item => item.id)
+          });          
+        }
+      } catch (err) {
+        console.error("Ошибка загрузки:", err);
+      }
+    };
 
+    loadData();
+  }, []);
 
-  fetch("http://localhost:7777/user")
-    .then(res => res.json())
-    .then(userData => {
-      setUser({
-        points: userData.points,
-        purchased: userData.purchasedItems || []
-      });
-    })
-    .catch(err => console.error("Error loading user data:", err));
-}, []);
-
-const handleBuy = async (product) => {
+  const handleBuy = async (product) => {
   setLoadingProductId(product.id);
 
-const res = await fetch("http://localhost:7777/user/buy", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ productId: product.id })
-});
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showNotification("❌ Нет токена авторизации", "error");
+      return;
+    }
 
+    // 1. Покупка товара — backend-main
+    const res = await fetch(`${API_MAIN}/user/buy`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userId: user.id, productId: product.id }),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (res.ok) {
+    if (res.ok) {
+      // ✅ Сразу добавляем в purchased на фронте
+      setUser((prev) => ({
+        ...prev,
+        points: data.points ?? prev.points, // если backend возвращает баланс
+        purchased: Array.from(new Set([...(prev.purchased || []), product.id])),
+      }));
 
-    setUser(prev => ({
-      ...prev,
-      points: prev.points - product.price,
-      purchased: data.purchasedItems
-    }));
-    showNotification(`✅ ${t(product.name)} ${t("shop.success")}`, "success");
-  } else {
-    showNotification(data.error || t("shop.insufficientFunds"), "error");
+      // 2. Обновляем баланс и покупки из backend-login
+      const userRes = await fetch(`${API_LOGIN}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userData = await userRes.json();
+      setUser({
+        id: userData.id,
+        points: userData.karmaPoints || 0,
+        purchased: (userData.purchasedItems || []).map(item => item.id)      
+      });
+
+      // 3. Записываем покупку в историю (backend-login)
+      try {
+        await fetch(`${API_LOGIN}/purchase-history/record`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productName: t(product.name),
+            amount: product.price,
+            currency: "points",
+            quantity: 1,
+            totalCost: product.price,
+            source: "shop",
+          }),
+        });
+      } catch (error) {
+        console.error("Ошибка записи истории:", error);
+      }
+
+      showNotification(`✅ ${t(product.name)} ${t("shop.success")}`, "success");
+    } else {
+      // ⚡️ Обрабатываем случай повторной покупки
+      if (data.message === "Product already purchased" || data.error === "Product already purchased") {
+        setUser((prev) => ({
+          ...prev,
+          purchased: Array.from(new Set([...(prev.purchased || []), product.id])),
+        }));
+        showNotification(`✅ ${t(product.name)} ${t("shop.success")}`, "success");
+        return;
+      }
+
+      showNotification(data.error || t("shop.insufficientFunds"), "error");
+    }
+  } catch (error) {
+    console.error("Ошибка покупки:", error);
+    showNotification("❌ Ошибка при покупке", "error");
+  } finally {
+    setLoadingProductId(null);
   }
-
-  setLoadingProductId(null);
 };
 
 
@@ -126,6 +198,10 @@ const res = await fetch("http://localhost:7777/user/buy", {
             <span className={s.balanceAmount}>{user.points.toLocaleString()}</span>
           </div>
 
+          <Link to="/Points">
+            <button className={s.Pointsbtn}>{t("shop.buypoints")}</button>
+          </Link>
+
           {user.purchased.length > 0 && (
             <div className={s.purchaseInfo}>
               <span className={s.purchaseLabel}>{t("shop.spent")}</span>
@@ -176,7 +252,6 @@ const res = await fetch("http://localhost:7777/user/buy", {
           </div>
         </div>
       </div>
-
 
       <div className={s.productGrid}>
         {filteredProducts.length === 0 ? (

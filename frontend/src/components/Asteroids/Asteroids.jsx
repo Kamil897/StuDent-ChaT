@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './asteroid.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { saveGameProgress } from '../utils/gamesApi';
 
 const Doom = () => {
   const canvasRef = useRef(null);
@@ -227,6 +228,13 @@ const Doom = () => {
 
       if (asteroidsRef.current.length === 0) {
         setGameState(prev => ({ ...prev, gameOver: true }));
+        // Сохраняем прогресс в backend при победе
+        saveGameProgress('asteroids', {
+          score: gameState.score,
+          level: Math.floor(gameState.score / 100) + 1,
+          timeSpent: 0,
+          completed: true
+        });
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
         ctx.textAlign = "center";

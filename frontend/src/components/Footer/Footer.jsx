@@ -25,7 +25,7 @@ const Footer = () => {
         {/* Ссылки */}
         <nav className={s.nav}>
           <Link to="/ChatGroup">{t("footer.groups")}</Link>
-          <Link to="/AiChat">{t("footer.ai_assistant")}</Link>
+          <Link to="/AiChat">Cognia AI</Link>
           <Link to="/MainPage">{t("footer.account")}</Link>
         </nav>
 

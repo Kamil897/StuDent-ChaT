@@ -3,6 +3,7 @@ import s from './Space.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../Context/UserContext';
 import { useTranslation } from 'react-i18next'; // <-- добавлен импорт
+import { saveGameProgress } from '../utils/gamesApi';
 
 const PLAYER_WIDTH = 40;
 const PLAYER_HEIGHT = 20;
@@ -85,6 +86,13 @@ function Invider() {
       if (allEnemiesDead) {
         cancelAnimationFrame(animationId);
         setGameState('win');
+        // Сохраняем прогресс в backend при победе
+        saveGameProgress('space', {
+          score: enemies.length * 10,
+          level: 1,
+          timeSpent: 0,
+          completed: true
+        });
       }
     };
 

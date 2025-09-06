@@ -5,6 +5,7 @@ import Tabs from "../Tabs/Tabs.jsx";
 import TextCursor from "../TextCursor/TextCursor.jsx";
 import { useTranslation } from "react-i18next";
 import { FaRobot, FaLightbulb, FaBookOpen, FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import ComplaintsOver from "../ComplainsOver/ComplaintsOver.jsx";
 
 const HomeHero = () => {
     const tooltipRef = useRef(null);
@@ -174,6 +175,13 @@ const HomeHero = () => {
                     </div>
                     <p className={s.note}>{t("ai_usage.note")}</p>
                 </div>
+            </section>
+            {/* <style>
+            @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Edu+NSW+ACT+Cursive:wght@400..700&family=Lobster&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+            </style> */}
+
+            <section className={s.complaints_section}>
+                <ComplaintsOver />
             </section>
         </>
     );

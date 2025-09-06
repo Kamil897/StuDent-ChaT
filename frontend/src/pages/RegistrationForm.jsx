@@ -1,193 +1,174 @@
-import React, { useState, useEffect, useRef, createContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import s from './Registration.module.scss';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import s from "./Registration.module.scss";
+import { useTranslation } from "react-i18next";
 
 const Registration = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        hobby: '',
-        education: '',
-        username: '',
-        password: '',
-        avatar: ''
+        firstName: "",
+        lastName: "",
+        email: "",
+        hobby: "",
+        education: "",
+        name: "",
+        password: "",
+        avatar: "",
+        birth: "",
     });
 
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleRegister = (e) => {
-        e.preventDefault();
+    const handleRegister = async (e) => {
+  e.preventDefault();
 
-        const existingUser = localStorage.getItem(formData.username);
-        if (existingUser) {
-            alert('Пользователь с таким именем уже существует');
-            return;
-        }
+  let calculatedAge = null;
+  if (formData.birth) {
+    const birthDate = new Date(formData.birth);
+    const today = new Date();
+    calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      calculatedAge--;
+    }
+  }
 
-        localStorage.setItem(formData.username, JSON.stringify(formData));
+  try {
+    await axios.post("/auth/register", {
+      email: formData.email,
+      password: formData.password,
+      name: `${formData.firstName} ${formData.lastName}`,
+      age: calculatedAge,
+      hobby: formData.hobby,
+      education: formData.education,
+      avatar: formData.avatar,
+      username: formData.username,
+    });
 
-        alert('Регистрация прошла успешно!');
-        
-        navigate('/login');
-    };
+    alert(t("register.success") || "Ro‘yxatdan o‘tish muvaffaqiyatli!");
+    navigate("/login");
+  } catch (error) {
+    console.error("Registration error:", error);
+    if (error.response?.status === 409) {
+      alert(
+        t("register.already_exists") ||
+          "Bu foydalanuvchi allaqachon mavjud!"
+      );
+    } else {
+      alert(t("register.server_error") || "Serverda xatolik yuz berdi");
+    }
+  }
+};
+
 
     return (
-        <div className="container__main">
-                <form className={s.form} onSubmit={handleRegister}>
-            {/* Аватарка */}
+        <form className={s.form} onSubmit={handleRegister}>
             <div className={s.img}>
                 <label htmlFor="avatar" className={s.imageUpload}>
-                <img
-                    src={formData.avatar || 'profileimg.png'}
-                    alt="Аватар"
-                    className={s.uploadImage}
-                />
+                    <img
+                        src={formData.avatar || "profileimg.png"}
+                        alt="avatar"
+                        className={s.uploadImage}
+                    />
                 </label>
                 <input
-                type="file"
-                id="avatar"
-                name="avatar"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        setFormData({
-                        ...formData,
-                        avatar: reader.result,
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                    }
-                }}
+                    type="file"
+                    id="avatar"
+                    name="avatar"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                setFormData({
+                                    ...formData,
+                                    avatar: reader.result,
+                                });
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    }}
                 />
             </div>
 
-            {/* Имя */}
-            <div className={s.flex_column}>
-                <label>Имя</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Введите имя"
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                />
-            </div>
+            {[
+                {
+                    name: "firstName",
+                    label: t("register.first_name"),
+                    placeholder: t("register.enter_first_name"),
+                },
+                {
+                    name: "lastName",
+                    label: t("register.last_name"),
+                    placeholder: t("register.enter_last_name"),
+                },
+                {
+                    name: "email",
+                    label: t("register.email"),
+                    placeholder: t("register.enter_email"),
+                    type: "email",
+                },
+                {
+                    name: "hobby",
+                    label: t("register.hobby"),
+                    placeholder: t("register.enter_hobby"),
+                },
+                {
+                    name: "education",
+                    label: t("register.education"),
+                    placeholder: t("register.enter_education"),
+                },
+                { name: "birth", label: t("register.birth"), type: "date" },
+                {
+                    name: "username",
+                    label: t("register.username"),
+                    placeholder: t("register.enter_username"),
+                },
+                {
+                    name: "password",
+                    label: t("register.password"),
+                    placeholder: t("register.enter_password"),
+                    type: "password",
+                },
+            ].map(({ name, label, placeholder, type = "text" }) => (
+                <div key={name}>
+                    <div className={s.flex_column}>
+                        <label>{label}</label>
+                    </div>
+                    <div className={s.inputForm}>
+                        <input
+                            className={s.input}
+                            placeholder={placeholder}
+                            type={type}
+                            name={name}
+                            value={formData[name]}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
+            ))}
 
-            {/* Фамилия */}
-            <div className={s.flex_column}>
-                <label>Фамилия</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Введите фамилию"
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Хобби */}
-            <div className={s.flex_column}>
-                <label>Хобби</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Ваше хобби"
-                type="text"
-                name="hobby"
-                value={formData.hobby}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Образование/Работа */}
-            <div className={s.flex_column}>
-                <label>Образование / Работа</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Образование или место работы"
-                type="text"
-                name="education"
-                value={formData.education}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Дата рождения */}
-            <div className={s.flex_column}>
-                <label>Дата рождения (необязательно)</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                type="date"
-                name="birth"
-                value={formData.birth}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Имя пользователя */}
-            <div className={s.flex_column}>
-                <label>Имя пользователя</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="username"
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                />
-            </div>
-
-            {/* Пароль */}
-            <div className={s.flex_column}>
-                <label>Пароль</label>
-            </div>
-            <div className={s.inputForm}>
-                <input
-                className={s.input}
-                placeholder="Введите пароль"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                />
-            </div>
-
-            {/* Кнопка отправки */}
             <button className={s.button_submit} type="submit">
-                Зарегистрироваться
+                {t("register.register_button") || "Ro‘yxatdan o‘tish"}
             </button>
 
-            {/* Ссылка на вход */}
             <p className={s.p}>
-                Уже есть аккаунт? <span className={s.span}><Link to="/login">Войти</Link></span>
+                {t("register.have_account")}{" "}
+                <span className={s.span}>
+                    <Link to="/login">
+                        {t("register.login_link") || "Kirish"}
+                    </Link>
+                </span>
             </p>
-            </form>
-        </div>
+        </form>
     );
 };
 

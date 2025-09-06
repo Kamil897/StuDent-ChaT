@@ -76,7 +76,6 @@
       "groups": "Groups",
       "news": "Intructions for using AI",
       "institutions": "Institutions",
-      "ai_assistant": "StuDent AI",
       "account": "My Account",
       "slogan": "Learn. Communicate. Grow."
     },
@@ -93,22 +92,27 @@
     },
 
     "ai_chat": {
-      "start_prompt": "Start the conversation by asking a question!",
-      "you": "You",
-      "ai": "AI",
-      "input_placeholder": "Ask a question",
-      "connection_error": "Connection to server failed.",
-      "no_reply": "No response",
       "chats": "Chats",
       "new_chat": "New Chat",
-      "search": "Search",
       "chat": "Chat",
-      "library": "Library",
       "settings": "Settings",
+      "welcome": "Welcome to Cognia!",
+      "start_prompt": "Start by typing your question below.",
+      "input_placeholder": "Type your message...",
+      "thinking": "Thinking",
+      "no_reply": "No reply from AI",
+      "connection_error": "Connection error. Please try again.",
+  
+      "settings_title": "AI Settings",
       "theme": "Theme",
-      "logged_in_as": "Logged in as",
-      "welcome": "Welcome!",
-      "thinking": "Thinking"
+      "light": "Light",
+      "dark": "Dark",
+      "reply_style": "Answer Style",
+      "style_normal": "Normal",
+      "style_detailed": "Detailed",
+      "style_creative": "Creative",
+      "clear_history": "Clear Chat History",
+      "close": "Close"
     },
 
     "main": {
@@ -202,7 +206,8 @@
       "statsTitle": "Purchase Statistics",
       "statsPurchased": "Items Purchased",
       "statsSpent": "Points Spent",
-      "statsCollection": "Collection"
+      "statsCollection": "Collection",
+      "buypoints":"Buy points"
     },
 
     "bought": {

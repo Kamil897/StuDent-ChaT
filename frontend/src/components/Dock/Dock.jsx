@@ -39,13 +39,13 @@ const Dock = () => {
             </li>
           </Link>
 
-          <Link to={'/edit'}>
+          <Link to={'/LeaderBoard'}>
             <li className="element">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil">
                 <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
                 <path d="m15 5 4 4"/>
               </svg>
-              <p className="label">{t('dock.edit')}</p>
+              <p className="label">Leaderboard</p>
             </li>
           </Link>
         </ul>
@@ -74,6 +74,40 @@ const Dock = () => {
                 <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
               </svg>
               <p className="label">{t('dock.games')}</p>
+            </li>
+          </Link>
+
+          <Link to={'/Wallet'}>
+            <li className="element">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-wallet">
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 0 5 10.5v3A1.5 1.5 0 0 0 6.5 15h13a1.5 1.5 0 0 1 1.5 1.5V20a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a1 1 0 0 0 1-1z"/>
+              </svg>
+              <p className="label">Кошелек</p>
+            </li>
+          </Link>
+
+          <Link to={'/Achievements'}>
+            <li className="element">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trophy">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/>
+                <path d="M10 14.66V17c0 1.1.9 2 2 2s2-.9 2-2v-2.34"/>
+                <path d="M12 14V6"/>
+              </svg>
+              <p className="label">Достижения</p>
+            </li>
+          </Link>
+
+          <Link to={'/Friends'}>
+            <li className="element">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="m22 21-2-2"/>
+                <path d="M16 16.28A6 6 0 0 0 18 7h-2a4 4 0 0 0-4 4v2"/>
+              </svg>
+              <p className="label">Друзья</p>
             </li>
           </Link>
         </ul>

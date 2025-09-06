@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useUser } from '../../Context/UserContext'; 
 import s from "./KnowledgeMaze.module.scss";
+import { saveGameProgress } from '../utils/gamesApi';
 
 export default function KnowledgeMaze() {
   const { t } = useTranslation();
@@ -32,6 +33,13 @@ export default function KnowledgeMaze() {
     if (level >= questions.length && questions.length > 0 && !gameFinished) {
       setGameFinished(true);
       addPoints(score);
+      // Сохраняем прогресс в backend
+      saveGameProgress('knowledgemaze', {
+        score: score * 10,
+        level: Math.floor(score / 2) + 1,
+        timeSpent: 0,
+        completed: score >= questions.length * 0.7
+      });
     }
   }, [level, questions.length, score, addPoints, gameFinished]);
 

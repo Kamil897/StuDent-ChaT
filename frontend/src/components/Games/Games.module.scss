@@ -24,7 +24,6 @@
   padding: 0.75rem 1.25rem;
   border-radius: 50px;
   cursor: pointer;
-  margin-bottom: 2rem;
   font-weight: 600;
   font-size: 0.95rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -55,6 +54,34 @@
     font-size: 0.85rem;
   }
 }
+
+.topButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.leaderboardButton {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s ease;
+}
+
+.leaderboardButton:hover {
+  background-color: #f0f2ff;
+}
+
 
 .gamesGrid {
   display: grid;

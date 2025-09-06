@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import s from './FlappyBird.module.scss';
 import MyTituls from '../MyTituls/MyTituls'; // Импортируем функцию для получения титулов
+import { saveGameProgress } from '../utils/gamesApi';
 
 const FlappyBird = ({ isMenuOpen, isGameOver, restartGame, goToMenu, canvasRef }) => {
   const navigate = useNavigate();
@@ -64,6 +65,13 @@ const FlappyBird = ({ isMenuOpen, isGameOver, restartGame, goToMenu, canvasRef }
       // Проверка на столкновения
       if (checkCollision(bird, pipes, ground)) {
         setGameOver(true);
+        // Сохраняем прогресс в backend при проигрыше
+        saveGameProgress('flappybird', {
+          score: score,
+          level: Math.floor(score / 10) + 1,
+          timeSpent: 0,
+          completed: false
+        });
       }
 
       frameId = requestAnimationFrame(update);

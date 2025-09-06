@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, createContext } from 'react';
 import './2048.css';
 import { Link } from 'react-router-dom';
+import { saveGameProgress } from '../utils/gamesApi';
 
 const GRID_SIZE = 4;
 const WINNING_TILE = 2048;
@@ -120,8 +121,22 @@ function Game() {
 
         if (gridWithTile.some((row) => row.includes(WINNING_TILE))) {
           setGameWon(true);
+          // Сохраняем прогресс в backend при победе
+          saveGameProgress('2048', {
+            score: score,
+            level: Math.floor(score / 1000) + 1,
+            timeSpent: 0,
+            completed: true
+          });
         } else if (checkGameOver(gridWithTile)) {
           setGameOver(true);
+          // Сохраняем прогресс в backend при проигрыше
+          saveGameProgress('2048', {
+            score: score,
+            level: Math.floor(score / 1000) + 1,
+            timeSpent: 0,
+            completed: false
+          });
         }
       }
     };

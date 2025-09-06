@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import s from "./PointsShop.module.css";
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { recordPurchase } from "../components/utils/gamesApi";
 
-const API_BASE = " http://localhost:5173/shop";
+// Базовые урлы
+const API_MAIN = "http://localhost:7777/shop";   // backend-main
+const API_LOGIN = "http://localhost:3000";       // backend-login
 
 const pointPackages = [
     { id: 1, amount: 500, label: "500 Points (Free)", free: true },
@@ -14,14 +19,19 @@ const PointsShop = () => {
     const [points, setPoints] = useState(0);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
+    const { t } = useTranslation(); 
 
-    // Fetch current points
+    // Получаем текущие очки (backend-login)
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch(`${API_BASE}/user`);
+                const res = await fetch(`${API_LOGIN}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
                 const data = await res.json();
-                setPoints(data.points || 0);
+                setPoints(data.karmaPoints || 0);
             } catch (err) {
                 console.error("Error fetching user:", err);
             } finally {
@@ -31,19 +41,37 @@ const PointsShop = () => {
         fetchUser();
     }, []);
 
-    // Add points directly (free)
+    // Бесплатные очки (backend-login)
     const addFreePoints = async (amount) => {
         setMessage("");
         try {
-            const res = await fetch(`${API_BASE}/user/add-points`, {
+            const res = await fetch(`${API_LOGIN}/auth/add-points`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 body: JSON.stringify({ points: amount }),
             });
 
             const data = await res.json();
             if (res.ok) {
-                setPoints(data.points);
+                setPoints(data.karmaPoints);
+                
+                // Записываем покупку в историю (backend-login)
+                try {
+                    await recordPurchase({
+                        productName: `${amount} Points (Free)`,
+                        amount: amount,
+                        currency: 'points',
+                        quantity: 1,
+                        totalCost: 0,
+                        source: 'points_shop'
+                    });
+                } catch (error) {
+                    console.error('Error recording purchase:', error);
+                }
+                
                 setMessage(`✅ You received ${amount} points!`);
             } else {
                 setMessage(`❌ ${data.error}`);
@@ -54,11 +82,11 @@ const PointsShop = () => {
         }
     };
 
-    // Buy points with Stripe
+    // Покупка через Stripe (backend-main)
     const buyWithStripe = async (pkg) => {
         setMessage("");
         try {
-            const res = await fetch(`${API_BASE}/create-checkout-session`, {
+            const res = await fetch(`${API_MAIN}/create-checkout-session`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ productId: pkg.id }),
@@ -66,7 +94,7 @@ const PointsShop = () => {
 
             const data = await res.json();
             if (res.ok && data.url) {
-                window.location.href = data.url; // Redirect to Stripe Checkout
+                window.location.href = data.url; // Переход на Stripe Checkout
             } else {
                 setMessage(`❌ ${data.error || "Payment failed"}`);
             }
@@ -82,6 +110,11 @@ const PointsShop = () => {
 
     return (
         <div className={s.container}>
+
+            <Link to='/Shop'>
+                <button className={s.buyBtn}>{t('games.back')}</button>
+            </Link>
+
             <h1 className={s.title}>Buy Points</h1>
 
             <div className={s.points}>

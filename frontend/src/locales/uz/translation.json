@@ -113,22 +113,27 @@
     },
 
     "ai_chat": {
-      "start_prompt": "Savol berib suhbatni boshlang!",
-      "you": "Siz",
-      "ai": "II",
-      "input_placeholder": "Savolingizni yozing",
-      "connection_error": "Server bilan aloqa muvaffaqiyatsiz tugadi.",
-      "no_reply": "Javob mavjud emas",
-      "chats": "Suhbatlar",
-      "new_chat": "Yangi suhbat",
-      "search": "Qidirish",
-      "chat": "Suhbat",
-      "library": "Kutubxona",
+      "chats": "Chatlar",
+      "new_chat": "Yangi chat",
+      "chat": "Chat",
       "settings": "Sozlamalar",
+      "welcome": "Cognia ga xush kelibsiz!",
+      "start_prompt": "Savolingizni pastga yozib boshlang.",
+      "input_placeholder": "Xabaringizni yozing...",
+      "thinking": "O‘ylayapman",
+      "no_reply": "AI javob bermadi",
+      "connection_error": "Ulanishda xatolik. Qayta urinib ko‘ring.",
+  
+      "settings_title": "AI Sozlamalari",
       "theme": "Mavzu",
-      "logged_in_as": "Sizning ismingiz",
-      "welcome": "Xush kelibsiz!",
-      "thinking": "O‘ylayapman"
+      "light": "Yorug‘",
+      "dark": "Qorong‘i",
+      "reply_style": "Javob uslubi",
+      "style_normal": "Oddiy",
+      "style_detailed": "Batafsil",
+      "style_creative": "Ijodiy",
+      "clear_history": "Chat tarixini tozalash",
+      "close": "Yopish"
     },
 
     "main": {
@@ -222,7 +227,8 @@
       "statsTitle": "Sotib olish statistikasi",
       "statsPurchased": "Sotib olingan mahsulotlar",
       "statsSpent": "Sarflangan ballar",
-      "statsCollection": "Kolleksiya"
+      "statsCollection": "Kolleksiya",
+      "buypoints":"Ball sotib olish"
     },
 
     "bought": {

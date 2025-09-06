@@ -13,6 +13,11 @@ export default defineConfig(({ mode }) => {
           target: "http://localhost:7777",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, "")
+        },
+        "/auth": { // 👈 добавляем прокси для авторизации
+          target: "http://localhost:3000",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/auth/, "/auth")
         }
       }
     },    

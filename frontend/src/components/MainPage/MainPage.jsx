@@ -10,41 +10,54 @@ const MainPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const username = localStorage.getItem('loggedInUsername');
-    if (!username) {
-      navigate('/login');
-    } else {
-      const user = JSON.parse(localStorage.getItem(username));
-      setUserData(user);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
     }
+
+    fetch("http://localhost:3000/auth/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(async res => {
+        const data = await res.json();
+        console.log("Ответ /auth/me:", res.status, data);
+        if (res.ok) {
+          setUserData(data);
+        } else {
+          navigate("/login");
+        }
+      })
+      .catch(err => {
+        console.error("Ошибка запроса:", err);
+        navigate("/login");
+      });
   }, [navigate]);
 
+  if (!userData) {
+    return <p>{t("main.loading")}</p>;
+  }
+
   return (
-    <>
-      {userData ? (
-        <div className={s.sects}>
-          <div className={s.section_2}>
-            <div className={s.main}>
-              <img
-                className={`${userData.avatar ? s.pfp : s.defoltpfp} ${userData.avatarBorders ? s[userData.avatarBorders] : ''}`}
-                src={userData.avatar || 'profileimg.png'}
-                alt="profile"
-              />
-              <div className={s.info}>
-                <h2 className={s.username}><b>{userData.firstName} {userData.lastName}</b></h2>
-                <p><b>{t("main.first_name")}: </b>{userData.firstName}</p>
-                <p><b>{t("main.last_name")}:</b> {userData.lastName}</p>
-                <p><b>{t("main.hobby")}:</b> {userData.hobby}</p>
-                <p><b>{t("main.education")}:</b> {userData.education}</p>
-              </div>
-            </div>
+    <div className={s.sects}>
+      <div className={s.section_2}>
+        <div className={s.main}>
+          <img
+            className={`${userData.avatar ? s.pfp : s.defoltpfp} ${userData.avatarBorders ? s[userData.avatarBorders] : ''}`}
+            src={userData.avatar || '/profileimg.png'}
+            alt="profile"
+          />
+          <div className={s.info}>
+            <h2 className={s.username}>
+              <b>{userData.firstName} {userData.lastName}</b>
+            </h2>
+            <p><b>{t("main.first_name")}: </b>{userData.firstName || "—"}</p>
+            <p><b>{t("main.email")}:</b> {userData.email || "—"}</p>
           </div>
-          <Dock />
         </div>
-      ) : (
-        <p>{t("main.loading")}</p>
-      )}
-    </>
+      </div>
+      <Dock />
+    </div>
   );
 };
 

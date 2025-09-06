@@ -3,6 +3,7 @@ import styles from "./Ping.module.css";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'; // <-- добавлен импорт
+import { saveGameProgress } from '../utils/gamesApi';
 
 const PongNeon = () => {
   const canvasRef = useRef(null);
@@ -73,6 +74,15 @@ const PongNeon = () => {
     const resetBall = () => {
       if (state.playerScore >= winningScore || state.aiScore >= winningScore) {
         setIsRunning(false);
+        // Сохраняем прогресс в backend при завершении игры
+        if (state.playerScore >= winningScore) {
+          saveGameProgress('pingpong', {
+            score: state.playerScore * 20,
+            level: Math.floor(state.playerScore / 3) + 1,
+            timeSpent: 0,
+            completed: true
+          });
+        }
         state.playerScore = 0;
         state.aiScore = 0;
         return;

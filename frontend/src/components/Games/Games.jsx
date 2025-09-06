@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Info, Play, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
 import s from './Games.module.scss';
 import { getMaxPoints } from '../utils/pointsHelper';
 
@@ -23,9 +22,18 @@ const Games = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`${API_BASE}/user`);
+        const token = localStorage.getItem('token'); // токен ты сохраняешь при логине
+        const res = await fetch(`http://localhost:3000/auth/me`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+  
+        if (!res.ok) throw new Error('Unauthorized');
+        
         const data = await res.json();
-        setCurrentPoints(data.points || 0);
+        setCurrentPoints(data.karmaPoints || 0);
       } catch (err) {
         console.error('Failed to fetch user:', err);
       } finally {
@@ -34,6 +42,7 @@ const Games = () => {
     };
     fetchUser();
   }, []);
+  
 
   const maxPoints = getMaxPoints();
 
@@ -61,16 +70,19 @@ const Games = () => {
   // ✅ Call backend to add points
   const addPoints = async (pointsToAdd = 500) => {
     try {
-      const res = await fetch(`${API_BASE}/user/add-points`, {
+      const res = await fetch(`http://localhost:3000/auth/add-points`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify({ points: pointsToAdd })
       });
       const updatedUser = await res.json();
 
       if (res.ok) {
-        setCurrentPoints(updatedUser.points);
-        if (updatedUser.points >= maxPoints) {
+        setCurrentPoints(updatedUser.karmaPoints);
+        if (updatedUser.karmaPoints >= maxPoints) {
           setShowCongrats(true);
           document.body.style.overflow = 'hidden';
         }
@@ -103,9 +115,15 @@ const Games = () => {
 
   return (
     <div className={s.container}>
-      <button className={s.backButton} onClick={() => navigate('/MainPage')}>
-        {t('games.back')}
-      </button>
+      <div className={s.topButtons}>
+        <button className={s.backButton} onClick={() => navigate('/MainPage')}>
+          {t('games.back')}
+        </button>
+
+        <button className={s.leaderboardButton} onClick={() => navigate('/LeaderBoard')}>
+          🏆 LeaderBoard
+        </button>
+      </div>
 
       <div className={s.progressContainer}>
         <h3>{t('games.progress')} {currentPoints} / {maxPoints}</h3>

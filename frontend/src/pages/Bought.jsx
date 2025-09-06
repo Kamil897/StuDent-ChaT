@@ -6,7 +6,7 @@ import { FaShoppingBag } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
 
 const Bought = () => {
-  const { user, removePurchasedItem, addProductToShop } = useUser();
+  const { user, removePurchasedItem } = useUser();  
   const [sellingItem, setSellingItem] = useState(null);
   const [sellPrice, setSellPrice] = useState("");
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const Bought = () => {
 
   const confirmSell = () => {
     if (sellPrice && sellingItem) {
-      addProductToShop({ ...sellingItem, price: Number(sellPrice) });
       removePurchasedItem(sellingItem.id);
       setSellingItem(null);
       setSellPrice("");

@@ -3,6 +3,7 @@ import s from "./MathBattle.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Context/UserContext";
 import { useTranslation } from "react-i18next";
+import { saveGameProgress } from "../utils/gamesApi";
 
 export default function MathBattle() {
   const { t } = useTranslation();
@@ -132,12 +133,31 @@ export default function MathBattle() {
                   ? t("math_battle.you_lost")
                   : t("math_battle.you_won")}
               </h2>
-              <button
-                className={s.backButton}
-                onClick={() => navigate("/Games")}
-              >
-                <span>{t("math_battle.back")}</span>
-              </button>
+              {botHealth === 0 && (
+                <button
+                  className={s.backButton}
+                  onClick={() => {
+                    // Сохраняем прогресс в backend при победе
+                    saveGameProgress('mathbattle', {
+                      score: 500,
+                      level: parseInt(difficulty),
+                      timeSpent: 0,
+                      completed: true
+                    });
+                    navigate("/Games");
+                  }}
+                >
+                  <span>{t("math_battle.back")}</span>
+                </button>
+              )}
+              {playerHealth === 0 && (
+                <button
+                  className={s.backButton}
+                  onClick={() => navigate("/Games")}
+                >
+                  <span>{t("math_battle.back")}</span>
+                </button>
+              )}
             </div>
           )}
 

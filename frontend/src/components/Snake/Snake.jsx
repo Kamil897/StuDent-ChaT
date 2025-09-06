@@ -4,6 +4,7 @@ import { getMaxPoints, addGamePoints } from '../utils/pointsHelper';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../Context/UserContext';
 import { useTranslation } from 'react-i18next';
+import { saveGameProgress } from '../utils/gamesApi';
 
 const TILE_SIZE = 20;
 const ROWS = 20;
@@ -129,9 +130,17 @@ const endGame = useCallback(() => {
 
     addPoints(currentScore);
     
+    // Сохраняем прогресс в backend
+    saveGameProgress('snake', {
+      score: currentScore,
+      level: Math.floor(currentScore / 10) + 1,
+      timeSpent: GAME_DURATION - timeLeft,
+      completed: currentScore >= 50
+    });
+    
     return currentScore; 
   });
-}, [addPoints]);
+}, [addPoints, timeLeft]);
 
 
   const resetGame = () => {

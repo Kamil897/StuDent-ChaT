@@ -111,22 +111,27 @@
     },
     
     "ai_chat": {
-      "start_prompt": "Начни диалог, задав вопрос!",
-      "you": "Вы",
-      "ai": "ИИ",
-      "input_placeholder": "Задай вопрос",
-      "connection_error": "Ошибка соединения с сервером.",
-      "no_reply": "Ответ отсутствует",
       "chats": "Чаты",
       "new_chat": "Новый чат",
-      "search": "Поиск",
       "chat": "Чат",
-      "library": "Библиотека",
       "settings": "Настройки",
+      "welcome": "Добро пожаловать в Cognia!",
+      "start_prompt": "Начни с того, что напишешь свой вопрос ниже.",
+      "input_placeholder": "Введите сообщение...",
+      "thinking": "Думаю",
+      "no_reply": "Нет ответа от ИИ",
+      "connection_error": "Ошибка соединения. Попробуйте ещё раз.",
+  
+      "settings_title": "Настройки ИИ",
       "theme": "Тема",
-      "logged_in_as": "Вы вошли как",
-      "welcome": "Добро пожаловать!",
-      "thinking": "Думаю"
+      "light": "Светлая",
+      "dark": "Тёмная",
+      "reply_style": "Стиль ответов",
+      "style_normal": "Обычный",
+      "style_detailed": "Подробный",
+      "style_creative": "Креативный",
+      "clear_history": "Очистить историю чатов",
+      "close": "Закрыть"
     },
 
     "main": {
@@ -220,7 +225,8 @@
       "statsTitle": "Статистика покупок",
       "statsPurchased": "Товаров куплено",
       "statsSpent": "Потрачено баллов",
-      "statsCollection": "Коллекция"
+      "statsCollection": "Коллекция",
+      "buypoints":"Купить очки"
     },
 
     "bought": {

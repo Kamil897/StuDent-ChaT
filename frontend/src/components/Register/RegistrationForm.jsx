@@ -12,7 +12,7 @@ const Registration = () => {
         email: "",
         hobby: "",
         education: "",
-        username: "",
+        name: "",
         password: "",
         avatar: "",
         birth: "",
@@ -25,43 +25,48 @@ const Registration = () => {
     };
 
     const handleRegister = async (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        let calculatedAge = null;
-        if (formData.birth) {
-            const birthDate = new Date(formData.birth);
-            const today = new Date();
-            calculatedAge = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                calculatedAge--;
-            }
-        }
+  let calculatedAge = null;
+  if (formData.birth) {
+    const birthDate = new Date(formData.birth);
+    const today = new Date();
+    calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      calculatedAge--;
+    }
+  }
 
-        try {
-            const res = await axios.get(
-                `${import.meta.env.VITE_API_URL}?username=${formData.username}`
-            );
-            if (res.data.length > 0) {
-                alert(
-                    t("register.already_exists") ||
-                        "Bu foydalanuvchi allaqachon mavjud!"
-                );
-                return;
-            }
+  try {
+    await axios.post("/auth/register", {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        username: formData.name,  // если нужен логин отдельно
+        age: calculatedAge,
+        hobby: formData.hobby,
+        education: formData.education,
+        avatar: formData.avatar,
+      });
+      
 
-            await axios.post(import.meta.env.VITE_API_URL, {
-                ...formData,
-                age: calculatedAge,
-            });
+    alert(t("register.success") || "Ro‘yxatdan o‘tish muvaffaqiyatli!");
+    navigate("/login");
+  } catch (error) {
+    console.error("Registration error:", error);
+    if (error.response?.status === 409) {
+      alert(
+        t("register.already_exists") ||
+          "Bu foydalanuvchi allaqachon mavjud!"
+      );
+    } else {
+      alert(t("register.server_error") || "Serverda xatolik yuz berdi");
+    }
+  }
+};
 
-            alert(t("register.success") || "Ro‘yxatdan o‘tish muvaffaqiyatli!");
-            navigate("/login");
-        } catch (error) {
-            console.error("Registration error:", error);
-            alert(t("register.server_error") || "Serverda xatolik yuz berdi");
-        }
-    };
 
     return (
         <form className={s.form} onSubmit={handleRegister}>
@@ -124,7 +129,7 @@ const Registration = () => {
                 },
                 { name: "birth", label: t("register.birth"), type: "date" },
                 {
-                    name: "username",
+                    name: "name",
                     label: t("register.username"),
                     placeholder: t("register.enter_username"),
                 },

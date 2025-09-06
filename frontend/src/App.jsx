@@ -34,6 +34,14 @@ const MathBattle = lazy(() => import('./components/MathBattle/MathBattle'));
 const MyTituls = lazy(() => import('./components/MyTituls/MyTituls'));
 const AiChat = lazy(() => import('./components/AIChat/AiChat'));
 const AdminPanel = lazy(() => import('./components/AdminPanel/AdminPanel'));
+const Leaderboard = lazy(() => import('./components/LeaderBoard/LeaderBoard'));
+const Inbox = lazy(() => import('./pages/Inbox'));
+const Wallet = lazy(() => import('./components/Wallet/Wallet'));
+const Achievements = lazy(() => import('./components/Achievements/Achievements'));
+const FriendsList = lazy(() => import('./components/FriendsList/FriendsList'));
+const ChatBox = lazy(() => import('./components/ChatBox/ChatBox'));
+
+// Leaderboard с маленькой, имя файла с Большой LeaderBoard
 
 const App = () => {
   const location = useLocation();
@@ -48,7 +56,7 @@ const App = () => {
   const isNotFoundPage = ![
     "/", "/ChatGroup", "/Register", "/Login", "/MainPage",
     "/Society", "/Tech", "/Culture", "/TicTacToe", "/Snake",
-    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat", "/AdminPanel"
+    "/Games", "/Tetris", "/Tir", "/Shop", "/news", "/bought", "/KnowledgeMaze", "/MathBattle", "/don","/MyTituls","/AiChat", "/AdminPanel", "/LeaderBoard", "/Inbox", "/Wallet", "/Achievements", "/Friends", "/Chat",
   ].includes(location.pathname);
 
   return (
@@ -85,6 +93,12 @@ const App = () => {
           <Route path="/AiChat" element={<AiChat />} />
           <Route path="/AdminPanel" element={<AdminPanel />} />
           <Route path="/Points" element={<PointsShop/>}/>
+          <Route path="/LeaderBoard" element={<Leaderboard/>}/>
+          <Route path="/Inbox" element={<Inbox/>}/>
+          <Route path="/Wallet" element={<Wallet/>}/>
+          <Route path="/Achievements" element={<Achievements/>}/>
+          <Route path="/Friends" element={<FriendsList/>}/>
+          <Route path="/Chat/:friendId" element={<ChatBox/>}/>
         </Routes>
       </Suspense>
       {!isNotFoundPage && location.pathname !== "/ChatGroup" && <Footer />}

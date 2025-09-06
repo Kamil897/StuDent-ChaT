@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 const Login = () => {
     const { t } = useTranslation();
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
@@ -14,27 +14,21 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const res = await axios.get(
-                `${import.meta.env.VITE_API_URL}?username=${username}`
+            // ⚡ Отправляем POST на NestJS
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/login`,
+                { email, password }
             );
-            const user = res.data[0]; // Birinchi mos foydalanuvchi
 
-            if (!user) {
-                alert(t("login.user_not_found") || "Foydalanuvchi topilmadi");
-                return;
-            }
-
-            if (user.password !== password) {
-                alert(t("login.incorrect_password") || "Parol noto‘g‘ri");
-                return;
-            }
+            // В ответе у тебя приходит { access_token, user }
+            localStorage.setItem("token", res.data.access_token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
 
             alert(t("login.success") || "Kirish muvaffaqiyatli!");
-            localStorage.setItem("loggedInUsername", username);
             navigate("/MainPage");
         } catch (error) {
             console.error("Login error:", error);
-            alert(t("login.server_error") || "Serverda xatolik yuz berdi");
+            alert(t("login.incorrect") || "Email yoki parol noto‘g‘ri");
         }
     };
 
@@ -46,21 +40,20 @@ const Login = () => {
                 </h2>
                 <form onSubmit={handleLogin} className={s.form}>
                     <div className={s.flexColumn}>
-                        <label htmlFor="username">
-                            {t("login.username") || "Foydalanuvchi nomi"}
+                        <label htmlFor="email">
+                            {t("login.email") || "Email"}
                         </label>
                     </div>
                     <div className={s.inputForm}>
                         <input
                             className={s.input}
-                            type="text"
-                            id="username"
+                            type="email"
+                            id="email"
                             placeholder={
-                                t("login.username_placeholder") ||
-                                "Ismingizni kiriting"
+                                t("login.email_placeholder") || "Email kiriting"
                             }
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
