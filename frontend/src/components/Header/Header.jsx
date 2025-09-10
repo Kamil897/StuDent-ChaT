@@ -56,7 +56,7 @@ const Header = () => {
               Cognia AI
             </Link>
           <div className={`${s.links} ${active ? s.active : ''}`}>
-            <Link className={s.teach} onClick={CloseMenu} to={'/IELTC'}>
+            <Link className={s.teach} onClick={CloseMenu} to={'/AISimulation'}>
               IELTC Simulation
             </Link>
           </div>

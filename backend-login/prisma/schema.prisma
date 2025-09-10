@@ -34,36 +34,37 @@ model User {
   lastName      String?
   hobby         String?
   education     String?
-  karmaPoints   Int      @default(0)       // 👈 геймификация
-  coins         Int      @default(0)       // 💰 монеты
-  crystals      Int      @default(0)       // 💎 кристаллы
+  karmaPoints   Int      @default(0) // 👈 геймификация
+  coins         Int      @default(0) // 💰 монеты
+  crystals      Int      @default(0) // 💎 кристаллы
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
 
-  cogniya        CogniyaProfile?
-  chatHistories  ChatHistory[]
+  chats Chat[]
+
+  cogniya            CogniyaProfile?
+  chatHistories      ChatHistory[]
   // связи для Report
-  reportsFiled   Report[] @relation("ReportsByReporter")
-  reportsAgainst Report[] @relation("ReportsByTarget")
-  assignedReports Report[] @relation("AssignedAdmin")
-  notifications  Notification[]
-  adminKPI       AdminKPI?
-  gameProgress   GameProgress[]
-  leaderboards   Leaderboard[]
-  userTitles     UserTitle[]
-  purchases      PurchaseHistory[]
-  achievements   UserAchievement[]
-  friends        Friend[] @relation("UserFriends")
-  friendsOf      Friend[] @relation("FriendOfUsers")
-  sentMessages   Message[] @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
+  reportsFiled       Report[]            @relation("ReportsByReporter")
+  reportsAgainst     Report[]            @relation("ReportsByTarget")
+  assignedReports    Report[]            @relation("AssignedAdmin")
+  notifications      Notification[]
+  adminKPI           AdminKPI?
+  gameProgress       GameProgress[]
+  leaderboards       Leaderboard[]
+  userTitles         UserTitle[]
+  purchases          PurchaseHistory[]
+  achievements       UserAchievement[]
+  friends            Friend[]            @relation("UserFriends")
+  friendsOf          Friend[]            @relation("FriendOfUsers")
+  sentMessages       Message[]           @relation("SentMessages")
+  receivedMessages   Message[]           @relation("ReceivedMessages")
   walletTransactions WalletTransaction[]
 }
 
-
 model CogniyaProfile {
   id        Int      @id @default(autoincrement())
-  userId    Int       @unique   // 👈 добавить уникальность  
+  userId    Int      @unique // 👈 добавить уникальность  
   hobbies   String?
   interests String?
   bio       String?
@@ -83,13 +84,33 @@ model ChatHistory {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model ServerStatus {
+model Chat {
   id        Int      @id @default(autoincrement())
-  uptime    Int      @default(0)
-  onlineUsers Int    @default(0)
-  message   String?
-  updatedAt DateTime @updatedAt
+  title     String   @default("Новый чат")
+  userId    Int
   createdAt DateTime @default(now())
+
+  user     User          @relation(fields: [userId], references: [id])
+  messages ChatMessage[]
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  chatId    Int
+  role      String // "user" | "assistant"
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  chat Chat @relation(fields: [chatId], references: [id])
+}
+
+model ServerStatus {
+  id          Int      @id @default(autoincrement())
+  uptime      Int      @default(0)
+  onlineUsers Int      @default(0)
+  message     String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
 }
 
 model Report {
@@ -107,19 +128,19 @@ model Report {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @default(now()) @updatedAt
 
-  reporter User   @relation("ReportsByReporter", fields: [reporterId], references: [id])
-  target   User?  @relation("ReportsByTarget",   fields: [targetId],   references: [id])
-  admin    User?  @relation("AssignedAdmin",     fields: [assignedAdminId], references: [id])
+  reporter User  @relation("ReportsByReporter", fields: [reporterId], references: [id])
+  target   User? @relation("ReportsByTarget", fields: [targetId], references: [id])
+  admin    User? @relation("AssignedAdmin", fields: [assignedAdminId], references: [id])
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   userId    Int
-  type      String   // e.g. "report.status", "system.update"
+  type      String // e.g. "report.status", "system.update"
   title     String
   body      String?
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -139,7 +160,7 @@ model AdminKPI {
 model GameProgress {
   id        Int      @id @default(autoincrement())
   userId    Int
-  gameName  String   // asteroids, snake, pingpong, tictactoe, mathbattle, tir, knowledgemaze, don
+  gameName  String // asteroids, snake, pingpong, tictactoe, mathbattle, tir, knowledgemaze, don
   score     Int      @default(0)
   level     Int      @default(1)
   timeSpent Int      @default(0) // в секундах
@@ -168,7 +189,7 @@ model Leaderboard {
 model UserTitle {
   id        Int      @id @default(autoincrement())
   userId    Int
-  titleName String   // "Snake Master", "Math Genius", "Asteroid Hunter", etc.
+  titleName String // "Snake Master", "Math Genius", "Asteroid Hunter", etc.
   earnedAt  DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
@@ -194,7 +215,7 @@ model Achievement {
   id          Int      @id @default(autoincrement())
   name        String   @unique
   description String   @db.Text
-  icon        String   // URL или эмодзи
+  icon        String // URL или эмодзи
   condition   String   @db.Text // JSON условие для получения
   points      Int      @default(0) // очки за достижение
   createdAt   DateTime @default(now())
@@ -203,10 +224,10 @@ model Achievement {
 }
 
 model UserAchievement {
-  id            Int         @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   userId        Int
   achievementId Int
-  earnedAt      DateTime    @default(now())
+  earnedAt      DateTime @default(now())
 
   user        User        @relation(fields: [userId], references: [id])
   achievement Achievement @relation(fields: [achievementId], references: [id])
@@ -228,11 +249,11 @@ model Friend {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   fromUserId Int
   toUserId   Int
-  content    String  @db.Text
-  read       Boolean @default(false)
+  content    String   @db.Text
+  read       Boolean  @default(false)
   createdAt  DateTime @default(now())
 
   fromUser User @relation("SentMessages", fields: [fromUserId], references: [id])
@@ -242,12 +263,11 @@ model Message {
 model WalletTransaction {
   id        Int      @id @default(autoincrement())
   userId    Int
-  type      String   // deposit, withdraw, transfer, reward
+  type      String // deposit, withdraw, transfer, reward
   amount    Int
   currency  String   @default("coins") // coins, crystals, points
-  source    String?  // game, shop, achievement, etc.
+  source    String? // game, shop, achievement, etc.
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
-

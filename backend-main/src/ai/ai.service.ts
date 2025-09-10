@@ -1,18 +1,26 @@
-import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import * as fs from 'fs';
-import * as path from 'path';
 import OpenAI from 'openai';
+import { AiStatusService } from './ai-status.service';
+
+interface MemoryItem {
+  q: string;
+  a: string;
+  embedding: number[];
+}
 
 @Injectable()
 export class AiService {
   private client: OpenAI;
   private memory: Record<string, Array<{ role: string; content: string }>> = {};
-  private memoryPath = path.resolve(process.cwd(), 'memory.json');
+  private knowledgeBase: MemoryItem[] = []; // глобальный кэш знаний
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly aiStatusService: AiStatusService, // 👈 статус AI
+  ) {
     this.client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY, // 🔑 API-ключ из .env
+      apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
@@ -75,79 +83,100 @@ export class AiService {
   }
 
   // =========================
-  // 📂 Память JSON
+  // ⏳ Retry + Timeout
   // =========================
-  private ensureMemoryFile() {
-    if (!fs.existsSync(this.memoryPath)) {
-      fs.writeFileSync(this.memoryPath, JSON.stringify([]), 'utf-8');
+  private async safeCall<T>(fn: () => Promise<T>, retries = 3, timeout = 10000): Promise<T> {
+    let lastError: any;
+    for (let i = 0; i < retries; i++) {
+      try {
+        const res = await Promise.race([
+          fn(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout)),
+        ]);
+        return res as T;
+      } catch (err) {
+        lastError = err;
+        await new Promise(r => setTimeout(r, (i + 1) * 500));
+      }
     }
+    throw lastError;
   }
 
-  private readMemory(): Array<{ q: string; a: string }> {
-    this.ensureMemoryFile();
-    try {
-      return JSON.parse(fs.readFileSync(this.memoryPath, 'utf-8'));
-    } catch {
-      return [];
-    }
+  // =========================
+  // 📐 Embeddings
+  // =========================
+  private async getEmbedding(text: string): Promise<number[]> {
+    const res = await this.safeCall(() =>
+      this.client.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: text,
+      })
+    );
+    return res.data[0].embedding;
   }
 
-  private writeMemory(items: Array<{ q: string; a: string }>) {
-    fs.writeFileSync(this.memoryPath, JSON.stringify(items, null, 2), 'utf-8');
+  private cosineSim(a: number[], b: number[]): number {
+    const dot = a.reduce((sum, ai, i) => sum + ai * b[i], 0);
+    const normA = Math.sqrt(a.reduce((sum, ai) => sum + ai * ai, 0));
+    const normB = Math.sqrt(b.reduce((sum, bi) => sum + bi * bi, 0));
+    return dot / (normA * normB || 1);
   }
 
-  private similarity(a: string, b: string): number {
-    const sa = new Set(a.toLowerCase().split(/\W+/).filter(Boolean));
-    const sb = new Set(b.toLowerCase().split(/\W+/).filter(Boolean));
-    const inter = [...sa].filter(x => sb.has(x)).length;
-    const union = new Set([...sa, ...sb]).size || 1;
-    return inter / union;
-  }
+  private async searchKnowledge(query: string, threshold = 0.85): Promise<string | null> {
+    if (this.knowledgeBase.length === 0) return null;
+    const queryEmbedding = await this.getEmbedding(query);
 
-  private searchMemory(query: string, threshold = 0.6): string | null {
-    const mem = this.readMemory();
     let best: { a: string; score: number } | null = null;
-    for (const item of mem) {
-      const s = this.similarity(query, item.q);
-      if (!best || s > best.score) best = { a: item.a, score: s };
+    for (const item of this.knowledgeBase) {
+      const score = this.cosineSim(queryEmbedding, item.embedding);
+      if (!best || score > best.score) {
+        best = { a: item.a, score };
+      }
     }
     return best && best.score >= threshold ? best.a : null;
   }
 
-  private saveToMemory(q: string, a: string) {
+  private async saveToKnowledge(q: string, a: string) {
     if (!q || !a) return;
-    const mem = this.readMemory();
-    mem.push({ q, a });
-    if (mem.length > 500) mem.splice(0, mem.length - 500);
-    this.writeMemory(mem);
+    const embedding = await this.getEmbedding(q);
+    this.knowledgeBase.push({ q, a, embedding });
+    if (this.knowledgeBase.length > 500) {
+      this.knowledgeBase.splice(0, this.knowledgeBase.length - 500);
+    }
   }
 
   // =========================
-  // 🤝 GPT-4 с памятью
+  // 🤝 GPT-4 запрос
   // =========================
   async askGPT4(message: string, persona?: string): Promise<{ reply: string; source: 'memory' | 'model' }> {
-    const cached = this.searchMemory(message, 0.6);
+    // 👉 Проверяем статус AI
+    if (!this.aiStatusService.isRunning()) {
+      throw new ForbiddenException('AI is disabled by admin');
+    }
+
+    // Проверяем в knowledge base
+    const cached = await this.searchKnowledge(message);
     if (cached) return { reply: cached, source: 'memory' };
 
-    const filteredPrompt = this.enforceStyleAndDomain(
-      persona ? `${persona}\n\n${message}` : message
-    );
+    const lang = this.detectLanguage(message);
+    const systemPrompt = this.systemPromptByLang(lang);
+    const finalPrompt = persona ? `${systemPrompt}\n\n${persona}` : systemPrompt;
+    const filteredPrompt = this.enforceStyleAndDomain(message);
 
     try {
-      const lang = this.detectLanguage(message);
-      const systemPrompt = persona || this.systemPromptByLang(lang);
-
-      const completion = await this.client.chat.completions.create({
-        model: 'gpt-4.1-nano', // можно 'gpt-4o-mini' для экономии
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: filteredPrompt },
-        ],
-        temperature: 0.3,
-      });
+      const completion = await this.safeCall(() =>
+        this.client.chat.completions.create({
+          model: 'gpt-4.1-nano',
+          messages: [
+            { role: 'system', content: finalPrompt },
+            { role: 'user', content: filteredPrompt },
+          ],
+          temperature: 0.3,
+        })
+      );
 
       const reply = completion.choices[0].message?.content?.trim() || 'Нет ответа';
-      this.saveToMemory(message, reply);
+      await this.saveToKnowledge(message, reply);
       return { reply, source: 'model' };
     } catch (error: any) {
       console.error('GPT-4 Error:', error.response?.data || error.message);
@@ -156,60 +185,11 @@ export class AiService {
   }
 
   // =========================
-  // 🌊 Streaming GPT-4
-  // =========================
-  async askGPT4Stream(message: string, onChunk: (chunk: string) => void, persona?: string): Promise<void> {
-    const cached = this.searchMemory(message, 0.6);
-    if (cached) {
-      onChunk(cached);
-      return;
-    }
-
-    const filteredPrompt = this.enforceStyleAndDomain(
-      persona ? `${persona}\n\n${message}` : message
-    );
-    const lang = this.detectLanguage(message);
-    const systemPrompt = persona || this.systemPromptByLang(lang);
-
-    try {
-      const stream = await this.client.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: filteredPrompt },
-        ],
-        temperature: 0.3,
-        stream: true,
-      });
-
-      let full = '';
-      for await (const chunk of stream) {
-        const delta = chunk.choices[0]?.delta?.content || '';
-        if (delta) {
-          full += delta;
-          onChunk(delta);
-        }
-      }
-
-      if (full.trim()) {
-        this.saveToMemory(message, full.trim());
-      }
-    } catch (error: any) {
-      console.error('GPT-4 Stream Error:', error.response?.data || error.message);
-      throw new InternalServerErrorException('GPT-4 stream failed');
-    }
-  }
-
-  // =========================
-  // 🛡️ SAFE: Memory → GPT-4 → fallback
+  // 🛡️ SAFE fallback
   // =========================
   async askAISafe(message: string, persona?: string) {
-    const cached = this.searchMemory(message, 0.6);
-    if (cached) return { reply: cached, source: 'memory' };
-
     try {
-      const { reply } = await this.askGPT4(message, persona);
-      return { reply, source: 'model' as const };
+      return await this.askGPT4(message, persona);
     } catch (e) {
       console.error('Model failed:', e);
     }
@@ -222,26 +202,6 @@ export class AiService {
     return { reply: fallback, source: 'fallback' as const };
   }
 
-  async askAIStreamSafe(message: string, onChunk: (chunk: string) => void, persona?: string) {
-    const cached = this.searchMemory(message, 0.6);
-    if (cached) {
-      onChunk(cached);
-      return;
-    }
-
-    try {
-      await this.askGPT4Stream(message, onChunk, persona);
-    } catch (e) {
-      console.error('Stream failed:', e);
-      const lang = this.detectLanguage(message);
-      const fallback =
-        lang === 'ru'
-          ? 'Сейчас не могу получить ответ. Попробуйте позже.'
-          : 'I cannot fetch an answer right now. Please try again later.';
-      onChunk(fallback);
-    }
-  }
-
   // =========================
   // 🔥 Метод: ask с userId + history
   // =========================
@@ -251,6 +211,11 @@ export class AiService {
     }
     if (!this.memory[userId]) this.memory[userId] = [];
     this.memory[userId].push({ role: 'user', content: message });
+
+    // лимит истории (макс 40 сообщений)
+    if (this.memory[userId].length > 40) {
+      this.memory[userId] = this.memory[userId].slice(-40);
+    }
 
     const persona = style ? `${style}\n\n${this.systemPromptByLang(this.detectLanguage(message))}` : undefined;
     const { reply, source } = await this.askAISafe(message, persona);

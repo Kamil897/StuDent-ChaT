@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import s from "./AiChat.module.scss";
+import s from "./AISimulation.module.scss";
 
 const API_LOGIN = "http://localhost:3000"; // backend-login
 const API_MAIN = "http://localhost:7777"; // backend-main

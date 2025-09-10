@@ -4,19 +4,19 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../common/roles.guard';
 import { Roles } from '../common/roles.decorator';
 
-@Controller('creator/ai-status')
-@UseGuards(JwtAuthGuard, RolesGuard) // подключаем Guards ко всему контроллеру
+@Controller('ai-status')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AiStatusController {
   constructor(private readonly aiStatusService: AiStatusService) {}
 
   @Get()
-  @Roles('superadmin') // только супер-админ может смотреть состояние
+  @Roles('creator')
   async getStatus() {
     return await this.aiStatusService.getStatus();
   }
 
   @Patch()
-  @Roles('superadmin') // только супер-админ может менять состояние
+  @Roles('creator')
   async setStatus(@Body() body: { running: boolean }) {
     return await this.aiStatusService.setStatus(Boolean(body?.running));
   }
