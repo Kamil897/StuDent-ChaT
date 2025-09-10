@@ -18,6 +18,7 @@ import { FriendsModule } from './friends/friends.module';
 import { MessagesModule } from './messages/messages.module';
 import { WalletModule } from './wallet/wallet.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     FriendsModule,
     MessagesModule,
     WalletModule,
-    AnalyticsModule
+    AnalyticsModule,
+    HistoryModule
   ],
   controllers: [ChatController],
   providers: [ChatService, PrismaService],

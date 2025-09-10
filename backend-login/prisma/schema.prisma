@@ -58,6 +58,7 @@ model User {
   sentMessages   Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   walletTransactions WalletTransaction[]
+  histories     History[]
 }
 
 
@@ -249,5 +250,15 @@ model WalletTransaction {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  examType  String   // 'ielts-writing' | 'ielts-reading'
+  result    Json
+  timestamp DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
