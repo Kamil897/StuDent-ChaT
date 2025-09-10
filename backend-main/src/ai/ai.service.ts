@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -54,11 +58,28 @@ export class AiService {
   // =========================
   private enforceStyleAndDomain(message: string): string {
     const offTopic = [
-      'политик','политика','18+','порно','оруж','биржа','ставк','казино',
-      'взлом','хакинг','наркот','бомб','террор','религ','рецепт','анекдот','новост'
+      'политик',
+      'политика',
+      '18+',
+      'порно',
+      'оруж',
+      'биржа',
+      'ставк',
+      'казино',
+      'взлом',
+      'хакинг',
+      'наркот',
+      'бомб',
+      'террор',
+      'религ',
+      'рецепт',
+      'анекдот',
+      'новост',
     ];
-    if (offTopic.some(k => message.toLowerCase().includes(k))) {
-      throw new BadRequestException('Вопрос не относится к теме образования/ИТ.');
+    if (offTopic.some((k) => message.toLowerCase().includes(k))) {
+      throw new BadRequestException(
+        'Вопрос не относится к теме образования/ИТ.',
+      );
     }
 
     return `
@@ -99,7 +120,7 @@ export class AiService {
   private similarity(a: string, b: string): number {
     const sa = new Set(a.toLowerCase().split(/\W+/).filter(Boolean));
     const sb = new Set(b.toLowerCase().split(/\W+/).filter(Boolean));
-    const inter = [...sa].filter(x => sb.has(x)).length;
+    const inter = [...sa].filter((x) => sb.has(x)).length;
     const union = new Set([...sa, ...sb]).size || 1;
     return inter / union;
   }
@@ -125,12 +146,15 @@ export class AiService {
   // =========================
   // 🤝 GPT-4 с памятью
   // =========================
-  async askGPT4(message: string, persona?: string): Promise<{ reply: string; source: 'memory' | 'model' }> {
+  async askGPT4(
+    message: string,
+    persona?: string,
+  ): Promise<{ reply: string; source: 'memory' | 'model' }> {
     const cached = this.searchMemory(message, 0.6);
     if (cached) return { reply: cached, source: 'memory' };
 
     const filteredPrompt = this.enforceStyleAndDomain(
-      persona ? `${persona}\n\n${message}` : message
+      persona ? `${persona}\n\n${message}` : message,
     );
 
     try {
@@ -146,7 +170,8 @@ export class AiService {
         temperature: 0.3,
       });
 
-      const reply = completion.choices[0].message?.content?.trim() || 'Нет ответа';
+      const reply =
+        completion.choices[0].message?.content?.trim() || 'Нет ответа';
       this.saveToMemory(message, reply);
       return { reply, source: 'model' };
     } catch (error: any) {
@@ -158,7 +183,11 @@ export class AiService {
   // =========================
   // 🌊 Streaming GPT-4
   // =========================
-  async askGPT4Stream(message: string, onChunk: (chunk: string) => void, persona?: string): Promise<void> {
+  async askGPT4Stream(
+    message: string,
+    onChunk: (chunk: string) => void,
+    persona?: string,
+  ): Promise<void> {
     const cached = this.searchMemory(message, 0.6);
     if (cached) {
       onChunk(cached);
@@ -166,7 +195,7 @@ export class AiService {
     }
 
     const filteredPrompt = this.enforceStyleAndDomain(
-      persona ? `${persona}\n\n${message}` : message
+      persona ? `${persona}\n\n${message}` : message,
     );
     const lang = this.detectLanguage(message);
     const systemPrompt = persona || this.systemPromptByLang(lang);
@@ -195,7 +224,10 @@ export class AiService {
         this.saveToMemory(message, full.trim());
       }
     } catch (error: any) {
-      console.error('GPT-4 Stream Error:', error.response?.data || error.message);
+      console.error(
+        'GPT-4 Stream Error:',
+        error.response?.data || error.message,
+      );
       throw new InternalServerErrorException('GPT-4 stream failed');
     }
   }
@@ -222,7 +254,11 @@ export class AiService {
     return { reply: fallback, source: 'fallback' as const };
   }
 
-  async askAIStreamSafe(message: string, onChunk: (chunk: string) => void, persona?: string) {
+  async askAIStreamSafe(
+    message: string,
+    onChunk: (chunk: string) => void,
+    persona?: string,
+  ) {
     const cached = this.searchMemory(message, 0.6);
     if (cached) {
       onChunk(cached);
@@ -247,12 +283,17 @@ export class AiService {
   // =========================
   async ask(userId: string, message: string, style: string, history?: any[]) {
     if (history) {
-      this.memory[userId] = history.map(m => ({ role: m.role, content: m.text }));
+      this.memory[userId] = history.map((m) => ({
+        role: m.role,
+        content: m.text,
+      }));
     }
     if (!this.memory[userId]) this.memory[userId] = [];
     this.memory[userId].push({ role: 'user', content: message });
 
-    const persona = style ? `${style}\n\n${this.systemPromptByLang(this.detectLanguage(message))}` : undefined;
+    const persona = style
+      ? `${style}\n\n${this.systemPromptByLang(this.detectLanguage(message))}`
+      : undefined;
     const { reply, source } = await this.askAISafe(message, persona);
 
     this.memory[userId].push({ role: 'assistant', content: reply });

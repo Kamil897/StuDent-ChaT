@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 // Фейковый эмбеддинг (для теста). Можно подключить openai/embeddings или langchain.
 export async function embed(text: string): Promise<number[]> {
   const hash = crypto.createHash('sha256').update(text).digest();
-  return Array.from(hash).map(b => b / 255);
+  return Array.from(hash).map((b) => b / 255);
 }
 
 export function cosineSimilarity(a: number[], b: number[]): number {

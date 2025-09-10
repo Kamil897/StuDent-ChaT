@@ -12,13 +12,13 @@ import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 // import { AppController } from './app.controller';
 import { ShopModule } from './shop/shop.module';
-
+import { IeltsModule } from './ielts/ielts.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ".env",
-      isGlobal: true
+      envFilePath: '.env',
+      isGlobal: true,
     }),
     PrismaModule,
     GroupModule,
@@ -29,8 +29,9 @@ import { ShopModule } from './shop/shop.module';
     AiModule,
     AuthModule,
     ShopModule,
+    IeltsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
