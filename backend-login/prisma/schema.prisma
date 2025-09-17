@@ -21,6 +21,17 @@ enum ReportPriority {
   critical
 }
 
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  examType  String   // 'ielts-writing' | 'ielts-reading' (или в будущем другие типы)
+  result    Json
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
 model User {
   id            Int      @id @default(autoincrement())
   email         String   @unique
@@ -60,6 +71,8 @@ model User {
   sentMessages       Message[]           @relation("SentMessages")
   receivedMessages   Message[]           @relation("ReceivedMessages")
   walletTransactions WalletTransaction[]
+
+  histories History[]
 }
 
 model CogniyaProfile {

@@ -5,7 +5,6 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // список чатов
   async getChats(userId: number) {
     return this.prisma.chat.findMany({
       where: { userId },
@@ -14,14 +13,12 @@ export class ChatService {
     });
   }
 
-  // создать новый чат
   async createChat(userId: number, title?: string) {
     return this.prisma.chat.create({
       data: { userId, title: title || 'Новый чат' },
     });
   }
 
-  // загрузить чат с сообщениями
   async getChat(userId: number, chatId: number) {
     const chat = await this.prisma.chat.findUnique({
       where: { id: chatId },
@@ -32,18 +29,23 @@ export class ChatService {
     return chat;
   }
 
-  // добавить сообщение
-  async addMessage(userId: number, chatId: number, role: 'user' | 'assistant', content: string) {
+  async addMessage(
+    userId: number,
+    chatId: number,
+    role: 'user' | 'assistant',
+    content: string,
+  ) {
     const chat = await this.prisma.chat.findUnique({ where: { id: chatId } });
     if (!chat) throw new NotFoundException('Chat not found');
     if (chat.userId !== userId) throw new ForbiddenException();
+
+    if (!content || !role) throw new Error('role and content are required');
 
     return this.prisma.chatMessage.create({
       data: { chatId, role, content },
     });
   }
 
-  // очистить чат
   async clearChat(userId: number, chatId: number) {
     const chat = await this.prisma.chat.findUnique({ where: { id: chatId } });
     if (!chat) throw new NotFoundException('Chat not found');

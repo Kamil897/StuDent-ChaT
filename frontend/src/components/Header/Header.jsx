@@ -19,17 +19,13 @@ const Header = () => {
     })
       .then(async res => {
         const data = await res.json();
-        console.log("Ответ /auth/me:", res.status, data);
         if (res.ok) {
           setUserData(data);
         } else {
           setUserData(null);
         }
       })
-      .catch(err => {
-        console.error("Ошибка запроса:", err);
-        setUserData(null);
-      });
+      .catch(() => setUserData(null));
   }, []);
 
   const handleLogout = () => {
@@ -45,22 +41,32 @@ const Header = () => {
     <header className={s.header}>
       <div className={s.container__main}>
         <nav className={s.nav}>
+          {/* Логотип */}
           <div className={s.logo}>
             <Link onClick={CloseMenu} to={'/'} className={s.h1__logo}>
               StuDent ChaT
             </Link>
           </div>
 
+          {/* Ссылки */}
           <div className={`${s.links} ${active ? s.active : ''}`}>
-            <Link className={s.teach} onClick={CloseMenu} to={'/AiChat'}>
-              Cognia AI
-            </Link>
-          <div className={`${s.links} ${active ? s.active : ''}`}>
-            <Link className={s.teach} onClick={CloseMenu} to={'/AISimulation'}>
-              IELTC Simulation
-            </Link>
-          </div>
+            {/* Cognia */}
+            <div className={s.group}>
+              <Link className={`${s.teach} ${s.cognia}`} onClick={CloseMenu} to={'/AiChat'}>
+                Cognia AI
+              </Link>
+            </div>
 
+            <div className={s.divider}></div>
+
+            {/* IELTS */}
+            <div className={s.group}>
+              <Link className={`${s.teach} ${s.ielts}`} onClick={CloseMenu} to={'/AISimulation'}>
+                IELTS Simulation
+              </Link>
+            </div>
+
+            {/* Авторизация */}
             {!userData ? (
               <div className={s.authButtons}>
                 <Link onClick={CloseMenu} to={'/login'}>
@@ -83,6 +89,7 @@ const Header = () => {
                 <span className={s.userName}>
                   {userData.firstName || "User"}
                 </span>
+                {/* Если захочешь logout кнопку */}
                 {/* <button onClick={handleLogout} className={s.logoutBtn}>
                   {t("menu.logout")}
                 </button> */}
@@ -90,11 +97,13 @@ const Header = () => {
             )}
           </div>
 
+          {/* Бургер */}
           <div onClick={toggleBurger} className={`${s.burger} ${active ? s.active : ''}`}>
             <span></span>
             <span></span>
           </div>
 
+          {/* Переключение языков */}
           <div className={s.langSwitcher}>
             <button onClick={() => i18n.changeLanguage('ru')}>RU</button>
             <button onClick={() => i18n.changeLanguage('en')}>EN</button>
