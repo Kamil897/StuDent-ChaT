@@ -23,17 +23,17 @@ let AssetsService = class AssetsService {
         this.repo = repo;
         this.storage = storage;
     }
-    async listAll() {
-        return this.repo.find({ order: { created_at: 'DESC' } });
+    async listAllForUser(userId) {
+        return this.repo.find({ where: { userId }, order: { created_at: 'DESC' } });
     }
-    async saveAsset(url, prompt, filename) {
-        const a = this.repo.create({ url, prompt, filename });
+    async saveAssetForUser(userId, url, prompt, filename) {
+        const a = this.repo.create({ userId, url, prompt, filename });
         return this.repo.save(a);
     }
-    async uploadBase64AndSave(b64, prompt, filename = `img-${Date.now()}.png`) {
+    async uploadBase64AndSaveForUser(userId, b64, prompt, filename = `img-${Date.now()}.png`) {
         const dest = `uploads/${Date.now()}-${filename}`;
         const url = await this.storage.uploadBase64(b64, dest);
-        return this.saveAsset(url, prompt, filename);
+        return this.saveAssetForUser(userId, url, prompt, filename);
     }
 };
 exports.AssetsService = AssetsService;

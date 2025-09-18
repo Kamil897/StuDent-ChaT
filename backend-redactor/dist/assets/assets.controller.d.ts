@@ -7,11 +7,11 @@ export declare class AssetsController {
     generateText(prompt: string): Promise<{
         text: any;
     }>;
-    generateImage(prompt: string): Promise<{
+    generateImage(req: any, prompt: string): Promise<{
         asset: import("./asset.entity").Asset;
     }>;
-    uploadFile(file: Express.Multer.File, prompt?: string): Promise<{
+    uploadFile(req: any, file: Express.Multer.File, prompt?: string): Promise<{
         asset: import("./asset.entity").Asset;
     }>;
-    getAssets(): Promise<import("./asset.entity").Asset[]>;
+    getAssets(req: any): Promise<import("./asset.entity").Asset[]>;
 }

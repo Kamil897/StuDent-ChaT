@@ -12,6 +12,8 @@ const typeorm_1 = require("@nestjs/typeorm");
 const dotenv = require("dotenv");
 const openai_module_1 = require("./openai/openai.module");
 const assets_module_1 = require("./assets/assets.module");
+const auth_module_1 = require("./auth/auth.module");
+const projects_module_1 = require("./projects/projects.module");
 dotenv.config();
 let AppModule = class AppModule {
 };
@@ -31,6 +33,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             openai_module_1.OpenAIModule,
             assets_module_1.AssetsModule,
+            auth_module_1.AuthModule,
+            projects_module_1.ProjectsModule,
         ],
     })
 ], AppModule);

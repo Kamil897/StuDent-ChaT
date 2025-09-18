@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { generateText, generateImage, listAssets, uploadFile } from '../api';
+import { generateText, generateImage, listAssets, uploadFile, loginWithBackendLogin } from '../api';
 import { FilePlus, Image as ImgIcon, Type as TextIcon } from 'lucide-react';
 
 export default function Toolbar() {
   const [prompt, setPrompt] = useState('');
   const [resultText, setResultText] = useState('');
   const [assets, setAssets] = useState([]);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
 
   useEffect(() => { loadAssets(); }, []);
 
@@ -40,9 +43,34 @@ export default function Toolbar() {
     }
   }
 
+  async function onLogin(e) {
+    e.preventDefault();
+    try {
+      const { user } = await loginWithBackendLogin(email, password);
+      setUser(user);
+      await loadAssets();
+    } catch (err) {
+      alert('Login failed');
+      console.error(err);
+    }
+  }
+
   return (
     <aside className="toolbar">
       <h3>AI Tools</h3>
+
+      <section className="toolbar-card">
+        <h4>Логин</h4>
+        {user ? (
+          <div>Вошли как: {user.email}</div>
+        ) : (
+          <form onSubmit={onLogin} className="login-form">
+            <input className="input" type="email" placeholder="email" value={email} onChange={e=>setEmail(e.target.value)} />
+            <input className="input" type="password" placeholder="password" value={password} onChange={e=>setPassword(e.target.value)} />
+            <button className="button" type="submit">Войти</button>
+          </form>
+        )}
+      </section>
 
       {/* Промпт */}
       <section className="toolbar-card">

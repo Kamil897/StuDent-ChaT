@@ -5,6 +5,9 @@ export class Asset {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ type: 'int' })
+  userId!: number;
+
   @Column('text')
   url!: string;
 

@@ -19,6 +19,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Asset.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'int' }),
+    __metadata("design:type", Number)
+], Asset.prototype, "userId", void 0);
+__decorate([
     (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Asset.prototype, "url", void 0);
