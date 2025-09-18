@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Stage, Layer, Image as KImage, Text, Rect } from 'react-konva';
 import useImage from 'use-image';
-import { listAssets, listProjects, saveProject, inpaint, generateBackground } from '../api';
+import { io } from 'socket.io-client';
+import { listAssets, listProjects, saveProject, inpaint, generateBackground, listProjectVersions, restoreProjectVersion, listTemplates, generateStyledText, exportPng, exportSvg } from '../api';
 
 function KonvaImage({ src, x = 0, y = 0 }) {
   const [image] = useImage(src);
@@ -16,10 +17,19 @@ export default function CanvasEditor() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [projects, setProjects] = useState([]);
   const [projectName, setProjectName] = useState('My Project');
+  const [currentProjectId, setCurrentProjectId] = useState(null);
   const [selection, setSelection] = useState(null); // {x,y,w,h}
   const [prompt, setPrompt] = useState('');
+  const [versions, setVersions] = useState([]);
+  const [templates, setTemplates] = useState([]);
+  const [chat, setChat] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [textInput, setTextInput] = useState('Hello');
+  const [font, setFont] = useState('Inter');
+  const [effect, setEffect] = useState('neon');
+  const socketRef = useRef(null);
 
-  useEffect(() => { loadAssets(); loadProjects(); }, []);
+  useEffect(() => { loadAssets(); loadProjects(); loadTemplates(); }, []);
   async function loadAssets() {
     try { const res = await listAssets(); setAssets(res); }
     catch (e) { console.error(e); }
@@ -30,10 +40,16 @@ export default function CanvasEditor() {
     catch (e) { console.error(e); }
   }
 
+  async function loadTemplates() {
+    try { const res = await listTemplates(); setTemplates(res); }
+    catch (e) { console.error(e); }
+  }
+
   function addAssetToCanvas(url) {
     const next = [...items, { id: Date.now(), type: 'image', url, x: 50, y: 100 }];
     pushHistory(next);
     setItems(next);
+    broadcastItems(next);
   }
 
   function exportPNG() {
@@ -47,6 +63,7 @@ export default function CanvasEditor() {
   function clearCanvas() {
     pushHistory([]);
     setItems([]);
+    broadcastItems([]);
   }
 
   function pushHistory(nextItems) {
@@ -61,6 +78,7 @@ export default function CanvasEditor() {
     const idx = historyIndex - 1;
     setHistoryIndex(idx);
     setItems(history[idx]);
+    broadcastItems(history[idx]);
   }
 
   function redo() {
@@ -68,6 +86,7 @@ export default function CanvasEditor() {
     const idx = historyIndex + 1;
     setHistoryIndex(idx);
     setItems(history[idx]);
+    broadcastItems(history[idx]);
   }
 
   async function onSaveProject() {
@@ -75,6 +94,8 @@ export default function CanvasEditor() {
       const res = await saveProject({ name: projectName, items });
       alert('Сохранено: ' + res.project.id);
       loadProjects();
+      setCurrentProjectId(res.project.id);
+      await loadVersions(res.project.id);
     } catch (e) { alert('Ошибка сохранения'); }
   }
 
@@ -84,6 +105,42 @@ export default function CanvasEditor() {
     setProjectName(proj.name);
     setItems(proj.items || []);
     pushHistory(proj.items || []);
+    setCurrentProjectId(proj.id);
+    await loadVersions(proj.id);
+    connectSocket(proj.id);
+  }
+
+  async function loadVersions(projectId) {
+    try { const res = await listProjectVersions(projectId); setVersions(res); }
+    catch (e) { console.error(e); }
+  }
+
+  async function onRestoreVersion(versionId) {
+    if (!currentProjectId) return;
+    const res = await restoreProjectVersion(currentProjectId, versionId);
+    const proj = res.project;
+    setItems(proj.items || []);
+    pushHistory(proj.items || []);
+  }
+
+  function connectSocket(projectId) {
+    if (socketRef.current) { socketRef.current.disconnect(); }
+    const token = localStorage.getItem('access_token');
+    const sock = io('http://localhost:4000', { auth: { token } });
+    socketRef.current = sock;
+    sock.emit('joinProject', { projectId });
+    sock.on('canvasUpdated', ({ items }) => {
+      setItems(items);
+    });
+    sock.on('chatMessage', msg => {
+      setChat(prev => [...prev, msg]);
+    });
+  }
+
+  function broadcastItems(next) {
+    if (socketRef.current && currentProjectId) {
+      socketRef.current.emit('updateCanvas', { projectId: currentProjectId, items: next });
+    }
   }
 
   function onMouseDown(e) {
@@ -126,13 +183,37 @@ export default function CanvasEditor() {
     } catch (e) { alert('Ошибка генерации фона'); }
   }
 
+  async function onGenerateStyledText() {
+    try {
+      const res = await generateStyledText(textInput, font, effect);
+      if (res.asset?.url) addAssetToCanvas(res.asset.url);
+    } catch (e) { alert('Ошибка генерации текста'); }
+  }
+
+  async function onExportPNG() {
+    const dataUrl = stageRef.current.toDataURL();
+    const res = await exportPng(dataUrl);
+    const url = URL.createObjectURL(res.data);
+    const a = document.createElement('a'); a.href = url; a.download = 'canvas.png'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  async function onExportSVG() {
+    const dataUrl = stageRef.current.toDataURL();
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1024' height='768'><image href='${dataUrl}' width='1024' height='768'/></svg>`;
+    const res = await exportSvg(svg);
+    const url = URL.createObjectURL(res.data);
+    const a = document.createElement('a'); a.href = url; a.download = 'canvas.svg'; a.click(); URL.revokeObjectURL(url);
+  }
+
   return (
     <div style={{ display: 'flex', flex: 1 }}>
       <div style={{ flex: '0 0 1024px', padding: 20, position: 'relative' }}>
         <div className="canvas-area">
           {/* Панель управления */}
           <div className="canvas-controls">
-            <button onClick={exportPNG}>Экспорт PNG</button>
+            <button onClick={exportPNG}>Экспорт PNG (client)</button>
+            <button onClick={onExportPNG}>Экспорт PNG (server)</button>
+            <button onClick={onExportSVG}>Экспорт SVG</button>
             <button onClick={clearCanvas}>Очистить</button>
           </div>
 
@@ -177,6 +258,40 @@ export default function CanvasEditor() {
           <input className="input" placeholder="Промпт" value={prompt} onChange={e=>setPrompt(e.target.value)} />
           <button onClick={onInpaint}>Inpaint Выделение</button>
           <button onClick={onGenerateBackground}>Сгенерировать фон</button>
+        </div>
+        <div className="canvas-controls" style={{ marginTop: 10 }}>
+          <h4>Версии</h4>
+          <select onChange={e=>onRestoreVersion(Number(e.target.value))} defaultValue="">
+            <option value="" disabled>Выберите версию...</option>
+            {versions.map(v => <option key={v.id} value={v.id}>{new Date(v.created_at).toLocaleString()}</option>)}
+          </select>
+        </div>
+        <div className="canvas-controls" style={{ marginTop: 10 }}>
+          <h4>Шаблоны</h4>
+          <select onChange={e=>{
+            const t = templates.find(x=>x.id===e.target.value);
+            if (t) { setItems(t.items); pushHistory(t.items); broadcastItems(t.items); }
+          }} defaultValue="">
+            <option value="" disabled>Выберите шаблон...</option>
+            {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+          </select>
+        </div>
+        <div className="canvas-controls" style={{ marginTop: 10 }}>
+          <h4>Styled Text</h4>
+          <input className="input" placeholder="Текст" value={textInput} onChange={e=>setTextInput(e.target.value)} />
+          <input className="input" placeholder="Шрифт" value={font} onChange={e=>setFont(e.target.value)} />
+          <input className="input" placeholder="Эффект" value={effect} onChange={e=>setEffect(e.target.value)} />
+          <button onClick={onGenerateStyledText}>Сгенерировать текст</button>
+        </div>
+        <div className="canvas-controls" style={{ marginTop: 10 }}>
+          <h4>Чат</h4>
+          <div style={{ maxHeight: 160, overflow: 'auto', border: '1px solid #eee', padding: 8 }}>
+            {chat.map((m,i)=>(<div key={i}>{m.userId}: {m.message}</div>))}
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input className="input" value={chatInput} onChange={e=>setChatInput(e.target.value)} />
+            <button onClick={()=>{ if(socketRef.current&&currentProjectId){ socketRef.current.emit('chatMessage',{ projectId: currentProjectId, message: chatInput }); setChatInput(''); } }}>Отправить</button>
+          </div>
         </div>
         <div className="assets-list">
           {assets.map(a => (

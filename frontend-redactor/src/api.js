@@ -18,6 +18,12 @@ export async function inpaint(imageB64, maskB64, prompt) { const res = await API
 export async function generateBackground(prompt) { const res = await API.post('/generate-background', { prompt }); return res.data; }
 export async function listProjects() { const res = await axios.get('/api/projects'); return res.data; }
 export async function saveProject(payload) { const res = await axios.post('/api/projects', payload); return res.data; }
+export async function listProjectVersions(projectId) { const res = await axios.get(`/api/projects/${projectId}/versions`); return res.data; }
+export async function restoreProjectVersion(projectId, versionId) { const res = await axios.post(`/api/projects/${projectId}/restore/${versionId}`); return res.data; }
+export async function listTemplates() { const res = await axios.get('/api/templates'); return res.data; }
+export async function generateStyledText(text, font, effect) { const res = await axios.post('/api/generate-styled-text', { text, font, effect }); return res.data; }
+export async function exportPng(dataUrl) { const res = await axios.post('/api/export/png', { dataUrl }, { responseType: 'blob' }); return res; }
+export async function exportSvg(svg) { const res = await axios.post('/api/export/svg', { svg }, { responseType: 'blob' }); return res; }
 
 export async function loginWithBackendLogin(email, password) {
   const res = await axios.post('http://localhost:3000/auth/login', { email, password });

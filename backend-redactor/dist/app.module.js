@@ -14,6 +14,10 @@ const openai_module_1 = require("./openai/openai.module");
 const assets_module_1 = require("./assets/assets.module");
 const auth_module_1 = require("./auth/auth.module");
 const projects_module_1 = require("./projects/projects.module");
+const collab_module_1 = require("./collab/collab.module");
+const templates_module_1 = require("./templates/templates.module");
+const styled_text_module_1 = require("./styled-text/styled-text.module");
+const export_module_1 = require("./export/export.module");
 dotenv.config();
 let AppModule = class AppModule {
 };
@@ -35,6 +39,10 @@ exports.AppModule = AppModule = __decorate([
             assets_module_1.AssetsModule,
             auth_module_1.AuthModule,
             projects_module_1.ProjectsModule,
+            collab_module_1.CollabModule,
+            templates_module_1.TemplatesModule,
+            styled_text_module_1.StyledTextModule,
+            export_module_1.ExportModule,
         ],
     })
 ], AppModule);
