@@ -3,7 +3,7 @@ import { AssetsService } from './assets.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
-@Controller('redactor/assets')
+@Controller('api/redactor/assets')
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 

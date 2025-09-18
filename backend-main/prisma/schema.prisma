@@ -262,6 +262,7 @@ model Project {
   id        Int       @id @default(autoincrement())
   userId    Int
   name      String
+  items     Json?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
