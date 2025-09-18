@@ -12,6 +12,7 @@ import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 // import { AppController } from './app.controller';
 import { ShopModule } from './shop/shop.module';
+import { RedactorModule } from './redactor/redactor.module';
 
 
 @Module({
@@ -29,6 +30,7 @@ import { ShopModule } from './shop/shop.module';
     AiModule,
     AuthModule,
     ShopModule,
+    RedactorModule,
   ],
   controllers: [],
   providers: [],
