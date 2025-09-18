@@ -11,6 +11,9 @@ export class Project {
   @Column({ type: 'varchar', length: 255 })
   name!: string;
 
+  @Column({ type: 'json', nullable: false, default: () => "'[]'" })
+  items!: any[];
+
   @Column({ type: 'json', nullable: true })
   metadata?: Record<string, any> | null;
 

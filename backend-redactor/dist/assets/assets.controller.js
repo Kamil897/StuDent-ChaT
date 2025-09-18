@@ -44,6 +44,34 @@ let AssetsController = class AssetsController {
         }
         throw new common_1.BadRequestException('Unexpected image result');
     }
+    async inpaint(req, prompt, imageB64, maskB64) {
+        if (!prompt || !imageB64 || !maskB64)
+            throw new common_1.BadRequestException('prompt, imageB64, maskB64 required');
+        const result = await this.openai.inpaintImage(prompt, imageB64, maskB64, '1024x1024');
+        if (result.b64) {
+            const saved = await this.assets.uploadBase64AndSaveForUser(req.user.id, result.b64, prompt);
+            return { asset: saved };
+        }
+        if (result.url) {
+            const saved = await this.assets.saveAssetForUser(req.user.id, result.url, prompt);
+            return { asset: saved };
+        }
+        throw new common_1.BadRequestException('Unexpected inpaint result');
+    }
+    async generateBackground(req, prompt) {
+        if (!prompt)
+            throw new common_1.BadRequestException('prompt required');
+        const result = await this.openai.generateImage(prompt, '1920x1080');
+        if (result.b64) {
+            const saved = await this.assets.uploadBase64AndSaveForUser(req.user.id, result.b64, prompt);
+            return { asset: saved };
+        }
+        if (result.url) {
+            const saved = await this.assets.saveAssetForUser(req.user.id, result.url, prompt);
+            return { asset: saved };
+        }
+        throw new common_1.BadRequestException('Unexpected background result');
+    }
     async uploadFile(req, file, prompt) {
         if (!file)
             throw new common_1.BadRequestException('file required');
@@ -76,6 +104,26 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], AssetsController.prototype, "generateImage", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('inpaint'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)('prompt')),
+    __param(2, (0, common_1.Body)('imageB64')),
+    __param(3, (0, common_1.Body)('maskB64')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String]),
+    __metadata("design:returntype", Promise)
+], AssetsController.prototype, "inpaint", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('generate-background'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)('prompt')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], AssetsController.prototype, "generateBackground", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('upload'),

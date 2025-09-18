@@ -14,6 +14,10 @@ export async function generateText(prompt) { const res = await API.post('/genera
 export async function generateImage(prompt) { const res = await API.post('/generate-image', { prompt }); return res.data; }
 export async function uploadFile(formData) { const res = await API.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } }); return res.data; }
 export async function listAssets() { const res = await API.get('/assets'); return res.data; }
+export async function inpaint(imageB64, maskB64, prompt) { const res = await API.post('/inpaint', { imageB64, maskB64, prompt }); return res.data; }
+export async function generateBackground(prompt) { const res = await API.post('/generate-background', { prompt }); return res.data; }
+export async function listProjects() { const res = await axios.get('/api/projects'); return res.data; }
+export async function saveProject(payload) { const res = await axios.post('/api/projects', payload); return res.data; }
 
 export async function loginWithBackendLogin(email, password) {
   const res = await axios.post('http://localhost:3000/auth/login', { email, password });

@@ -10,6 +10,12 @@ export declare class AssetsController {
     generateImage(req: any, prompt: string): Promise<{
         asset: import("./asset.entity").Asset;
     }>;
+    inpaint(req: any, prompt: string, imageB64: string, maskB64: string): Promise<{
+        asset: import("./asset.entity").Asset;
+    }>;
+    generateBackground(req: any, prompt: string): Promise<{
+        asset: import("./asset.entity").Asset;
+    }>;
     uploadFile(req: any, file: Express.Multer.File, prompt?: string): Promise<{
         asset: import("./asset.entity").Asset;
     }>;

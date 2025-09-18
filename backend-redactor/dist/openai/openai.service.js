@@ -44,6 +44,25 @@ let OpenAIService = OpenAIService_1 = class OpenAIService {
             return { url: data.url };
         throw new Error('Unexpected image response');
     }
+    async inpaintImage(prompt, base64Image, base64Mask, size = '1024x1024') {
+        var _a;
+        const res = await this.client.images.edits({
+            model: 'gpt-image-1',
+            prompt,
+            image: base64Image,
+            mask: base64Mask,
+            size,
+            n: 1,
+        });
+        const data = (_a = res.data) === null || _a === void 0 ? void 0 : _a[0];
+        if (!data)
+            throw new Error('No image data');
+        if (data.b64_json)
+            return { b64: data.b64_json };
+        if (data.url)
+            return { url: data.url };
+        throw new Error('Unexpected image response');
+    }
 };
 exports.OpenAIService = OpenAIService;
 exports.OpenAIService = OpenAIService = OpenAIService_1 = __decorate([

@@ -12,12 +12,14 @@ const typeorm_1 = require("@nestjs/typeorm");
 const project_entity_1 = require("./project.entity");
 const layer_entity_1 = require("./layer.entity");
 const edit_history_entity_1 = require("./edit-history.entity");
+const projects_controller_1 = require("./projects.controller");
 let ProjectsModule = class ProjectsModule {
 };
 exports.ProjectsModule = ProjectsModule;
 exports.ProjectsModule = ProjectsModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([project_entity_1.Project, layer_entity_1.Layer, edit_history_entity_1.EditHistory])],
+        controllers: [projects_controller_1.ProjectsController],
     })
 ], ProjectsModule);
 //# sourceMappingURL=projects.module.js.map

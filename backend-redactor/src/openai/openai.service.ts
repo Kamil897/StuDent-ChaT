@@ -32,4 +32,21 @@ export class OpenAIService {
     if (data.url) return { url: data.url };
     throw new Error('Unexpected image response');
   }
+
+  async inpaintImage(prompt: string, base64Image: string, base64Mask: string, size = '1024x1024') {
+    // OpenAI v1 images/edit accepting image/mask. With SDK v5, use multipart:
+    const res = await this.client.images.edits({
+      model: 'gpt-image-1',
+      prompt,
+      image: base64Image,
+      mask: base64Mask,
+      size,
+      n: 1,
+    });
+    const data = res.data?.[0];
+    if (!data) throw new Error('No image data');
+    if (data.b64_json) return { b64: data.b64_json };
+    if (data.url) return { url: data.url };
+    throw new Error('Unexpected image response');
+  }
 }

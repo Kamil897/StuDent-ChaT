@@ -34,6 +34,38 @@ export class AssetsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('inpaint')
+  async inpaint(@Req() req: any, @Body('prompt') prompt: string, @Body('imageB64') imageB64: string, @Body('maskB64') maskB64: string) {
+    if (!prompt || !imageB64 || !maskB64) throw new BadRequestException('prompt, imageB64, maskB64 required');
+    const result = await this.openai.inpaintImage(prompt, imageB64, maskB64, '1024x1024');
+    if ((result as any).b64) {
+      const saved = await this.assets.uploadBase64AndSaveForUser(req.user.id, (result as any).b64, prompt);
+      return { asset: saved };
+    }
+    if ((result as any).url) {
+      const saved = await this.assets.saveAssetForUser(req.user.id, (result as any).url, prompt);
+      return { asset: saved };
+    }
+    throw new BadRequestException('Unexpected inpaint result');
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('generate-background')
+  async generateBackground(@Req() req: any, @Body('prompt') prompt: string) {
+    if (!prompt) throw new BadRequestException('prompt required');
+    const result = await this.openai.generateImage(prompt, '1920x1080');
+    if ((result as any).b64) {
+      const saved = await this.assets.uploadBase64AndSaveForUser(req.user.id, (result as any).b64, prompt);
+      return { asset: saved };
+    }
+    if ((result as any).url) {
+      const saved = await this.assets.saveAssetForUser(req.user.id, (result as any).url, prompt);
+      return { asset: saved };
+    }
+    throw new BadRequestException('Unexpected background result');
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
