@@ -3,6 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { OpenAIModule } from './openai/openai.module';
 import { AssetsModule } from './assets/assets.module';
+import { AuthModule } from './auth/auth.module';
+import { ProjectsModule } from './projects/projects.module';
+import { CollabModule } from './collab/collab.module';
+import { TemplatesModule } from './templates/templates.module';
+import { StyledTextModule } from './styled-text/styled-text.module';
+import { ExportModule } from './export/export.module';
 
 dotenv.config();
 
@@ -20,6 +26,12 @@ dotenv.config();
     }),
     OpenAIModule,
     AssetsModule,
+    AuthModule,
+    ProjectsModule,
+    CollabModule,
+    TemplatesModule,
+    StyledTextModule,
+    ExportModule,
   ],
 })
 export class AppModule {}
