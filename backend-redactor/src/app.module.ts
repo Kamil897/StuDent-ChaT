@@ -16,11 +16,15 @@ dotenv.config();
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.MYSQL_HOST || 'localhost',
-      port: Number(process.env.MYSQL_PORT || 3306),
-      username: process.env.MYSQL_USER || 'root',
-      password: process.env.MYSQL_PASS || '',
-      database: process.env.MYSQL_DB || 'ai_editor',
+      ...(process.env.DATABASE_URL
+        ? { url: process.env.DATABASE_URL }
+        : {
+            host: process.env.MYSQL_HOST || 'localhost',
+            port: Number(process.env.MYSQL_PORT || 3306),
+            username: process.env.MYSQL_USER || 'root',
+            password: process.env.MYSQL_PASS || '',
+            database: process.env.MYSQL_DB || 'ai_editor',
+          }),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),

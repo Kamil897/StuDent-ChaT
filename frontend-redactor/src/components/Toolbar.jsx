@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { generateText, generateImage, listAssets, uploadFile, loginWithBackendLogin } from '../api';
 import { FilePlus, Image as ImgIcon, Type as TextIcon } from 'lucide-react';
+import './Toolbar.scss';
 
 export default function Toolbar() {
   const [prompt, setPrompt] = useState('');
@@ -10,7 +11,10 @@ export default function Toolbar() {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
-  useEffect(() => { loadAssets(); }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) loadAssets();
+  }, []);
 
   async function loadAssets() {
     try { const res = await listAssets(); setAssets(res); }
@@ -56,7 +60,7 @@ export default function Toolbar() {
   }
 
   return (
-    <aside className="toolbar">
+    <aside className="toolbar tb-root">
       <h3>AI Tools</h3>
 
       <section className="toolbar-card">

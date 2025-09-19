@@ -4,7 +4,7 @@ import CanvasEditor from './components/CanvasEditor';
 
 export default function App() {
   return (
-    <div className="app">
+    <div className="redactor-root">
       <header className="topbar">
         <h1>AI Canvas — Website</h1>
       </header>

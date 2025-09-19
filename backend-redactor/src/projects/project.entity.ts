@@ -11,7 +11,7 @@ export class Project {
   @Column({ type: 'varchar', length: 255 })
   name!: string;
 
-  @Column({ type: 'json', nullable: false, default: () => "'[]'" })
+  @Column({ type: 'json', nullable: false })
   items!: any[];
 
   @Column({ type: 'json', nullable: true })
@@ -23,4 +23,3 @@ export class Project {
   @UpdateDateColumn()
   updated_at!: Date;
 }
-

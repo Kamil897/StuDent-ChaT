@@ -73,6 +73,7 @@ model User {
   walletTransactions WalletTransaction[]
 
   histories History[]
+  ieltsResults IeltsResult[]
 }
 
 model CogniyaProfile {
@@ -283,4 +284,17 @@ model WalletTransaction {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model IeltsResult {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String   // "writing" | "reading"
+  payload   Json     // raw result data
+  band      Float?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
 }
