@@ -1,39 +1,49 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Stage, Layer, Image as KImage, Text, Rect } from 'react-konva';
+import { Stage, Layer, Image as KImage, Text as KText, Rect as KRect, Line as KLine, Ellipse as KEllipse, Transformer } from 'react-konva';
 import useImage from 'use-image';
 import { io } from 'socket.io-client';
-import {
-  listAssets,
-  listProjects,
-  saveProject,
-  inpaint,
-  generateBackground,
-  listProjectVersions,
-  restoreProjectVersion,
-  listTemplates,
-  generateStyledText,
-  exportPng,
-  exportSvg
-} from '../api';
+import { listAssets, listProjects, saveProject, inpaint, generateBackground, listProjectVersions, restoreProjectVersion, listTemplates, generateStyledText, exportPng, exportSvg } from '../api';
+import { useToast } from './ToastProvider';
 import './CanvasEditor.scss';
+import { useEditorStore } from '../store/editorStore';
 
-function KonvaImage({ src, x = 0, y = 0 }) {
+const KonvaImage = React.forwardRef(function KonvaImage({ src, x = 0, y = 0, onClick, onDragEnd, onDblClick }, ref) {
   const [image] = useImage(src);
-  return <KImage image={image} x={x} y={y} draggable />;
-}
+  return <KImage ref={ref} image={image} x={x} y={y} draggable onClick={onClick} onDblClick={onDblClick} onDragEnd={onDragEnd} />;
+});
 
 export default function CanvasEditor() {
+  const toast = useToast();
   const stageRef = useRef();
   const socketRef = useRef(null);
-
-  const [assets, setAssets] = useState([]);
-  const [items, setItems] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-
-  const [projects, setProjects] = useState([]);
-  const [projectName, setProjectName] = useState('My Project');
-  const [currentProjectId, setCurrentProjectId] = useState(null);
+  const assets = useEditorStore(s => s.assets);
+  const items = useEditorStore(s => s.items);
+  const setItems = (next) => useEditorStore.setState({ items: next });
+  const user = useEditorStore(s => s.user);
+  const history = useEditorStore(s => s.history);
+  const historyIndex = useEditorStore(s => s.historyIndex);
+  const pushHistory = useEditorStore(s => s.pushHistory);
+  const undo = useEditorStore(s => s.undo);
+  const redo = useEditorStore(s => s.redo);
+  const projects = useEditorStore(s => s.projects);
+  const projectName = useEditorStore(s => s.projectName);
+  const setProjectName = useEditorStore(s => s.setProjectName);
+  const currentProjectId = useEditorStore(s => s.currentProjectId);
+  const setCurrentProjectId = (id) => useEditorStore.setState({ currentProjectId: id });
+  const refreshProjects = useEditorStore(s => s.refreshProjects);
+  const selectionId = useEditorStore(s => s.selectionId);
+  const setSelectionId = useEditorStore(s => s.setSelectionId);
+  const activeTool = useEditorStore(s => s.activeTool);
+  const strokeColor = useEditorStore(s => s.strokeColor);
+  const fillColor = useEditorStore(s => s.fillColor);
+  const strokeWidth = useEditorStore(s => s.strokeWidth);
+  const drawings = useEditorStore(s => s.drawings);
+  const drawingsHidden = useEditorStore(s => s.drawingsHidden);
+  const pushDrawing = useEditorStore(s => s.pushDrawing);
+  const updateLastDrawing = useEditorStore(s => s.updateLastDrawing);
+  const updateItemProps = useEditorStore(s => s.updateItemProps);
+  const remoteSelections = useEditorStore(s => s.remoteSelections);
+  const setRemoteSelection = useEditorStore(s => s.setRemoteSelection);
 
   const [selection, setSelection] = useState(null); // {x,y,w,h}
   const [prompt, setPrompt] = useState('');
@@ -48,6 +58,9 @@ export default function CanvasEditor() {
   const [font, setFont] = useState('Inter');
   const [effect, setEffect] = useState('neon');
 
+  const transformerRef = useRef(null);
+  const nodeRefs = useRef({});
+
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (token) {
@@ -58,18 +71,13 @@ export default function CanvasEditor() {
   }, []);
 
   async function loadAssets() {
-    try {
-      const res = await listAssets();
-      setAssets(res);
-    } catch (e) {
-      console.error(e);
-    }
+    // уже делает store.initSession, но оставим явный вызов в редакторе
+    // нет прямой зависимости — данные читаются из store
   }
 
   async function loadProjects() {
     try {
-      const res = await listProjects();
-      setProjects(res);
+      await refreshProjects();
     } catch (e) {
       console.error(e);
     }
@@ -97,38 +105,33 @@ export default function CanvasEditor() {
     broadcastItems([]);
   }
 
-  function pushHistory(nextItems) {
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(nextItems);
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
+  // history handled by store
+
+  function undoLocal() {
+    const prevIndex = historyIndex - 1;
+    if (prevIndex < 0) return;
+    undo();
+    const next = useEditorStore.getState().items;
+    broadcastItems(next);
   }
 
-  function undo() {
-    if (historyIndex <= 0) return;
-    const idx = historyIndex - 1;
-    setHistoryIndex(idx);
-    setItems(history[idx]);
-    broadcastItems(history[idx]);
-  }
-
-  function redo() {
-    if (historyIndex >= history.length - 1) return;
-    const idx = historyIndex + 1;
-    setHistoryIndex(idx);
-    setItems(history[idx]);
-    broadcastItems(history[idx]);
+  function redoLocal() {
+    const nextIndex = historyIndex + 1;
+    if (nextIndex > history.length - 1) return;
+    redo();
+    const next = useEditorStore.getState().items;
+    broadcastItems(next);
   }
 
   async function onSaveProject() {
     try {
       const res = await saveProject({ name: projectName, items });
-      alert('Сохранено: ' + res.project.id);
+      toast.add('Проект сохранён', 'success');
       loadProjects();
       setCurrentProjectId(res.project.id);
       await loadVersions(res.project.id);
     } catch {
-      alert('Ошибка сохранения');
+      toast.add('Ошибка сохранения', 'error');
     }
   }
 
@@ -166,28 +169,113 @@ export default function CanvasEditor() {
     const sock = io('http://localhost:3000', { auth: { token } });
     socketRef.current = sock;
     sock.emit('joinProject', { projectId });
-    sock.on('canvasUpdated', ({ items }) => setItems(items));
+    sock.on('canvasUpdated', ({ items: incomingItems, drawings: incomingDrawings }) => {
+      if (Array.isArray(incomingItems)) setItems(incomingItems);
+      if (Array.isArray(incomingDrawings)) useEditorStore.setState({ drawings: incomingDrawings });
+    });
+    sock.on('canvasSelection', ({ userId, selectionId }) => {
+      if (!userId) return;
+      setRemoteSelection(userId, selectionId);
+    });
     sock.on('chatMessage', msg => setChat(prev => [...prev, msg]));
   }
 
   function broadcastItems(next) {
     if (socketRef.current && currentProjectId) {
-      socketRef.current.emit('updateCanvas', { projectId: currentProjectId, items: next });
+      socketRef.current.emit('updateCanvas', { projectId: currentProjectId, items: next, drawings });
+    }
+  }
+
+  function broadcastDrawings(nextDrawings) {
+    if (socketRef.current && currentProjectId) {
+      socketRef.current.emit('updateCanvas', { projectId: currentProjectId, items, drawings: nextDrawings });
     }
   }
 
   function onMouseDown(e) {
     const pos = e.target.getStage().getPointerPosition();
-    setSelection({ x: pos.x, y: pos.y, w: 0, h: 0 });
+    if (activeTool === 'select') {
+      setSelection({ x: pos.x, y: pos.y, w: 0, h: 0 });
+      return;
+    }
+    if (activeTool === 'brush' || activeTool === 'eraser') {
+      pushDrawing({ id: Date.now(), type: 'brush', tool: activeTool, points: [pos.x, pos.y], color: strokeColor, width: strokeWidth, composite: activeTool==='eraser'?'destination-out':'source-over' });
+      broadcastDrawings([...useEditorStore.getState().drawings]);
+    } else if (activeTool === 'line') {
+      pushDrawing({ id: Date.now(), type: 'line', points: [pos.x, pos.y, pos.x, pos.y], color: strokeColor, width: strokeWidth });
+      broadcastDrawings([...useEditorStore.getState().drawings]);
+    } else if (activeTool === 'rect') {
+      pushDrawing({ id: Date.now(), type: 'rect', x: pos.x, y: pos.y, width: 0, height: 0, stroke: strokeColor, fill: fillColor, strokeWidth });
+      broadcastDrawings([...useEditorStore.getState().drawings]);
+    } else if (activeTool === 'ellipse') {
+      pushDrawing({ id: Date.now(), type: 'ellipse', x: pos.x, y: pos.y, radiusX: 0, radiusY: 0, stroke: strokeColor, fill: fillColor, strokeWidth });
+      broadcastDrawings([...useEditorStore.getState().drawings]);
+    }
   }
 
   function onMouseMove(e) {
-    if (!selection) return;
     const pos = e.target.getStage().getPointerPosition();
-    setSelection({ ...selection, w: pos.x - selection.x, h: pos.y - selection.y });
+    if (activeTool === 'select') {
+      if (!selection) return;
+      setSelection({ ...selection, w: pos.x - selection.x, h: pos.y - selection.y });
+      return;
+    }
+    // update last drawing
+    updateLastDrawing((d) => {
+      if (!d) return d;
+      if (d.type === 'brush' || d.type === 'line') {
+        const pts = d.type==='brush' ? [...d.points, pos.x, pos.y] : [d.points[0], d.points[1], pos.x, pos.y];
+        const updated = { ...d, points: pts };
+        setTimeout(()=> broadcastDrawings([...useEditorStore.getState().drawings]), 0);
+        return updated;
+      }
+      if (d.type === 'rect') {
+        const updated = { ...d, width: pos.x - d.x, height: pos.y - d.y };
+        setTimeout(()=> broadcastDrawings([...useEditorStore.getState().drawings]), 0);
+        return updated;
+      }
+      if (d.type === 'ellipse') {
+        const updated = { ...d, radiusX: Math.abs(pos.x - d.x), radiusY: Math.abs(pos.y - d.y) };
+        setTimeout(()=> broadcastDrawings([...useEditorStore.getState().drawings]), 0);
+        return updated;
+      }
+      return d;
+    });
   }
 
   function onMouseUp() {}
+
+  // delete selected item via keyboard
+  useEffect(() => {
+    function onKeyDown(e) {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectionId) {
+        useEditorStore.getState().removeItemById(selectionId);
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undoLocal();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redoLocal();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        useEditorStore.getState().cloneSelected();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        useEditorStore.getState().cloneSelected();
+        return;
+      }
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectionId]);
 
   async function onInpaint() {
     if (!selection) return alert('Выделите область');
@@ -208,7 +296,7 @@ export default function CanvasEditor() {
       const res = await inpaint(imageB64, maskB64, prompt);
       if (res.asset?.url) addAssetToCanvas(res.asset.url);
     } catch {
-      alert('Ошибка inpaint');
+      toast.add('Ошибка inpaint', 'error');
     }
   }
 
@@ -217,7 +305,7 @@ export default function CanvasEditor() {
       const res = await generateBackground(prompt || 'Beautiful abstract background');
       if (res.asset?.url) addAssetToCanvas(res.asset.url);
     } catch {
-      alert('Ошибка генерации фона');
+      toast.add('Ошибка генерации фона', 'error');
     }
   }
 
@@ -226,7 +314,7 @@ export default function CanvasEditor() {
       const res = await generateStyledText(textInput, font, effect);
       if (res.asset?.url) addAssetToCanvas(res.asset.url);
     } catch {
-      alert('Ошибка генерации текста');
+      toast.add('Ошибка генерации текста', 'error');
     }
   }
 
@@ -253,6 +341,55 @@ export default function CanvasEditor() {
     URL.revokeObjectURL(url);
   }
 
+  // attach transformer when selection changes
+  useEffect(() => {
+    const node = nodeRefs.current[selectionId || ''];
+    const tr = transformerRef.current;
+    if (node && tr) {
+      tr.nodes([node]);
+      tr.getLayer()?.batchDraw();
+    } else if (tr) {
+      tr.nodes([]);
+      tr.getLayer()?.batchDraw();
+    }
+  }, [selectionId, items]);
+
+  function onSaveJSON() {
+    const state = {
+      items,
+      drawings,
+    };
+    const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'canvas.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function onLoadJSON(ev) {
+    const file = ev.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result || '{}'));
+        const nextItems = Array.isArray(parsed.items) ? parsed.items : [];
+        const nextDrawings = Array.isArray(parsed.drawings) ? parsed.drawings : [];
+        pushHistory(nextItems);
+        setItems(nextItems);
+        useEditorStore.setState({ drawings: nextDrawings });
+        toast.add('JSON загружен', 'success');
+      } catch {
+        toast.add('Ошибка чтения JSON', 'error');
+      }
+    };
+    reader.readAsText(file);
+    // reset input value to allow re-upload same file
+    ev.target.value = '';
+  }
+
   return (
     <div className="ce-root">
       {/* Центр */}
@@ -262,6 +399,11 @@ export default function CanvasEditor() {
             <button onClick={onExportPNG}>Экспорт PNG</button>
             <button onClick={onExportSVG}>Экспорт SVG</button>
             <button onClick={clearCanvas}>Очистить</button>
+            <button onClick={onSaveJSON}>Сохранить JSON</button>
+            <label className="button" style={{ display:'inline-block' }}>
+              Загрузить JSON
+              <input type="file" accept="application/json" onChange={onLoadJSON} hidden />
+            </label>
           </div>
 
           <Stage
@@ -271,14 +413,104 @@ export default function CanvasEditor() {
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
+            onDragOver={(e)=> e.preventDefault()}
+            onDrop={(e)=>{
+              const url = e.dataTransfer.getData('text/asset-url');
+              if (url) addAssetToCanvas(url);
+            }}
           >
-            <Layer>
-              <Rect x={0} y={0} width={1024} height={768} fill="#ffffff" />
-              {items.map(it => (
-                <KonvaImage key={it.id} src={it.url} x={it.x || 50} y={it.y || 100} />
-              ))}
+            <Layer listening={activeTool!=='select'}>
+              <KRect x={0} y={0} width={1024} height={768} fill="#ffffff" />
+              {items.filter(it=>!it.hidden).map(it => {
+                if (it.type === 'image') {
+                  return (
+                    <KonvaImage
+                      key={it.id}
+                      src={it.url}
+                      x={it.x || 50}
+                      y={it.y || 100}
+                      ref={(n)=>{ if (n) nodeRefs.current[it.id] = n; }}
+                      onClick={()=> {
+                        setSelectionId(it.id);
+                        if (socketRef.current && user?.id) socketRef.current.emit('canvasSelection', { projectId: currentProjectId, userId: user.id, selectionId: it.id });
+                      }}
+                      onDblClick={()=> {
+                        updateItemProps(it.id, { scaleX: 1, scaleY: 1, rotation: 0 });
+                      }}
+                      onDragEnd={(e)=>{
+                        const { x, y } = e.target.position();
+                        useEditorStore.getState().updateItemPosition(it.id, x, y);
+                      }}
+                    />
+                  );
+                }
+                if (it.type === 'text') {
+                  return (
+                    <KText
+                      key={it.id}
+                      ref={(n)=>{ if (n) nodeRefs.current[it.id] = n; }}
+                      text={it.text}
+                      x={it.x}
+                      y={it.y}
+                      fontSize={it.fontSize}
+                      fill={it.fill}
+                      draggable={!useEditorStore.getState().lockedIds.has(it.id)}
+                      onClick={()=> {
+                        setSelectionId(it.id);
+                        if (socketRef.current && user?.id) socketRef.current.emit('canvasSelection', { projectId: currentProjectId, userId: user.id, selectionId: it.id });
+                      }}
+                      onDragEnd={(e)=>{
+                        const { x, y } = e.target.position();
+                        useEditorStore.getState().updateItemPosition(it.id, x, y);
+                      }}
+                    />
+                  );
+                }
+                if (it.type === 'rect') {
+                  return (
+                    <KRect
+                      key={it.id}
+                      ref={(n)=>{ if (n) nodeRefs.current[it.id] = n; }}
+                      x={it.x}
+                      y={it.y}
+                      width={it.width}
+                      height={it.height}
+                      fill={it.fill}
+                      stroke={it.stroke}
+                      strokeWidth={it.strokeWidth}
+                      draggable={!useEditorStore.getState().lockedIds.has(it.id)}
+                      onClick={()=> {
+                        setSelectionId(it.id);
+                        if (socketRef.current && user?.id) socketRef.current.emit('canvasSelection', { projectId: currentProjectId, userId: user.id, selectionId: it.id });
+                      }}
+                      onTransformEnd={(e)=>{
+                        const node = e.target;
+                        const scaleX = node.scaleX();
+                        const scaleY = node.scaleY();
+                        const newWidth = Math.max(5, node.width() * scaleX);
+                        const newHeight = Math.max(5, node.height() * scaleY);
+                        node.scaleX(1);
+                        node.scaleY(1);
+                        updateItemProps(it.id, { width: newWidth, height: newHeight, rotation: node.rotation() });
+                      }}
+                      onDblClick={(e)=>{
+                        const node = e.target;
+                        node.scale({ x: 1, y: 1 });
+                        node.rotation(0);
+                        updateItemProps(it.id, { rotation: 0 });
+                      }}
+                      onDragEnd={(e)=>{
+                        const { x, y } = e.target.position();
+                        useEditorStore.getState().updateItemPosition(it.id, x, y);
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })}
+              <Transformer ref={transformerRef} rotateEnabled={true} enabledAnchors={[ 'top-left','top-right','bottom-left','bottom-right' ]} />
               {selection && (
-                <Rect
+                <KRect
                   x={selection.x}
                   y={selection.y}
                   width={selection.w}
@@ -287,6 +519,52 @@ export default function CanvasEditor() {
                   dash={[4, 4]}
                 />
               )}
+              {
+                Object.entries(remoteSelections || {}).map(([uid, sel]) => {
+                  const it = items.find(x => x.id === sel.selectionId);
+                  if (!it) return null;
+                  const color = 'rgba(14,165,233,0.9)';
+                  if (it.type === 'rect') {
+                    return <KRect key={`rs-${uid}`} x={it.x} y={it.y} width={it.width} height={it.height} stroke={color} dash={[6,4]} listening={false} />
+                  }
+                  if (it.type === 'text') {
+                    const approxW = (it.text?.length || 4) * (it.fontSize || 16) * 0.6;
+                    const approxH = (it.fontSize || 16) * 1.2;
+                    return <KRect key={`rs-${uid}`} x={it.x} y={it.y} width={approxW} height={approxH} stroke={color} dash={[6,4]} listening={false} />
+                  }
+                  if (it.type === 'image') {
+                    return <KRect key={`rs-${uid}`} x={it.x||50} y={it.y||100} width={120} height={90} stroke={color} dash={[6,4]} listening={false} />
+                  }
+                  return null;
+                })
+              }
+            </Layer>
+
+            {/* Drawings layer */}
+            <Layer listening={activeTool!=='select'} visible={!drawingsHidden}>
+              {drawings.map(d => {
+                if (d.type === 'brush') {
+                  return (
+                    <KLine key={d.id} points={d.points} stroke={d.color} strokeWidth={d.width} lineCap="round" lineJoin="round" globalCompositeOperation={d.composite || 'source-over'} />
+                  );
+                }
+                if (d.type === 'line') {
+                  return (
+                    <KLine key={d.id} points={d.points} stroke={d.color} strokeWidth={d.width} lineCap="round" lineJoin="round" />
+                  );
+                }
+                if (d.type === 'rect') {
+                  return (
+                    <KRect key={d.id} x={d.x} y={d.y} width={d.width} height={d.height} stroke={d.stroke} strokeWidth={d.strokeWidth} fill={d.fill} />
+                  );
+                }
+                if (d.type === 'ellipse') {
+                  return (
+                    <KEllipse key={d.id} x={d.x} y={d.y} radiusX={d.radiusX} radiusY={d.radiusY} stroke={d.stroke} strokeWidth={d.strokeWidth} fill={d.fill} />
+                  );
+                }
+                return null;
+              })}
             </Layer>
           </Stage>
         </div>
@@ -296,8 +574,8 @@ export default function CanvasEditor() {
       <div className="assets-panel">
         <h3>Управление</h3>
         <div className="panel-group">
-          <button onClick={undo}>Undo</button>
-          <button onClick={redo}>Redo</button>
+          <button onClick={undoLocal}>Undo</button>
+          <button onClick={redoLocal}>Redo</button>
         </div>
 
         <div className="panel-group">
