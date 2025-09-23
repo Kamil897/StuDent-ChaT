@@ -274,7 +274,6 @@ export default function CanvasEditor() {
           >
             <Layer>
               <Rect x={0} y={0} width={1024} height={768} fill="#ffffff" />
-              <Text text="AI Canvas" x={20} y={20} fontSize={28} fill="#111" />
               {items.map(it => (
                 <KonvaImage key={it.id} src={it.url} x={it.x || 50} y={it.y || 100} />
               ))}

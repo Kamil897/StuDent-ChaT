@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { generateText, generateImage, listAssets, uploadFile, loginWithBackendLogin } from '../api';
+import {
+  generateText,
+  generateImage,
+  listAssets,
+  uploadFile,
+  loginWithBackendLogin,
+  getMe, // 👈 новый метод
+} from '../api';
 import { FilePlus, Image as ImgIcon, Type as TextIcon } from 'lucide-react';
 import './Toolbar.scss';
 
@@ -11,19 +18,39 @@ export default function Toolbar() {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
+  // === при загрузке пробуем восстановить сессию ===
   useEffect(() => {
     const token = localStorage.getItem('access_token');
-    if (token) loadAssets();
+    if (token) {
+      getMe()
+        .then(u => {
+          setUser(u);
+          loadAssets();
+        })
+        .catch(err => {
+          console.error('Ошибка восстановления сессии:', err);
+          localStorage.removeItem('access_token');
+          setUser(null);
+        });
+    }
   }, []);
 
   async function loadAssets() {
-    try { const res = await listAssets(); setAssets(res); }
-    catch (e) { console.error(e); }
+    try {
+      const res = await listAssets();
+      setAssets(res);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function onGenerateText() {
-    try { const res = await generateText(prompt); setResultText(res.text); }
-    catch (e) { alert('Error: ' + (e.message || e)); }
+    try {
+      const res = await generateText(prompt);
+      setResultText(res.text);
+    } catch (e) {
+      alert('Error: ' + (e.message || e));
+    }
   }
 
   async function onGenerateImage() {
@@ -31,12 +58,16 @@ export default function Toolbar() {
       const res = await generateImage(prompt);
       alert('Image generated and saved. ID: ' + res.asset?.id);
       loadAssets();
-    } catch (e) { alert('Error: ' + (e.message || e)); }
+    } catch (e) {
+      alert('Error: ' + (e.message || e));
+    }
   }
 
   async function onUpload(e) {
-    const f = e.target.files[0]; if (!f) return;
-    const fd = new FormData(); fd.append('file', f);
+    const f = e.target.files[0];
+    if (!f) return;
+    const fd = new FormData();
+    fd.append('file', f);
     try {
       const res = await uploadFile(fd);
       alert('Uploaded: ' + res.asset.id);
@@ -50,13 +81,22 @@ export default function Toolbar() {
   async function onLogin(e) {
     e.preventDefault();
     try {
-      const { user } = await loginWithBackendLogin(email, password);
-      setUser(user);
-      await loadAssets();
+      const { access_token } = await loginWithBackendLogin(email, password);
+      if (access_token) {
+        const u = await getMe();
+        setUser(u);
+        await loadAssets();
+      }
     } catch (err) {
       alert('Login failed');
       console.error(err);
     }
+  }
+
+  function onLogout() {
+    localStorage.removeItem('access_token');
+    setUser(null);
+    setAssets([]);
   }
 
   return (
@@ -64,14 +104,33 @@ export default function Toolbar() {
       <h3>AI Tools</h3>
 
       <section className="toolbar-card">
-        <h4>Логин</h4>
         {user ? (
-          <div>Вошли как: {user.email}</div>
+          <div>
+            <div>{user.email}</div>
+            <button className="logout-btn" onClick={onLogout}>
+              Выйти
+            </button>
+
+          </div>
         ) : (
           <form onSubmit={onLogin} className="login-form">
-            <input className="input" type="email" placeholder="email" value={email} onChange={e=>setEmail(e.target.value)} />
-            <input className="input" type="password" placeholder="password" value={password} onChange={e=>setPassword(e.target.value)} />
-            <button className="button" type="submit">Войти</button>
+            <input
+              className="input"
+              type="email"
+              placeholder="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <input
+              className="input"
+              type="password"
+              placeholder="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            <button className="button" type="submit">
+              Войти
+            </button>
           </form>
         )}
       </section>

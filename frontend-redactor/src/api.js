@@ -4,14 +4,16 @@ import axios from "axios";
 const API_RED = axios.create({ baseURL: "http://localhost:4000/api", timeout: 60000 });
 const API_LOGIN = axios.create({ baseURL: "http://localhost:3000", timeout: 60000 });
 
-// === Интерцептор токена для API_RED ===
-API_RED.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    config.headers = config.headers || {};
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
-  return config;
+// === Интерцептор токена для обоих клиентов ===
+[API_RED, API_LOGIN].forEach(client => {
+  client.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  });
 });
 
 // === Функции генерации ===
@@ -90,10 +92,15 @@ export async function exportSvg(svg) {
   return res;
 }
 
-// === Логин только через backend-login ===
+// === Логин / текущий пользователь ===
 export async function loginWithBackendLogin(email, password) {
   const res = await API_LOGIN.post("/auth/login", { email, password });
   const { access_token, user } = res.data;
   if (access_token) localStorage.setItem("access_token", access_token);
   return { access_token, user };
+}
+
+export async function getMe() {
+  const res = await API_LOGIN.get("/auth/me");
+  return res.data;
 }
